@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Dashboard — Moataz ElSayed</title>
+<style>
+:root{--bg:#0a0a18;--bg-card:#12122a;--bg-raised:#1a1a35;--purple:#7a63ff;--purple-light:#9d8fff;--purple-dim:rgba(122,99,255,.12);--white:#fff;--gray:#ccc;--gray-dim:#888899;--border:rgba(122,99,255,.18);--border-card:rgba(255,255,255,.06);--radius:12px;--radius-sm:8px;--green:#4ade80;--red:#f87171;--font:'Inter',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--white);min-height:100vh;direction:rtl}
+a{color:inherit;text-decoration:none}
+#lockScreen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;padding:2rem}
+.lock-box{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:2.5rem;width:100%;max-width:420px;text-align:center}
+.lock-logo{font-size:2rem;font-weight:800;margin-bottom:.5rem}
+.lock-logo span{color:var(--purple)}
+.lock-subtitle{font-size:.85rem;color:var(--gray-dim);margin-bottom:2rem}
+.lock-field{margin-bottom:1rem;text-align:right}
+.lock-field label{display:block;font-size:.75rem;color:var(--gray-dim);margin-bottom:.4rem}
+.lock-field input{width:100%;padding:.75rem 1rem;background:var(--bg-raised);border:1px solid var(--border-card);border-radius:var(--radius-sm);color:var(--white);font-size:.9rem;outline:none;font-family:var(--font)}
+.lock-field input:focus{border-color:var(--purple)}
+.lock-btn{width:100%;padding:.85rem;background:var(--purple);color:var(--white);border:none;border-radius:100px;font-size:.9rem;font-weight:700;cursor:pointer;margin-top:.5rem}
+.lock-btn:hover{background:var(--purple-light)}
+.lock-note{font-size:.72rem;color:var(--gray-dim);margin-top:1rem;line-height:1.8}
+.app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+.sidebar{background:var(--bg-card);border-left:1px solid var(--border-card);padding:1.5rem 0;display:flex;flex-direction:column}
+.sidebar-logo{padding:.5rem 1.5rem 1.5rem;font-size:1rem;font-weight:800;border-bottom:1px solid var(--border-card);margin-bottom:1rem}
+.sidebar-logo span{color:var(--purple)}
+.sidebar-badge{display:inline-block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--purple-dim);color:var(--purple-light);border:1px solid var(--border);padding:.2rem .6rem;border-radius:100px;margin-top:.3rem}
+.nav-item{display:flex;align-items:center;gap:.75rem;padding:.7rem 1.5rem;font-size:.85rem;color:var(--gray-dim);cursor:pointer;transition:all .2s;border-right:3px solid transparent}
+.nav-item:hover{color:var(--purple-light);background:var(--purple-dim)}
+.nav-item.active{color:var(--white);background:var(--purple-dim);border-right-color:var(--purple)}
+.sidebar-bottom{margin-top:auto;padding:1rem 1.5rem;border-top:1px solid var(--border-card)}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;margin-left:.5rem;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,.4)}50%{box-shadow:0 0 0 6px rgba(74,222,128,0)}}
+.main{padding:2rem;overflow-y:auto;max-height:100vh}
+.main-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
+.main-title{font-size:1.3rem;font-weight:800}
+.main-title span{color:var(--purple)}
+.deploy-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.4rem;background:var(--purple);color:var(--white);border:none;border-radius:100px;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .2s}
+.deploy-btn:hover{background:var(--purple-light)}
+.deploy-btn:disabled{opacity:.5;cursor:not-allowed}
+#toast{position:fixed;top:1.5rem;left:50%;transform:translateX(-50%);z-index:9998;padding:.75rem 1.5rem;border-radius:100px;font-size:.85rem;font-weight:600;display:none;white-space:nowrap}
+#toast.success{background:#166534;color:#bbf7d0;border:1px solid #4ade80}
+#toast.error{background:#7f1d1d;color:#fecaca;border:1px solid #f87171}
+#toast.info{background:var(--bg-raised);color:var(--purple-light);border:1px solid var(--border)}
+.card{background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.25rem}
+.card-title{font-size:.95rem;font-weight:700;color:var(--purple-light);margin-bottom:1.25rem}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-size:.72rem;font-weight:600;color:var(--gray-dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.4rem}
+.form-group input,.form-group textarea{width:100%;padding:.75rem 1rem;background:var(--bg-raised);border:1px solid var(--border-card);border-radius:var(--radius-sm);color:var(--white);font-size:.9rem;outline:none;font-family:var(--font);transition:border-color .2s}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--purple)}
+.form-group textarea{resize:vertical;min-height:80px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.chips-wrap{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.5rem}
+.chip{font-size:.72rem;font-weight:600;color:var(--purple-light);background:var(--purple-dim);border:1px solid var(--border);padding:.25rem .7rem;border-radius:100px;cursor:pointer}
+.chip:hover{background:rgba(122,99,255,.3)}
+.chip-input-row{display:flex;gap:.5rem;margin-top:.5rem}
+.chip-input-row input{flex:1;padding:.5rem .75rem;background:var(--bg-raised);border:1px solid var(--border-card);border-radius:var(--radius-sm);color:var(--white);font-size:.82rem;outline:none;font-family:var(--font)}
+.chip-input-row input:focus{border-color:var(--purple)}
+.chip-add-btn{padding:.5rem .9rem;background:var(--purple-dim);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--purple-light);font-size:.82rem;cursor:pointer;font-weight:700}
+.work-card{background:var(--bg-raised);border:1px solid var(--border-card);border-radius:var(--radius-sm);margin-bottom:.75rem;overflow:hidden}
+.work-card-header{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.1rem;cursor:pointer;transition:background .2s}
+.work-card-header:hover{background:rgba(122,99,255,.06)}
+.work-card-thumb{width:50px;height:34px;border-radius:5px;object-fit:cover;border:1px solid var(--border-card)}
+.work-card-thumb-placeholder{width:50px;height:34px;border-radius:5px;background:var(--bg-card);border:1px solid var(--border-card);display:flex;align-items:center;justify-content:center;font-size:.8rem}
+.work-card-info{flex:1;margin-right:.75rem}
+.work-card-info strong{font-size:.85rem;display:block}
+.work-card-info span{font-size:.72rem;color:var(--gray-dim)}
+.work-card-actions{display:flex;gap:.5rem;align-items:center}
+.work-card-body{padding:1.1rem;border-top:1px solid var(--border-card);display:none}
+.work-card-body.open{display:block}
+.link-preview{font-size:.72rem;color:var(--gray-dim);background:var(--bg-card);padding:.4rem .75rem;border-radius:var(--radius-sm);margin-top:.5rem;border:1px solid var(--border-card)}
+.link-preview span{color:var(--purple-light)}
+.upload-zone{border:1.5px dashed var(--border);border-radius:var(--radius-sm);padding:1.5rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg-raised);margin-bottom:.75rem}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--purple);background:var(--purple-dim)}
+.upload-zone p{font-size:.8rem;color:var(--gray-dim);margin-top:.5rem}
+.upload-zone small{font-size:.7rem;color:var(--gray-dim);opacity:.6}
+.img-preview-wrap{margin-bottom:.75rem}
+.img-preview{width:100%;height:140px;object-fit:cover;border-radius:var(--radius-sm);border:1px solid var(--border-card);display:block}
+.img-preview-btns{display:flex;gap:.5rem;margin-top:.5rem}
+.stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem}
+.stat-mini{background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius-sm);padding:.9rem;text-align:center}
+.stat-mini input{width:100%;background:transparent;border:none;color:var(--purple);font-weight:800;text-align:center;outline:none;font-family:var(--font)}
+.stat-mini label{display:block;font-size:.62rem;color:var(--gray-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem}
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.55rem 1.1rem;border-radius:100px;font-size:.8rem;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:all .2s}
+.btn-purple{background:var(--purple);color:var(--white)}
+.btn-purple:hover{background:var(--purple-light)}
+.btn-ghost{background:transparent;color:var(--gray);border:1px solid var(--border-card)}
+.btn-ghost:hover{border-color:var(--purple);color:var(--purple-light)}
+.btn-danger{background:transparent;color:var(--red);border:1px solid rgba(248,113,113,.3);font-size:.75rem;padding:.4rem .8rem}
+.btn-danger:hover{background:rgba(248,113,113,.1)}
+.btn-sm{padding:.4rem .8rem;font-size:.75rem}
+.cs-card{background:var(--bg-raised);border:1px solid var(--border-card);border-radius:var(--radius-sm);padding:1.1rem;margin-bottom:.75rem}
+.cs-nums{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-top:.75rem}
+.cs-num-box{background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius-sm);padding:.6rem;text-align:center}
+.cs-num-box label{font-size:.6rem;color:var(--gray-dim);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:.25rem}
+.cs-num-box input{width:100%;background:transparent;border:none;color:var(--purple);font-size:1rem;font-weight:800;text-align:center;outline:none;font-family:var(--font)}
+.services-grid-admin{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem}
+.service-admin-card{background:var(--bg-raised);border:1px solid var(--border-card);border-radius:var(--radius-sm);padding:.9rem}
+.deploy-log{background:var(--bg-raised);border:1px solid var(--border-card);border-radius:var(--radius-sm);padding:.75rem 1rem;font-family:monospace;font-size:.75rem;color:var(--gray-dim);max-height:130px;overflow-y:auto;margin-top:1rem;display:none}
+.deploy-log.open{display:block}
+.log-line{padding:.1rem 0;line-height:1.5}
+.log-line.ok{color:var(--green)}
+.log-line.err{color:var(--red)}
+.log-line.info{color:var(--purple-light)}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--purple);border-radius:3px}
+@media(max-width:768px){.app{grid-template-columns:1fr}.sidebar{display:none}.grid-2{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(3,1fr)}.services-grid-admin{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+
+<div id="lockScreen">
+  <div class="lock-box">
+    <div class="lock-logo">M<span>.</span>ElSayed</div>
+    <p class="lock-subtitle">Admin Dashboard</p>
+    <div class="lock-field">
+      <label>GitHub Token</label>
+      <input type="password" id="tokenInput" placeholder="ghp_..." autocomplete="off"/>
+    </div>
+    <button class="lock-btn" onclick="unlock()">دخول ←</button>
+    <p class="lock-note">
+      التوكن بيتحفظ في المتصفح فقط وما بيتبعتش لأي سيرفر.<br/>
+      Repo: <strong>moataz-elsayed-1 / metoo</strong>
+    </p>
+  </div>
+</div>
+
+<div class="app" id="mainApp" style="display:none">
+  <aside class="sidebar">
+    <div class="sidebar-logo">M<span>.</span>ElSayed<div><span class="sidebar-badge">Admin</span></div></div>
+    <nav>
+      <div class="nav-item active" onclick="showTab('work')" id="nav-work"><span>💼</span> Work Section</div>
+      <div class="nav-item" onclick="showTab('hero')" id="nav-hero"><span>🏠</span> Hero Section</div>
+      <div class="nav-item" onclick="showTab('stats')" id="nav-stats"><span>📈</span> الإحصائيات</div>
+      <div class="nav-item" onclick="showTab('cs')" id="nav-cs"><span>📊</span> Case Studies</div>
+      <div class="nav-item" onclick="showTab('services')" id="nav-services"><span>⚙️</span> الخدمات</div>
+    </nav>
+    <div class="sidebar-bottom">
+      <div style="font-size:.72rem;color:var(--gray-dim);margin-bottom:.5rem"><span class="status-dot"></span>متصل بـ GitHub</div>
+      <div style="font-size:.7rem;color:var(--gray-dim);opacity:.6">moataz-elsayed-1/metoo</div>
+      <div style="margin-top:.75rem"><button class="btn btn-ghost btn-sm" onclick="logout()" style="width:100%;justify-content:center">تسجيل خروج</button></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="main-header">
+      <div class="main-title">لوحة التحكم <span id="tabLabel">— Work Section</span></div>
+      <button class="deploy-btn" id="deployBtn" onclick="deployToGitHub()">🚀 حفظ ونشر على الموقع</button>
+    </div>
+    <div class="deploy-log" id="deployLog"></div>
+
+    <div id="tab-work">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.75rem">
+        <p style="font-size:.82rem;color:var(--gray-dim)">كل كارد بيتله صورة screenshot تظهر في الـ carousel</p>
+        <button class="btn btn-purple" onclick="addWorkCard()">+ مشروع جديد</button>
+      </div>
+      <div id="workCards"></div>
+    </div>
+
+    <div id="tab-hero" style="display:none">
+      <div class="card">
+        <div class="card-title">🏠 Hero Section</div>
+        <div class="grid-2">
+          <div class="form-group"><label>الاسم</label><input id="h-name" type="text"/></div>
+          <div class="form-group"><label>الوظيفة</label><input id="h-role" type="text"/></div>
+        </div>
+        <div class="form-group"><label>التاجلاين</label><textarea id="h-tagline" rows="2"></textarea></div>
+        <div class="form-group"><label>الوصف</label><textarea id="h-desc" rows="3"></textarea></div>
+        <div class="grid-2">
+          <div class="form-group"><label>التليفون</label><input id="h-phone" type="text"/></div>
+          <div class="form-group"><label>الإيميل</label><input id="h-email" type="text"/></div>
+          <div class="form-group"><label>ROAS Pill</label><input id="h-roas" type="text"/></div>
+          <div class="form-group"><label>Ad Spend Pill</label><input id="h-spend" type="text"/></div>
+        </div>
+        <div class="form-group"><label>Availability Badge</label><input id="h-avail" type="text"/></div>
+      </div>
+    </div>
+
+    <div id="tab-stats" style="display:none">
+      <div class="card">
+        <div class="card-title">📈 Stats Bar</div>
+        <div class="stats-grid" id="statsGrid"></div>
+      </div>
+    </div>
+
+    <div id="tab-cs" style="display:none"><div id="csCards"></div></div>
+
+    <div id="tab-services" style="display:none">
+      <div class="card">
+        <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+          <span>⚙️ الخدمات</span>
+          <button class="btn btn-ghost btn-sm" onclick="addService()">+ خدمة</button>
+        </div>
+        <div class="services-grid-admin" id="servicesGrid"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+const OWNER='moataz-elsayed-1',REPO='metoo',FILE='index.html';
+let STATE={
+  hero:{name:'Moataz ElSayed',role:'Media Buyer · Full Stack Developer',tagline:"I Don't Run Ads.\nI Build Performance Systems.",desc:'Scaling brands with data-driven Facebook & Instagram campaigns. Every strategy, every creative, every dollar — fully accountable',phone:'+20 109 091 6639',email:'moatazelsayed61@gmail.com',roas:'3×',adSpend:'$20k+',availability:'Available for new projects'},
+  stats:[{num:'1+',lbl:'Years Experience'},{num:'$20k+',lbl:'Ad Spend Managed'},{num:'20+',lbl:'Campaigns Launched'},{num:'3×',lbl:'Average ROAS'},{num:'3+',lbl:'Brands Scaled'}],
+  work:[
+    {id:1,title:'Bilingual Website Templates — Arab Businesses',desc:'Clean, bilingual (AR/EN) website templates built for Arab businesses — restaurants, clinics, and more.',link:'https://payhip.com/MoatazElSayed',btnText:'Browse Templates →',badge:'HTML · CSS · JS',chips:['AR / EN Switch','Full RTL Support','Mobile Responsive','Multiple Niches'],image:''},
+    {id:2,title:'Luxury Automotive — Lead Generation',desc:'Full-funnel Facebook & Instagram strategy targeting high-income auto buyers.',link:'case-studies.html',btnText:'View Full Case Study →',badge:'Facebook · Instagram',chips:['640 WhatsApp Conversations','Avg. CPL: 18.21 EGP','Spend: 16,655 EGP'],image:''}
+  ],
+  caseStudies:[
+    {id:1,title:'Golden Camel — Luxury Cars',subtitle:'WhatsApp Messaging Conversations Campaign',conversations:'640',reach:'204K',avgCpl:'18.21',bestCpl:'10.89',spend:'16,655.85 EGP'},
+    {id:2,title:'Luxotic — Luxury Cars',subtitle:'WhatsApp Messaging Conversations Campaign',conversations:'536',reach:'125K',avgCpl:'14.01',bestCpl:'8.72',spend:'7,508.47 EGP'}
+  ],
+  services:[
+    {icon:'📘',title:'Meta Ads Management',desc:'Full-cycle Facebook & Instagram campaign management.'},
+    {icon:'💬',title:'WhatsApp Messaging Campaigns',desc:'Click-to-WhatsApp strategies.'},
+    {icon:'🎯',title:'Lead Generation Campaigns',desc:'Precision lead-gen funnels.'},
+    {icon:'🔀',title:'Full Funnel Strategy',desc:'TOF → MOF → BOF architecture.'},
+    {icon:'🚀',title:'Campaign Structuring & Scaling',desc:'Vertical and horizontal scaling.'},
+    {icon:'🧪',title:'Creative Testing & Optimization',desc:'A/B and multivariate testing.'},
+    {icon:'🔍',title:'Audience Research & Positioning',desc:'Deep market positioning.'},
+    {icon:'🌐',title:'Website Development',desc:'Bilingual AR/EN websites.'}
+  ]
+};
+let openCards={},TOKEN='';
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// LOCK
+function unlock(){
+  const t=document.getElementById('tokenInput').value.trim();
+  if(!t||!t.startsWith('ghp_')){showToast('توكن غير صحيح — لازم يبدأ بـ ghp_','error');return;}
+  TOKEN=t; localStorage.setItem('gh_admin_token',t);
+  document.getElementById('lockScreen').style.display='none';
+  document.getElementById('mainApp').style.display='grid';
+  loadFromStorage(); renderAll();
+  showToast('أهلاً بيك يا Moataz 👋','info');
+}
+function logout(){localStorage.removeItem('gh_admin_token');location.reload();}
+window.addEventListener('DOMContentLoaded',()=>{
+  const saved=localStorage.getItem('gh_admin_token');
+  if(saved&&saved.startsWith('ghp_')){
+    TOKEN=saved; document.getElementById('tokenInput').value=saved;
+    document.getElementById('lockScreen').style.display='none';
+    document.getElementById('mainApp').style.display='grid';
+    loadFromStorage(); renderAll();
+  }
+});
+
+function saveToStorage(){localStorage.setItem('admin_state',JSON.stringify(STATE));}
+function loadFromStorage(){const s=localStorage.getItem('admin_state');if(s){try{STATE=JSON.parse(s);}catch(_){}}}
+
+// TABS
+const TABS=['work','hero','stats','cs','services'];
+const LABELS={work:'Work Section',hero:'Hero Section',stats:'الإحصائيات',cs:'Case Studies',services:'الخدمات'};
+function showTab(name){
+  TABS.forEach(t=>{document.getElementById('tab-'+t).style.display=t===name?'block':'none';document.getElementById('nav-'+t).classList.toggle('active',t===name);});
+  document.getElementById('tabLabel').textContent='— '+LABELS[name];
+  if(name==='stats')renderStats();if(name==='cs')renderCS();if(name==='services')renderServices();
+}
+
+let toastT;
+function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className=type;t.style.display='block';clearTimeout(toastT);toastT=setTimeout(()=>{t.style.display='none';},3500);}
+
+function log(msg,type='info'){
+  const el=document.getElementById('deployLog');el.classList.add('open');
+  const line=document.createElement('div');line.className='log-line '+type;
+  line.textContent='['+new Date().toLocaleTimeString('ar')+'] '+msg;
+  el.appendChild(line);el.scrollTop=el.scrollHeight;
+}
+
+function renderAll(){renderWorkCards();renderHero();renderStats();renderCS();renderServices();}
+
+// HERO
+function renderHero(){
+  const h=STATE.hero;
+  const map={name:'name',role:'role',tagline:'tagline',desc:'desc',phone:'phone',email:'email',roas:'roas',spend:'adSpend',avail:'availability'};
+  Object.entries(map).forEach(([k,sk])=>{
+    const el=document.getElementById('h-'+k);
+    if(el){el.value=h[sk]||'';el.oninput=e=>{STATE.hero[sk]=e.target.value;saveToStorage();};}
+  });
+}
+
+// STATS
+function renderStats(){
+  document.getElementById('statsGrid').innerHTML=STATE.stats.map((s,i)=>`
+    <div class="stat-mini">
+      <label>${s.lbl}</label>
+      <input value="${esc(s.num)}" style="font-size:1.2rem" oninput="STATE.stats[${i}].num=this.value;saveToStorage()"/>
+      <input value="${esc(s.lbl)}" style="font-size:.65rem;color:var(--gray-dim);margin-top:.25rem" oninput="STATE.stats[${i}].lbl=this.value;saveToStorage()"/>
+    </div>`).join('');
+}
+
+// CASE STUDIES
+function renderCS(){
+  document.getElementById('csCards').innerHTML=STATE.caseStudies.map((cs,i)=>`
+    <div class="cs-card">
+      <div class="grid-2">
+        <div class="form-group"><label>العنوان</label><input value="${esc(cs.title)}" oninput="STATE.caseStudies[${i}].title=this.value;saveToStorage()"/></div>
+        <div class="form-group"><label>Subtitle</label><input value="${esc(cs.subtitle)}" oninput="STATE.caseStudies[${i}].subtitle=this.value;saveToStorage()"/></div>
+      </div>
+      <div class="form-group"><label>Total Spend</label><input value="${esc(cs.spend)}" oninput="STATE.caseStudies[${i}].spend=this.value;saveToStorage()"/></div>
+      <div class="cs-nums">
+        <div class="cs-num-box"><label>محادثات</label><input value="${esc(cs.conversations)}" oninput="STATE.caseStudies[${i}].conversations=this.value;saveToStorage()"/></div>
+        <div class="cs-num-box"><label>Reach</label><input value="${esc(cs.reach)}" oninput="STATE.caseStudies[${i}].reach=this.value;saveToStorage()"/></div>
+        <div class="cs-num-box"><label>Avg CPL</label><input value="${esc(cs.avgCpl)}" oninput="STATE.caseStudies[${i}].avgCpl=this.value;saveToStorage()"/></div>
+        <div class="cs-num-box"><label>Best CPL</label><input value="${esc(cs.bestCpl)}" oninput="STATE.caseStudies[${i}].bestCpl=this.value;saveToStorage()"/></div>
+      </div>
+    </div>`).join('');
+}
+
+// SERVICES
+function renderServices(){
+  document.getElementById('servicesGrid').innerHTML=STATE.services.map((s,i)=>`
+    <div class="service-admin-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem">
+        <input type="text" value="${s.icon}" oninput="STATE.services[${i}].icon=this.value;saveToStorage()" style="width:42px;font-size:1.3rem;text-align:center;background:var(--bg-card);border:1px solid var(--border-card);border-radius:6px;padding:.25rem;outline:none;color:var(--white)"/>
+        <button class="btn btn-danger" onclick="removeService(${i})">✕</button>
+      </div>
+      <div class="form-group"><label>العنوان</label><input value="${esc(s.title)}" oninput="STATE.services[${i}].title=this.value;saveToStorage()"/></div>
+      <div class="form-group"><label>الوصف</label><textarea rows="2" oninput="STATE.services[${i}].desc=this.value;saveToStorage()">${esc(s.desc)}</textarea></div>
+    </div>`).join('');
+}
+function addService(){STATE.services.push({icon:'⭐',title:'خدمة جديدة',desc:''});saveToStorage();renderServices();}
+function removeService(i){STATE.services.splice(i,1);saveToStorage();renderServices();}
+
+// WORK CARDS
+function renderWorkCards(){
+  const g=document.getElementById('workCards');g.innerHTML='';
+  STATE.work.forEach((item)=>{
+    const div=document.createElement('div');div.className='work-card';div.id='wc-'+item.id;
+    const isOpen=openCards[item.id];
+    div.innerHTML=`
+      <div class="work-card-header" onclick="toggleCard(${item.id})">
+        ${item.image?`<img class="work-card-thumb" src="${item.image}" alt=""/>`:`<div class="work-card-thumb-placeholder">🖼️</div>`}
+        <div class="work-card-info" style="margin-right:.75rem">
+          <strong>${esc(item.title)||'بدون عنوان'}</strong>
+          <span>${esc(item.badge)||'—'}</span>
+        </div>
+        <div class="work-card-actions">
+          <span style="font-size:.7rem;color:var(--gray-dim)">${isOpen?'▲':'▼'}</span>
+          <button class="btn btn-danger" onclick="event.stopPropagation();removeWork(${item.id})">حذف</button>
+        </div>
+      </div>
+      <div class="work-card-body ${isOpen?'open':''}">
+        <input type="file" accept="image/*" id="file-${item.id}" style="display:none" onchange="handleFile(event,${item.id})"/>
+        ${item.image
+          ?`<div class="img-preview-wrap"><img class="img-preview" src="${item.image}" alt=""/><div class="img-preview-btns"><button class="btn btn-ghost btn-sm" onclick="triggerUpload(${item.id})">تغيير الصورة</button><button class="btn btn-danger btn-sm" onclick="removeImg(${item.id})">حذف الصورة</button></div></div>`
+          :`<div class="upload-zone" onclick="triggerUpload(${item.id})" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event,${item.id})"><div style="font-size:2rem">🖼️</div><p>اضغط أو اسحب صورة الـ Screenshot</p><small>PNG · JPG · WebP</small></div>`}
+        <div class="grid-2">
+          <div class="form-group"><label>العنوان</label><input value="${esc(item.title)}" oninput="updateWork(${item.id},'title',this.value)"/></div>
+          <div class="form-group"><label>Badge</label><input value="${esc(item.badge)}" oninput="updateWork(${item.id},'badge',this.value)"/></div>
+        </div>
+        <div class="form-group"><label>الوصف</label><textarea rows="3" oninput="updateWork(${item.id},'desc',this.value)">${esc(item.desc)}</textarea></div>
+        <div class="grid-2">
+          <div class="form-group"><label>الرابط</label><input value="${esc(item.link)}" oninput="updateWork(${item.id},'link',this.value)"/></div>
+          <div class="form-group"><label>نص الزرار</label><input value="${esc(item.btnText)}" oninput="updateWork(${item.id},'btnText',this.value)"/></div>
+        </div>
+        <div class="form-group">
+          <label>الـ Chips</label>
+          <div class="chips-wrap">${(item.chips||[]).map((c,ci)=>`<span class="chip" onclick="removeChip(${item.id},${ci})">${esc(c)} ✕</span>`).join('')}</div>
+          <div class="chip-input-row"><input id="chip-inp-${item.id}" placeholder="اكتب chip واضغط Enter" onkeydown="if(event.key==='Enter')addChip(${item.id})"/><button class="chip-add-btn" onclick="addChip(${item.id})">+</button></div>
+        </div>
+        <div class="link-preview">🔗 الزرار "<strong>${esc(item.btnText)}</strong>" هيروح على: <span>${esc(item.link)}</span></div>
+      </div>`;
+    g.appendChild(div);
+  });
+}
+
+function toggleCard(id){openCards[id]=!openCards[id];renderWorkCards();}
+function updateWork(id,f,v){const i=STATE.work.findIndex(w=>w.id===id);if(i>-1){STATE.work[i][f]=v;saveToStorage();}}
+function removeWork(id){STATE.work=STATE.work.filter(w=>w.id!==id);delete openCards[id];saveToStorage();renderWorkCards();}
+function addWorkCard(){const id=Date.now();STATE.work.push({id,title:'مشروع جديد',desc:'',link:'https://',btnText:'View Project →',badge:'',chips:[],image:''});openCards[id]=true;saveToStorage();renderWorkCards();document.getElementById('wc-'+id)?.scrollIntoView({behavior:'smooth'});}
+function addChip(id){const inp=document.getElementById('chip-inp-'+id);if(!inp||!inp.value.trim())return;const i=STATE.work.findIndex(w=>w.id===id);if(i>-1){STATE.work[i].chips=[...(STATE.work[i].chips||[]),inp.value.trim()];saveToStorage();}inp.value='';renderWorkCards();}
+function removeChip(id,ci){const i=STATE.work.findIndex(w=>w.id===id);if(i>-1){STATE.work[i].chips.splice(ci,1);saveToStorage();}renderWorkCards();}
+function triggerUpload(id){document.getElementById('file-'+id)?.click();}
+function handleFile(e,id){const f=e.target.files[0];if(f)processImage(f,id);}
+function handleDrop(e,id){e.preventDefault();e.currentTarget.classList.remove('drag');const f=e.dataTransfer.files[0];if(f)processImage(f,id);}
+function processImage(file,id){
+  if(!file.type.startsWith('image/')){showToast('الملف ده مش صورة','error');return;}
+  const reader=new FileReader();
+  reader.onload=ev=>{const i=STATE.work.findIndex(w=>w.id===id);if(i>-1){STATE.work[i].image=ev.target.result;saveToStorage();}renderWorkCards();showToast('✓ تم رفع الصورة','info');};
+  reader.readAsDataURL(file);
+}
+function removeImg(id){const i=STATE.work.findIndex(w=>w.id===id);if(i>-1){STATE.work[i].image='';saveToStorage();}renderWorkCards();}
+
+// GENERATE HTML
+function generateHTML(){
+  const h=STATE.hero;
+  const workCards=STATE.work.map(item=>{
+    const chips=(item.chips||[]).map(c=>`<span class="result-chip">${esc(c)}</span>`).join('\n                ');
+    const thumb=item.image?`<img src="${item.image}" alt="${esc(item.title)}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0"/>`:`<!-- لا توجد صورة -->`;
+    return `        <div class="case-single-wrap reveal">
+          <div class="case-card-big">
+            <div class="case-thumb-big" style="position:relative;overflow:hidden;">
+              ${thumb}
+              <span class="case-platform-badge">${esc(item.badge)}</span>
+            </div>
+            <div class="case-body-big">
+              <h3 class="case-title-big">${esc(item.title)}</h3>
+              <p class="case-desc-big">${esc(item.desc)}</p>
+              <div class="case-results-big">${chips}</div>
+            </div>
+            <div class="case-footer-big">
+              <a href="${esc(item.link)}" target="_blank" class="btn btn-purple">${esc(item.btnText)}</a>
+            </div>
+          </div>
+        </div>`;
+  }).join('\n');
+
+  const statsHTML=STATE.stats.map(s=>`<div class="stat-item"><div class="s-num">${esc(s.num)}</div><div class="s-lbl">${esc(s.lbl)}</div></div>`).join('\n        <div class="stat-divider"></div>\n        ');
+  const servicesHTML=STATE.services.map(s=>`<div class="service-card reveal"><div class="service-icon">${s.icon}</div><h3 class="service-title">${esc(s.title)}</h3><p class="service-desc">${esc(s.desc)}</p></div>`).join('\n        ');
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="images/favicon.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${esc(h.name)} – Media Buyer &amp; Full Stack Developer</title>
+  <meta name="google-site-verification" content="90o9MLkuCFx5QtkCwwcJfSA5UEPqp0JXamRcUK-8F-g" />
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5K7PLZEYGE"><\/script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-5K7PLZEYGE');<\/script>
+  <meta name="description" content="${esc(h.name)} – Media Buyer, Meta Ads Specialist &amp; Web Developer in Egypt." />
+  <meta name="author" content="${esc(h.name)}" />
+  <meta name="robots" content="index, follow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="Style.css" />
+</head>
+<body>
+  <a href="https://wa.me/${h.phone.replace(/\D/g,'')}" target="_blank" class="wa-float" aria-label="Chat on WhatsApp">
+    <div class="wa-float-pulse"></div>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+  </a>
+  <nav id="navbar">
+    <div class="container nav-inner">
+      <div class="nav-logo">M<span>.</span>ElSayed</div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#hero">Home</a></li><li><a href="#about">About</a></li>
+        <li><a href="#services">Services</a></li><li><a href="#case-studies">Work</a></li>
+        <li><a href="#why">Why Me</a></li><li><a href="#contact">Contact</a></li>
+      </ul>
+      <div class="nav-right">
+        <a href="https://drive.google.com/file/d/1mPAg79rY9MKovzQwKfAWWr3Ou65DOAGJ/view?usp=sharing" target="_blank" class="btn-cv">My CV</a>
+        <a href="#contact" class="btn btn-purple">Hire Me</a>
+        <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+  <section id="hero">
+    <div class="blob blob-1"></div><div class="blob blob-2"></div>
+    <div class="container"><div class="hero-inner">
+      <div class="hero-text">
+        <div class="availability">${esc(h.availability)}</div>
+        <p class="hero-role">${esc(h.role)}</p>
+        <h1 class="hero-name"><span class="grad">${esc(h.name.split(' ')[0])}</span><br>${esc(h.name.split(' ').slice(1).join(' '))}</h1>
+        <p class="hero-tagline">${esc(h.tagline).replace(/\n/g,'<br>')}</p>
+        <p class="hero-desc">${esc(h.desc)}</p>
+        <div class="hero-contact-row">
+          <div class="contact-chip"><div class="chip-icon">📞</div><span>${esc(h.phone)}</span></div>
+          <div class="contact-chip"><div class="chip-icon">✉️</div><span><a href="mailto:${esc(h.email)}">${esc(h.email)}</a></span></div>
+        </div>
+        <div class="hero-cta">
+          <a href="#contact" class="btn btn-purple">Contact me<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          <a href="#case-studies" class="btn btn-ghost">View My Work</a>
+        </div>
+      </div>
+      <div class="hero-photo-wrap">
+        <div class="hero-photo"><img src="images/NEW.png" alt="${esc(h.name)}" /></div>
+        <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+        <div class="stat-pill stat-pill-1"><div class="sp-icon">🎯</div><div><div class="sp-num">${esc(h.roas)}</div><div class="sp-lbl">Avg. ROAS</div></div></div>
+        <div class="stat-pill stat-pill-2"><div class="sp-icon">📈</div><div><div class="sp-num">${esc(h.adSpend)}</div><div class="sp-lbl">Ad Spend</div></div></div>
+      </div>
+    </div></div>
+  </section>
+  <section id="about"><div class="container"><div class="about-grid">
+    <div class="reveal">
+      <div class="tag">✦ About Me</div>
+      <h2 class="section-title">Performance Over <span>Everything</span></h2>
+      <div style="width:48px;height:3px;background:linear-gradient(90deg,var(--purple),transparent);border-radius:2px;margin:1rem 0 1.75rem"></div>
+      <p class="about-highlight">I help brands scale through structured, data-driven paid advertising systems — not random campaigns</p>
+      <div class="about-body">
+        <p>As a Media Buyer in Meta Ads (Facebook &amp; Instagram), I focus on building full-funnel strategies that turn attention into measurable revenue. My approach is analytical, testing-based, and ROI-oriented.</p>
+        <p>My core strengths include <strong>Full Funnel Strategy (TOF → MOF → BOF)</strong>, campaign structuring and scaling frameworks, creative testing systems, audience research and market positioning, and budget optimization based strictly on performance metrics. I maintain a deep focus on <strong>ROAS, CAC, CTR, and Conversion Rate</strong> to ensure campaigns are not just active — but profitable.</p>
+        <p>With a background in <strong>Management Information Systems (MIS)</strong>, I combine marketing strategy with technical logic and analytical thinking. I specialize in <strong>Full Stack Web Development</strong> building and integrating websites, funnels, and tracking systems to support high-performing marketing campaigns and turn data into actionable results</p>
+      </div>
+      <div class="about-tagline">I don't run ads.<br>I build performance systems.</div>
+    </div>
+    <div class="about-cards reveal">
+      <div class="about-card"><div class="about-card-icon">📊</div><div><h4>ROAS · CAC · CTR · CVR</h4><p>Every campaign is measured against the metrics that actually matter to business growth.</p></div></div>
+      <div class="about-card"><div class="about-card-icon">🔀</div><div><h4>Full Funnel: TOF → MOF → BOF</h4><p>I architect complete funnel strategies — not isolated ad sets — for predictable, scalable results.</p></div></div>
+      <div class="about-card"><div class="about-card-icon">🧪</div><div><h4>Testing-Based Optimization</h4><p>Systematic creative and audience testing ensures every budget decision is backed by real data.</p></div></div>
+      <div class="about-card"><div class="about-card-icon">🎓</div><div><h4>MIS Background + Full Stack Development</h4><p>MIS foundation + Full Stack development to build, optimize, and integrate websites, funnels, and tracking systems.</p></div></div>
+      <div class="about-card"><div class="about-card-icon">🚀</div><div><h4>Scaling Frameworks</h4><p>Proven vertical and horizontal scaling methods that multiply profitable campaigns without breaking performance.</p></div></div>
+    </div>
+  </div></div></section>
+  <section id="stats"><div class="container"><div class="stats-inner">
+    ${statsHTML}
+  </div></div></section>
+  <section id="services"><div class="container">
+    <div class="section-header reveal"><div class="tag">✦ What I Do</div><h2 class="section-title">Services Built for <span>Results</span></h2><p class="section-sub">Every service is engineered to move the needle — not just spend budget.</p></div>
+    <div class="services-grid">${servicesHTML}</div>
+  </div></section>
+  <section id="case-studies"><div class="container">
+    <div class="section-header reveal" style="text-align:left;max-width:none;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:2.5rem;">
+      <div><div class="tag">✦ Work &amp; Products</div><h2 class="section-title">Campaigns &amp; <span>Digital Products</span></h2></div>
+      <a href="case-studies.html" class="btn btn-ghost reveal">View All Case Studies →</a>
+    </div>
+    <div class="carousel-wrapper">
+      <div class="carousel-progress" id="carouselProgress"></div>
+      <div class="case-studies-scroll" id="carouselTrack">
+${workCards}
+      </div>
+      <div class="carousel-controls">
+        <button class="carousel-btn" id="carouselPrev" aria-label="Previous">&#8592;</button>
+        <div class="carousel-dots" id="carouselDots"></div>
+        <button class="carousel-btn" id="carouselNext" aria-label="Next">&#8594;</button>
+      </div>
+    </div>
+  </div></section>
+  <section id="cs-banner"><div class="container">
+    <div class="cs-banner-inner reveal" onclick="window.location.href='case-studies.html'">
+      <div class="cs-banner-img"><img src="images/cs.png" alt="Case Studies" style="width:100%;height:100%;object-fit:cover;" /></div>
+      <div class="cs-banner-text">
+        <div class="tag">✦ Case Studies</div>
+        <h2>See How I Turn <span class="grad">Budgets Into Results</span></h2>
+        <p>Real campaigns. Real numbers. Deep breakdowns of strategy, execution, and results across luxury automotive brands in the Egyptian market.</p>
+        <div class="cs-chips"><span class="result-chip">640+ Conversations</span><span class="result-chip">536+ Conversations</span><span class="result-chip">CPL as low as 8.72 EGP</span><span class="result-chip">204K+ Reach</span></div>
+        <a href="case-studies.html" class="btn btn-purple">Explore Case Studies<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+    </div>
+  </div></section>
+  <section id="why"><div class="container">
+    <div class="reveal" style="text-align:center;max-width:600px;margin:0 auto"><div class="tag">✦ Why Me</div><h2 class="section-title">Why Work <span>With Me?</span></h2><p style="font-size:1rem;color:var(--gray-dim);margin-top:.75rem;line-height:1.7">Not all media buyers are the same. Here's what sets my approach apart.</p></div>
+    <div class="why-grid">
+      <div class="why-card reveal"><div class="why-card-icon">📊</div><h4>Data-Driven Decision Making</h4></div>
+      <div class="why-card reveal"><div class="why-card-icon">💰</div><h4>ROI-Focused Strategy</h4></div>
+      <div class="why-card reveal"><div class="why-card-icon">🏗️</div><h4>Structured Campaign Architecture</h4></div>
+      <div class="why-card reveal"><div class="why-card-icon">🎯</div><h4>Strong Understanding of High-Intent Buyers</h4></div>
+      <div class="why-card reveal"><div class="why-card-icon">🔄</div><h4>Continuous Testing &amp; Scaling Mindset</h4></div>
+      <div class="why-card reveal"><div class="why-card-icon">📈</div><h4>Every Decision Backed by Performance Data</h4></div>
+    </div>
+  </div></section>
+  <section id="tools"><div class="container">
+    <p class="tools-label reveal">Tools &amp; Platforms I Work With</p>
+    <div class="tools-row">
+      <div class="tool-badge reveal"><span class="tb-icon">📘</span> Facebook Ads</div><div class="tool-badge reveal"><span class="tb-icon">📸</span> Instagram Ads</div>
+      <div class="tool-badge reveal"><span class="tb-icon">⚙️</span> Meta Business Suite</div><div class="tool-badge reveal"><span class="tb-icon">📊</span> Google Analytics</div>
+      <div class="tool-badge reveal"><span class="tb-icon">🏷️</span> Meta Pixel &amp; API</div><div class="tool-badge reveal"><span class="tb-icon">🔄</span> Retargeting Funnels</div>
+      <div class="tool-badge reveal"><span class="tb-icon">🔬</span> A/B Testing</div><div class="tool-badge reveal"><span class="tb-icon">📋</span> Campaign Reporting</div>
+      <div class="tool-badge reveal"><span class="tb-icon">🌐</span> HTML / CSS / JS</div><div class="tool-badge reveal"><span class="tb-icon">🎨</span> VS Code</div>
+      <div class="tool-badge reveal"><span class="tb-icon">🚀</span> Netlify</div><div class="tool-badge reveal"><span class="tb-icon">🛒</span> Payhip</div>
+    </div>
+  </div></section>
+  <section id="contact"><div class="container">
+    <div class="section-header reveal" style="text-align:center;margin-bottom:3.5rem;"><div class="tag">✦ Contact</div><h2 class="section-title">Let's Build Something <span>Together</span></h2><p class="section-sub">Have a project in mind? Let's talk about how to make it perform.</p></div>
+    <div class="contact-grid">
+      <div class="reveal">
+        <div class="tag" style="margin-bottom:1.25rem;">Direct Channels</div>
+        <p class="contact-info-text">Prefer to message directly? I'm active on all platforms and typically respond within a few hours.</p>
+        <div class="social-links">
+          <a href="http://www.linkedin.com/in/moatazelsayed1" target="_blank" class="social-link"><div class="sl-icon sl-linkedin"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#0077B5" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></div><div class="sl-text"><strong>LinkedIn</strong><span>linkedin.com/in/moatazelsayed1</span></div><svg style="margin-left:auto;opacity:.4" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          <a href="https://wa.me/${h.phone.replace(/\D/g,'')}" target="_blank" class="social-link"><div class="sl-icon sl-whatsapp"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#25D366" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></div><div class="sl-text"><strong>WhatsApp</strong><span>${esc(h.phone)}</span></div><svg style="margin-left:auto;opacity:.4" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          <a href="https://www.instagram.com/moataz_elsayed.1" target="_blank" class="social-link"><div class="sl-icon sl-instagram"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#C13584" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></div><div class="sl-text"><strong>Instagram</strong><span>@moataz_elsayed.1</span></div><svg style="margin-left:auto;opacity:.4" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          <a href="https://www.facebook.com/moatazelsayed11" target="_blank" class="social-link"><div class="sl-icon sl-facebook"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#1877F2" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></div><div class="sl-text"><strong>Facebook</strong><span>facebook.com/moatazelsayed</span></div><svg style="margin-left:auto;opacity:.4" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </div>
+      <div class="contact-form reveal">
+        <h3 class="form-title">Send a Message</h3>
+        <p class="form-sub">I'll get back to you within 24 hours.</p>
+        <div id="contactForm">
+          <div class="form-group"><label for="name">Your Name</label><input type="text" id="name" placeholder="Ahmed Hassan" /></div>
+          <div class="form-group"><label for="email">Email Address</label><input type="email" id="email" placeholder="ahmed@company.com" /></div>
+          <div class="form-group"><label for="message">Message</label><textarea id="message" placeholder="Tell me about your project — industry, goals, budget range..."></textarea></div>
+          <button class="form-submit" onclick="submitForm()">Send Message →</button>
+        </div>
+        <div class="form-success" id="formSuccess">✅ Message sent! I'll be in touch very soon.</div>
+      </div>
+    </div>
+  </div></section>
+  <footer><div class="container footer-inner">
+    <div class="footer-logo">Moataz <span>ElSayed</span></div>
+    <div class="footer-copy">Developed by <strong>Moataz ElSayed</strong></div>
+    <div class="footer-copy">&copy; 2025 Moataz ElSayed. All rights reserved.</div>
+    <div class="footer-socials" aria-label="Social media links">
+      <a href="http://www.linkedin.com/in/moatazelsayed1" target="_blank" rel="noopener" aria-label="LinkedIn">in</a>
+      <a href="https://www.instagram.com/moataz_elsayed.1" target="_blank" rel="noopener" aria-label="Instagram">ig</a>
+      <a href="https://wa.me/${h.phone.replace(/\D/g,'')}" target="_blank" rel="noopener" aria-label="WhatsApp">wa</a>
+      <a href="https://www.facebook.com/moatazelsayed11/" target="_blank" rel="noopener" aria-label="Facebook">fb</a>
+    </div>
+  </div></footer>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"><\/script>
+  <script>
+    const navbar=document.getElementById('navbar');
+    window.addEventListener('scroll',()=>navbar.classList.toggle('scrolled',window.scrollY>50));
+    const hamburger=document.getElementById('hamburger');
+    const navLinks=document.getElementById('navLinks');
+    hamburger.addEventListener('click',()=>navLinks.classList.toggle('open'));
+    navLinks.querySelectorAll('a').forEach(l=>l.addEventListener('click',()=>navLinks.classList.remove('open')));
+    const revealEls=document.querySelectorAll('.reveal');
+    const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){const sibs=[...(entry.target.parentElement?.querySelectorAll('.reveal')||[])];entry.target.style.transitionDelay=Math.min(sibs.indexOf(entry.target)*0.07,0.4)+'s';entry.target.classList.add('visible');observer.unobserve(entry.target);}});},{threshold:0.1});
+    revealEls.forEach(el=>observer.observe(el));
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}});});
+    function submitForm(){const n=document.getElementById('name').value.trim();const em=document.getElementById('email').value.trim();const m=document.getElementById('message').value.trim();if(!n||!em||!m){alert('Please fill in all fields.');return;}document.getElementById('contactForm').style.display='none';document.getElementById('formSuccess').style.display='block';}
+    document.addEventListener('mousemove',e=>{const x=(e.clientX/window.innerWidth-.5)*30;const y=(e.clientY/window.innerHeight-.5)*30;document.querySelectorAll('.blob').forEach((b,i)=>{const d=i%2===0?1:-1;b.style.transform='translate('+x*d*.4+'px,'+y*d*.4+'px)';});});
+    (function(){const track=document.getElementById('carouselTrack');const dotsContainer=document.getElementById('carouselDots');const prevBtn=document.getElementById('carouselPrev');const nextBtn=document.getElementById('carouselNext');const progressBar=document.getElementById('carouselProgress');if(!track)return;const cards=Array.from(track.querySelectorAll('.case-single-wrap'));const total=cards.length;if(total<2)return;let current=0,autoTimer=null;const INTERVAL=3500;const dots=cards.map((_,i)=>{const d=document.createElement('button');d.className='carousel-dot'+(i===0?' active':'');d.setAttribute('aria-label','Go to slide '+(i+1));d.addEventListener('click',()=>goTo(i,true));dotsContainer.appendChild(d);return d;});function updateDots(){dots.forEach((d,i)=>d.classList.toggle('active',i===current));}function getCardWidth(){return cards[0].offsetWidth+24;}function goTo(index,reset){current=(index+total)%total;track.scrollTo({left:current*getCardWidth(),behavior:'smooth'});updateDots();if(reset){stopAuto();startAuto();}}function startProgress(){progressBar.style.transition='none';progressBar.style.width='0%';requestAnimationFrame(()=>requestAnimationFrame(()=>{progressBar.style.transition='width '+INTERVAL+'ms linear';progressBar.style.width='100%';}));}function startAuto(){startProgress();autoTimer=setInterval(()=>{goTo(current+1,false);startProgress();},INTERVAL);}function stopAuto(){clearInterval(autoTimer);progressBar.style.transition='none';progressBar.style.width='0%';}prevBtn.addEventListener('click',()=>goTo(current-1,true));nextBtn.addEventListener('click',()=>goTo(current+1,true));track.addEventListener('mouseenter',stopAuto);track.addEventListener('mouseleave',startAuto);let touchStartX=0;track.addEventListener('touchstart',e=>{touchStartX=e.touches[0].clientX;stopAuto();},{passive:true});track.addEventListener('touchend',e=>{const dx=touchStartX-e.changedTouches[0].clientX;if(Math.abs(dx)>40)goTo(dx>0?current+1:current-1,false);startAuto();});track.addEventListener('scroll',()=>{const idx=Math.round(track.scrollLeft/getCardWidth());if(idx!==current){current=idx%total;updateDots();}});startAuto();})();
+  <\/script>
+</body>
+</html>`;
+}
+
+// DEPLOY
+async function deployToGitHub(){
+  if(!TOKEN){showToast('مفيش توكن','error');return;}
+  const btn=document.getElementById('deployBtn');
+  btn.disabled=true;btn.textContent='⏳ جاري النشر...';
+  document.getElementById('deployLog').innerHTML='';
+  try{
+    log('جاري بناء index.html...','info');
+    const newContent=generateHTML();
+    const encoded=btoa(unescape(encodeURIComponent(newContent)));
+    log('جاري جلب SHA الملف الحالي...','info');
+    const getRes=await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`,{headers:{Authorization:`token ${TOKEN}`,Accept:'application/vnd.github.v3+json'}});
+    if(!getRes.ok){const e=await getRes.json();throw new Error(e.message||'فشل جلب الملف');}
+    const fileData=await getRes.json();
+    log('✓ SHA: '+fileData.sha.slice(0,8)+'...','ok');
+    log('جاري رفع التحديثات...','info');
+    const putRes=await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`,{
+      method:'PUT',
+      headers:{Authorization:`token ${TOKEN}`,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},
+      body:JSON.stringify({message:'dashboard update: '+new Date().toLocaleString('ar'),content:encoded,sha:fileData.sha})
+    });
+    if(!putRes.ok){const e=await putRes.json();throw new Error(e.message||'فشل الرفع');}
+    log('✓ تم الرفع على GitHub بنجاح!','ok');
+    log('⏳ Netlify بيعمل deploy — انتظر 1-2 دقيقة','info');
+    log('🌐 https://moatazelsayed1.netlify.app','info');
+    showToast('✓ تم النشر! الموقع هيتحدث خلال دقيقتين 🚀','success');
+  }catch(err){
+    log('✗ خطأ: '+err.message,'err');
+    showToast('خطأ: '+err.message,'error');
+  }finally{
+    btn.disabled=false;btn.textContent='🚀 حفظ ونشر على الموقع';
+  }
+}
+</script>
+</body>
+</html>
