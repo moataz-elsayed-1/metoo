@@ -1566,7 +1566,26 @@ footer {
 }
 
 /* ================= SOCIAL ================= */
-.social-links { display: grid; grid-template-columns: repeat(2, 550px); /* عرض ثابت لكل كارد */ justify-content: center; /* 👈 يوسّطهم في النص */ gap: 15px; } /* للموبايل */ @media (max-width: 600px) { .social-links { grid-template-columns: 1fr; justify-content: center; -webkit-overflow-scrolling: touch; /* مهم للموبايل */ cursor: grab; overflow-x: auto; } }
+.social-links {
+    display: grid;
+    grid-template-columns: repeat(2, 550px);
+    /* عرض ثابت لكل كارد */
+    justify-content: center;
+    /* 👈 يوسّطهم في النص */
+    gap: 15px;
+}
+
+/* للموبايل */
+@media (max-width: 600px) {
+    .social-links {
+        grid-template-columns: 1fr;
+        justify-content: center;
+        -webkit-overflow-scrolling: touch;
+        /* مهم للموبايل */
+        cursor: grab;
+        overflow-x: auto;
+    }
+}
 
 /* ===== SCROLL بدون حدود ===== */
 .case-studies-scroll {
@@ -1673,15 +1692,18 @@ footer {
 /* ===== Animation Auto Scroll ===== */
 @keyframes scrollX {
     0% {
-        transform: translateX(100vw); /* تبدأ من خارج الشاشة */
+        transform: translateX(100vw);
+        /* تبدأ من خارج الشاشة */
     }
+
     100% {
-        transform: translateX(-100%); /* تنتهي بعد الكروت */
+        transform: translateX(-100%);
+        /* تنتهي بعد الكروت */
     }
 }
 
 /* موبايل: يسمح بالسحب */
-@media(max-width:768px){
+@media(max-width:768px) {
     .case-studies-scroll {
         animation: none;
         overflow-x: auto;
