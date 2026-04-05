@@ -1,411 +1,1075 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Admin Dashboard — Moataz ElSayed</title>
-<style>
-:root{--bg:#0a0a18;--bg-card:#12122a;--bg-raised:#1a1a35;--purple:#7a63ff;--purple-light:#9d8fff;--purple-dim:rgba(122,99,255,.12);--white:#fff;--gray:#ccc;--gray-dim:#888899;--border:rgba(122,99,255,.18);--border-card:rgba(255,255,255,.06);--radius:12px;--radius-sm:8px;--green:#4ade80;--red:#f87171;--font:'Inter',sans-serif}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font);background:var(--bg);color:var(--white);min-height:100vh;direction:rtl}
-a{color:inherit;text-decoration:none}
-#lockScreen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;padding:2rem}
-.lock-box{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:2.5rem;width:100%;max-width:420px;text-align:center}
-.lock-logo{font-size:2rem;font-weight:800;margin-bottom:.5rem}
-.lock-logo span{color:var(--purple)}
-.lock-subtitle{font-size:.85rem;color:var(--gray-dim);margin-bottom:2rem}
-.lock-field{margin-bottom:1rem;text-align:right}
-.lock-field label{display:block;font-size:.75rem;color:var(--gray-dim);margin-bottom:.4rem}
-.lock-field input{width:100%;padding:.75rem 1rem;background:var(--bg-raised);border:1px solid var(--border-card);border-radius:var(--radius-sm);color:var(--white);font-size:.9rem;outline:none;font-family:var(--font)}
-.lock-field input:focus{border-color:var(--purple)}
-.lock-btn{width:100%;padding:.85rem;background:var(--purple);color:var(--white);border:none;border-radius:100px;font-size:.9rem;font-weight:700;cursor:pointer;margin-top:.5rem}
-.lock-btn:hover{background:var(--purple-light)}
-.lock-note{font-size:.72rem;color:var(--gray-dim);margin-top:1rem;line-height:1.8}
-.app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
-.sidebar{background:var(--bg-card);border-left:1px solid var(--border-card);padding:1.5rem 0;display:flex;flex-direction:column}
-.sidebar-logo{padding:.5rem 1.5rem 1.5rem;font-size:1rem;font-weight:800;border-bottom:1px solid var(--border-card);margin-bottom:1rem}
-.sidebar-logo span{color:var(--purple)}
-.sidebar-badge{display:inline-block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--purple-dim);color:var(--purple-light);border:1px solid var(--border);padding:.2rem .6rem;border-radius:100px;margin-top:.3rem}
-.nav-item{display:flex;align-items:center;gap:.75rem;padding:.7rem 1.5rem;font-size:.85rem;color:var(--gray-dim);cursor:pointer;transition:all .2s;border-right:3px solid transparent}
-.nav-item:hover{color:var(--purple-light);background:var(--purple-dim)}
-.nav-item.active{color:var(--white);background:var(--purple-dim);border-right-color:var(--purple)}
-.sidebar-bottom{margin-top:auto;padding:1rem 1.5rem;border-top:1px solid var(--border-card)}
-.status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;margin-left:.5rem;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,.4)}50%{box-shadow:0 0 0 6px rgba(74,222,128,0)}}
-.main{padding:2rem;overflow-y:auto;max-height:100vh}
-.main-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
-.main-title{font-size:1.3rem;font-weight:800}
-.main-title span{color:var(--purple)}
-.deploy-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.4rem;background:var(--purple);color:var(--white);border:none;border-radius:100px;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .2s}
-.deploy-btn:hover{background:var(--purple-light)}
-.deploy-btn:disabled{opacity:.5;cursor:not-allowed}
-#toast{position:fixed;top:1.5rem;left:50%;transform:translateX(-50%);z-index:9998;padding:.75rem 1.5rem;border-radius:100px;font-size:.85rem;font-weight:600;display:none;white-space:nowrap}
-#toast.success{background:#166534;color:#bbf7d0;border:1px solid #4ade80}
-#toast.error{background:#7f1d1d;color:#fecaca;border:1px solid #f87171}
-#toast.info{background:var(--bg-raised);color:var(--purple-light);border:1px solid var(--border)}
-.card{background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.25rem}
-.card-title{font-size:.95rem;font-weight:700;color:var(--purple-light);margin-bottom:1.25rem}
-.form-group{margin-bottom:1rem}
-.form-group label{display:block;font-size:.72rem;font-weight:600;color:var(--gray-dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.4rem}
-.form-group input,.form-group textarea{width:100%;padding:.75rem 1rem;background:var(--bg-raised);border:1px solid var(--border-card);border-radius:var(--radius-sm);color:var(--white);font-size:.9rem;outline:none;font-family:var(--font);transition:border-color .2s}
-.form-group input:focus,.form-group textarea:focus{border-color:var(--purple)}
-.form-group textarea{resize:vertical;min-height:80px}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-.chips-wrap{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.5rem}
-.chip{font-size:.72rem;font-weight:600;color:var(--purple-light);background:var(--purple-dim);border:1px solid var(--border);padding:.25rem .7rem;border-radius:100px;cursor:pointer}
-.chip:hover{background:rgba(122,99,255,.3)}
-.chip-input-row{display:flex;gap:.5rem;margin-top:.5rem}
-.chip-input-row input{flex:1;padding:.5rem .75rem;background:var(--bg-raised);border:1px solid var(--border-card);border-radius:var(--radius-sm);color:var(--white);font-size:.82rem;outline:none;font-family:var(--font)}
-.chip-input-row input:focus{border-color:var(--purple)}
-.chip-add-btn{padding:.5rem .9rem;background:var(--purple-dim);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--purple-light);font-size:.82rem;cursor:pointer;font-weight:700}
-.work-card{background:var(--bg-raised);border:1px solid var(--border-card);border-radius:var(--radius-sm);margin-bottom:.75rem;overflow:hidden}
-.work-card-header{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.1rem;cursor:pointer;transition:background .2s}
-.work-card-header:hover{background:rgba(122,99,255,.06)}
-.work-card-thumb{width:50px;height:34px;border-radius:5px;object-fit:cover;border:1px solid var(--border-card)}
-.work-card-thumb-placeholder{width:50px;height:34px;border-radius:5px;background:var(--bg-card);border:1px solid var(--border-card);display:flex;align-items:center;justify-content:center;font-size:.8rem}
-.work-card-info{flex:1;margin-right:.75rem}
-.work-card-info strong{font-size:.85rem;display:block}
-.work-card-info span{font-size:.72rem;color:var(--gray-dim)}
-.work-card-actions{display:flex;gap:.5rem;align-items:center}
-.work-card-body{padding:1.1rem;border-top:1px solid var(--border-card);display:none}
-.work-card-body.open{display:block}
-.link-preview{font-size:.72rem;color:var(--gray-dim);background:var(--bg-card);padding:.4rem .75rem;border-radius:var(--radius-sm);margin-top:.5rem;border:1px solid var(--border-card)}
-.link-preview span{color:var(--purple-light)}
-.upload-zone{border:1.5px dashed var(--border);border-radius:var(--radius-sm);padding:1.5rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg-raised);margin-bottom:.75rem}
-.upload-zone:hover,.upload-zone.drag{border-color:var(--purple);background:var(--purple-dim)}
-.upload-zone p{font-size:.8rem;color:var(--gray-dim);margin-top:.5rem}
-.upload-zone small{font-size:.7rem;color:var(--gray-dim);opacity:.6}
-.img-preview-wrap{margin-bottom:.75rem}
-.img-preview{width:100%;height:140px;object-fit:cover;border-radius:var(--radius-sm);border:1px solid var(--border-card);display:block}
-.img-preview-btns{display:flex;gap:.5rem;margin-top:.5rem}
-.stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem}
-.stat-mini{background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius-sm);padding:.9rem;text-align:center}
-.stat-mini input{width:100%;background:transparent;border:none;color:var(--purple);font-weight:800;text-align:center;outline:none;font-family:var(--font)}
-.stat-mini label{display:block;font-size:.62rem;color:var(--gray-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem}
-.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.55rem 1.1rem;border-radius:100px;font-size:.8rem;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:all .2s}
-.btn-purple{background:var(--purple);color:var(--white)}
-.btn-purple:hover{background:var(--purple-light)}
-.btn-ghost{background:transparent;color:var(--gray);border:1px solid var(--border-card)}
-.btn-ghost:hover{border-color:var(--purple);color:var(--purple-light)}
-.btn-danger{background:transparent;color:var(--red);border:1px solid rgba(248,113,113,.3);font-size:.75rem;padding:.4rem .8rem}
-.btn-danger:hover{background:rgba(248,113,113,.1)}
-.btn-sm{padding:.4rem .8rem;font-size:.75rem}
-.cs-card{background:var(--bg-raised);border:1px solid var(--border-card);border-radius:var(--radius-sm);padding:1.1rem;margin-bottom:.75rem}
-.cs-nums{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-top:.75rem}
-.cs-num-box{background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius-sm);padding:.6rem;text-align:center}
-.cs-num-box label{font-size:.6rem;color:var(--gray-dim);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:.25rem}
-.cs-num-box input{width:100%;background:transparent;border:none;color:var(--purple);font-size:1rem;font-weight:800;text-align:center;outline:none;font-family:var(--font)}
-.services-grid-admin{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem}
-.service-admin-card{background:var(--bg-raised);border:1px solid var(--border-card);border-radius:var(--radius-sm);padding:.9rem}
-.deploy-log{background:var(--bg-raised);border:1px solid var(--border-card);border-radius:var(--radius-sm);padding:.75rem 1rem;font-family:monospace;font-size:.75rem;color:var(--gray-dim);max-height:130px;overflow-y:auto;margin-top:1rem;display:none}
-.deploy-log.open{display:block}
-.log-line{padding:.1rem 0;line-height:1.5}
-.log-line.ok{color:var(--green)}
-.log-line.err{color:var(--red)}
-.log-line.info{color:var(--purple-light)}
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--purple);border-radius:3px}
-@media(max-width:768px){.app{grid-template-columns:1fr}.sidebar{display:none}.grid-2{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(3,1fr)}.services-grid-admin{grid-template-columns:1fr 1fr}}
-</style>
-</head>
-<body>
-<div id="toast"></div>
-
-<div id="lockScreen">
-  <div class="lock-box">
-    <div class="lock-logo">M<span>.</span>ElSayed</div>
-    <p class="lock-subtitle">Admin Dashboard</p>
-    <div class="lock-field">
-      <label>GitHub Token</label>
-      <input type="password" id="tokenInput" placeholder="ghp_..." autocomplete="off"/>
-    </div>
-    <button class="lock-btn" onclick="unlock()">دخول ←</button>
-    <p class="lock-note">
-      التوكن بيتحفظ في المتصفح فقط وما بيتبعتش لأي سيرفر.<br/>
-      Repo: <strong>moataz-elsayed-1 / metoo</strong>
-    </p>
-  </div>
-</div>
-
-<div class="app" id="mainApp" style="display:none">
-  <aside class="sidebar">
-    <div class="sidebar-logo">M<span>.</span>ElSayed<div><span class="sidebar-badge">Admin</span></div></div>
-    <nav>
-      <div class="nav-item active" onclick="showTab('work')" id="nav-work"><span>💼</span> Work Section</div>
-      <div class="nav-item" onclick="showTab('hero')" id="nav-hero"><span>🏠</span> Hero Section</div>
-      <div class="nav-item" onclick="showTab('stats')" id="nav-stats"><span>📈</span> الإحصائيات</div>
-      <div class="nav-item" onclick="showTab('cs')" id="nav-cs"><span>📊</span> Case Studies</div>
-      <div class="nav-item" onclick="showTab('services')" id="nav-services"><span>⚙️</span> الخدمات</div>
-    </nav>
-    <div class="sidebar-bottom">
-      <div style="font-size:.72rem;color:var(--gray-dim);margin-bottom:.5rem"><span class="status-dot"></span>متصل بـ GitHub</div>
-      <div style="font-size:.7rem;color:var(--gray-dim);opacity:.6">moataz-elsayed-1/metoo</div>
-      <div style="margin-top:.75rem"><button class="btn btn-ghost btn-sm" onclick="logout()" style="width:100%;justify-content:center">تسجيل خروج</button></div>
-    </div>
-  </aside>
-
-  <main class="main">
-    <div class="main-header">
-      <div class="main-title">لوحة التحكم <span id="tabLabel">— Work Section</span></div>
-      <button class="deploy-btn" id="deployBtn" onclick="deployToGitHub()">🚀 حفظ ونشر على الموقع</button>
-    </div>
-    <div class="deploy-log" id="deployLog"></div>
-
-    <div id="tab-work">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.75rem">
-        <p style="font-size:.82rem;color:var(--gray-dim)">كل كارد بيتله صورة screenshot تظهر في الـ carousel</p>
-        <button class="btn btn-purple" onclick="addWorkCard()">+ مشروع جديد</button>
-      </div>
-      <div id="workCards"></div>
-    </div>
-
-    <div id="tab-hero" style="display:none">
-      <div class="card">
-        <div class="card-title">🏠 Hero Section</div>
-        <div class="grid-2">
-          <div class="form-group"><label>الاسم</label><input id="h-name" type="text"/></div>
-          <div class="form-group"><label>الوظيفة</label><input id="h-role" type="text"/></div>
-        </div>
-        <div class="form-group"><label>التاجلاين</label><textarea id="h-tagline" rows="2"></textarea></div>
-        <div class="form-group"><label>الوصف</label><textarea id="h-desc" rows="3"></textarea></div>
-        <div class="grid-2">
-          <div class="form-group"><label>التليفون</label><input id="h-phone" type="text"/></div>
-          <div class="form-group"><label>الإيميل</label><input id="h-email" type="text"/></div>
-          <div class="form-group"><label>ROAS Pill</label><input id="h-roas" type="text"/></div>
-          <div class="form-group"><label>Ad Spend Pill</label><input id="h-spend" type="text"/></div>
-        </div>
-        <div class="form-group"><label>Availability Badge</label><input id="h-avail" type="text"/></div>
-      </div>
-    </div>
-
-    <div id="tab-stats" style="display:none">
-      <div class="card">
-        <div class="card-title">📈 Stats Bar</div>
-        <div class="stats-grid" id="statsGrid"></div>
-      </div>
-    </div>
-
-    <div id="tab-cs" style="display:none"><div id="csCards"></div></div>
-
-    <div id="tab-services" style="display:none">
-      <div class="card">
-        <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
-          <span>⚙️ الخدمات</span>
-          <button class="btn btn-ghost btn-sm" onclick="addService()">+ خدمة</button>
-        </div>
-        <div class="services-grid-admin" id="servicesGrid"></div>
-      </div>
-    </div>
-  </main>
-</div>
-
-<script>
-const OWNER='moataz-elsayed-1',REPO='metoo',FILE='index.html';
-let STATE={
-  hero:{name:'Moataz ElSayed',role:'Media Buyer · Full Stack Developer',tagline:"I Don't Run Ads.\nI Build Performance Systems.",desc:'Scaling brands with data-driven Facebook & Instagram campaigns. Every strategy, every creative, every dollar — fully accountable',phone:'+20 109 091 6639',email:'moatazelsayed61@gmail.com',roas:'3×',adSpend:'$20k+',availability:'Available for new projects'},
-  stats:[{num:'1+',lbl:'Years Experience'},{num:'$20k+',lbl:'Ad Spend Managed'},{num:'20+',lbl:'Campaigns Launched'},{num:'3×',lbl:'Average ROAS'},{num:'3+',lbl:'Brands Scaled'}],
-  work:[
-    {id:1,title:'Bilingual Website Templates — Arab Businesses',desc:'Clean, bilingual (AR/EN) website templates built for Arab businesses — restaurants, clinics, and more.',link:'https://payhip.com/MoatazElSayed',btnText:'Browse Templates →',badge:'HTML · CSS · JS',chips:['AR / EN Switch','Full RTL Support','Mobile Responsive','Multiple Niches'],image:''},
-    {id:2,title:'Luxury Automotive — Lead Generation',desc:'Full-funnel Facebook & Instagram strategy targeting high-income auto buyers.',link:'case-studies.html',btnText:'View Full Case Study →',badge:'Facebook · Instagram',chips:['640 WhatsApp Conversations','Avg. CPL: 18.21 EGP','Spend: 16,655 EGP'],image:''}
-  ],
-  caseStudies:[
-    {id:1,title:'Golden Camel — Luxury Cars',subtitle:'WhatsApp Messaging Conversations Campaign',conversations:'640',reach:'204K',avgCpl:'18.21',bestCpl:'10.89',spend:'16,655.85 EGP'},
-    {id:2,title:'Luxotic — Luxury Cars',subtitle:'WhatsApp Messaging Conversations Campaign',conversations:'536',reach:'125K',avgCpl:'14.01',bestCpl:'8.72',spend:'7,508.47 EGP'}
-  ],
-  services:[
-    {icon:'📘',title:'Meta Ads Management',desc:'Full-cycle Facebook & Instagram campaign management.'},
-    {icon:'💬',title:'WhatsApp Messaging Campaigns',desc:'Click-to-WhatsApp strategies.'},
-    {icon:'🎯',title:'Lead Generation Campaigns',desc:'Precision lead-gen funnels.'},
-    {icon:'🔀',title:'Full Funnel Strategy',desc:'TOF → MOF → BOF architecture.'},
-    {icon:'🚀',title:'Campaign Structuring & Scaling',desc:'Vertical and horizontal scaling.'},
-    {icon:'🧪',title:'Creative Testing & Optimization',desc:'A/B and multivariate testing.'},
-    {icon:'🔍',title:'Audience Research & Positioning',desc:'Deep market positioning.'},
-    {icon:'🌐',title:'Website Development',desc:'Bilingual AR/EN websites.'}
-  ]
-};
-let openCards={},TOKEN='';
-
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-
-function unlock(){
-  const t=document.getElementById('tokenInput').value.trim();
-  if(!t||!t.startsWith('ghp_')){showToast('توكن غير صحيح — لازم يبدأ بـ ghp_','error');return;}
-  TOKEN=t; localStorage.setItem('gh_admin_token',t);
-  document.getElementById('lockScreen').style.display='none';
-  document.getElementById('mainApp').style.display='grid';
-  document.getElementById('deployLog').classList.add('open');
-  loadFromStorage();
-  renderAll();
-  showToast('أهلاً بيك يا Moataz 👋','info');
-  loadFromGitHub(); // يحمل البيانات الحقيقية من الموقع ويحدث الشاشة
-}
-function logout(){localStorage.removeItem('gh_admin_token');localStorage.removeItem('admin_state');location.reload();}
-window.addEventListener('DOMContentLoaded',()=>{
-  const saved=localStorage.getItem('gh_admin_token');
-  if(saved&&saved.startsWith('ghp_')){
-    TOKEN=saved; document.getElementById('tokenInput').value=saved;
-    document.getElementById('lockScreen').style.display='none';
-    document.getElementById('mainApp').style.display='grid';
-    document.getElementById('deployLog').classList.add('open');
-    loadFromStorage();
-    renderAll();
-    loadFromGitHub(); // يحمل البيانات الحقيقية من GitHub
-  }
-});
-
-function saveToStorage(){localStorage.setItem('admin_state',JSON.stringify(STATE));}
-function loadFromStorage(){const s=localStorage.getItem('admin_state');if(s){try{STATE=JSON.parse(s);}catch(_){}}}
-
-// LOAD LIVE STATE FROM GITHUB — مصدر الحقيقة هو الملف على GitHub مش localStorage
-async function loadFromGitHub(){
-  if(!TOKEN)return;
-  try{
-    log('جاري قراءة البيانات الحالية من GitHub...','info');
-    const res=await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`,{
-      headers:{Authorization:`token ${TOKEN}`,Accept:'application/vnd.github.v3+json'}
-    });
-    if(!res.ok)return;
-    const data=await res.json();
-    const html=decodeURIComponent(escape(atob(data.content.replace(/\n/g,''))));
-
-    // استخرج البيانات من HTML الحالي
-    const parsed=parseStateFromHTML(html);
-    if(parsed){
-      // دمج مع localStorage — نأخذ أي حاجة جديدة من localStorage مش موجودة على GitHub
-      const local=localStorage.getItem('admin_state');
-      if(local){
-        try{
-          const localState=JSON.parse(local);
-          // لو عنده work cards أكتر من GitHub — ضيفهم
-          if(localState.work && localState.work.length > parsed.work.length){
-            parsed.work=localState.work;
-          }
-          // hero و stats من local لو اتعدلوا
-          if(localState._localVersion > (parsed._localVersion||0)){
-            parsed.hero=localState.hero||parsed.hero;
-            parsed.stats=localState.stats||parsed.stats;
-          }
-        }catch(_){}
-      }
-      STATE=parsed;
-      saveToStorage();
-      renderAll();
-      log('✓ تم تحميل البيانات من GitHub','ok');
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — Moataz ElSayed</title>
+  <style>
+    :root {
+      --bg: #0a0a18;
+      --bg-card: #12122a;
+      --bg-raised: #1a1a35;
+      --purple: #7a63ff;
+      --purple-light: #9d8fff;
+      --purple-dim: rgba(122, 99, 255, .12);
+      --white: #fff;
+      --gray: #ccc;
+      --gray-dim: #888899;
+      --border: rgba(122, 99, 255, .18);
+      --border-card: rgba(255, 255, 255, .06);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --green: #4ade80;
+      --red: #f87171;
+      --font: 'Inter', sans-serif
     }
-  }catch(e){
-    log('تعذر قراءة GitHub — تم استخدام البيانات المحلية','info');
-  }
-}
 
-function parseStateFromHTML(html){
-  try{
-    const parser=new DOMParser();
-    const doc=parser.parseFromString(html,'text/html');
-    const parsed={...STATE};
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
 
-    // استخرج Work Cards
-    const cards=doc.querySelectorAll('.case-single-wrap');
-    if(cards.length>0){
-      parsed.work=Array.from(cards).map((card,i)=>{
-        const title=card.querySelector('.case-title-big')?.textContent?.trim()||'';
-        const desc=card.querySelector('.case-desc-big')?.textContent?.trim()||'';
-        const link=card.querySelector('.case-footer-big a')?.getAttribute('href')||'';
-        const btnText=card.querySelector('.case-footer-big a')?.textContent?.trim()||'';
-        const badge=card.querySelector('.case-platform-badge')?.textContent?.trim()||'';
-        const chipEls=card.querySelectorAll('.result-chip');
-        const chips=Array.from(chipEls).map(c=>c.textContent.trim());
-        const imgEl=card.querySelector('.case-thumb-big img');
-        const image=imgEl?imgEl.getAttribute('src'):'';
-        return{id:i+1,title,desc,link,btnText,badge,chips,image};
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--white);
+      min-height: 100vh;
+      direction: rtl
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none
+    }
+
+    #lockScreen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem
+    }
+
+    .lock-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 420px;
+      text-align: center
+    }
+
+    .lock-logo {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: .5rem
+    }
+
+    .lock-logo span {
+      color: var(--purple)
+    }
+
+    .lock-subtitle {
+      font-size: .85rem;
+      color: var(--gray-dim);
+      margin-bottom: 2rem
+    }
+
+    .lock-field {
+      margin-bottom: 1rem;
+      text-align: right
+    }
+
+    .lock-field label {
+      display: block;
+      font-size: .75rem;
+      color: var(--gray-dim);
+      margin-bottom: .4rem
+    }
+
+    .lock-field input {
+      width: 100%;
+      padding: .75rem 1rem;
+      background: var(--bg-raised);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-sm);
+      color: var(--white);
+      font-size: .9rem;
+      outline: none;
+      font-family: var(--font)
+    }
+
+    .lock-field input:focus {
+      border-color: var(--purple)
+    }
+
+    .lock-btn {
+      width: 100%;
+      padding: .85rem;
+      background: var(--purple);
+      color: var(--white);
+      border: none;
+      border-radius: 100px;
+      font-size: .9rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: .5rem
+    }
+
+    .lock-btn:hover {
+      background: var(--purple-light)
+    }
+
+    .lock-note {
+      font-size: .72rem;
+      color: var(--gray-dim);
+      margin-top: 1rem;
+      line-height: 1.8
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 100vh
+    }
+
+    .sidebar {
+      background: var(--bg-card);
+      border-left: 1px solid var(--border-card);
+      padding: 1.5rem 0;
+      display: flex;
+      flex-direction: column
+    }
+
+    .sidebar-logo {
+      padding: .5rem 1.5rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 800;
+      border-bottom: 1px solid var(--border-card);
+      margin-bottom: 1rem
+    }
+
+    .sidebar-logo span {
+      color: var(--purple)
+    }
+
+    .sidebar-badge {
+      display: inline-block;
+      font-size: .6rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      background: var(--purple-dim);
+      color: var(--purple-light);
+      border: 1px solid var(--border);
+      padding: .2rem .6rem;
+      border-radius: 100px;
+      margin-top: .3rem
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .7rem 1.5rem;
+      font-size: .85rem;
+      color: var(--gray-dim);
+      cursor: pointer;
+      transition: all .2s;
+      border-right: 3px solid transparent
+    }
+
+    .nav-item:hover {
+      color: var(--purple-light);
+      background: var(--purple-dim)
+    }
+
+    .nav-item.active {
+      color: var(--white);
+      background: var(--purple-dim);
+      border-right-color: var(--purple)
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-card)
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      display: inline-block;
+      margin-left: .5rem;
+      animation: pulse 2s infinite
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(74, 222, 128, .4)
+      }
+
+      50% {
+        box-shadow: 0 0 0 6px rgba(74, 222, 128, 0)
+      }
+    }
+
+    .main {
+      padding: 2rem;
+      overflow-y: auto;
+      max-height: 100vh
+    }
+
+    .main-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem
+    }
+
+    .main-title {
+      font-size: 1.3rem;
+      font-weight: 800
+    }
+
+    .main-title span {
+      color: var(--purple)
+    }
+
+    .deploy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .7rem 1.4rem;
+      background: var(--purple);
+      color: var(--white);
+      border: none;
+      border-radius: 100px;
+      font-size: .85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .deploy-btn:hover {
+      background: var(--purple-light)
+    }
+
+    .deploy-btn:disabled {
+      opacity: .5;
+      cursor: not-allowed
+    }
+
+    #toast {
+      position: fixed;
+      top: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9998;
+      padding: .75rem 1.5rem;
+      border-radius: 100px;
+      font-size: .85rem;
+      font-weight: 600;
+      display: none;
+      white-space: nowrap
+    }
+
+    #toast.success {
+      background: #166534;
+      color: #bbf7d0;
+      border: 1px solid #4ade80
+    }
+
+    #toast.error {
+      background: #7f1d1d;
+      color: #fecaca;
+      border: 1px solid #f87171
+    }
+
+    #toast.info {
+      background: var(--bg-raised);
+      color: var(--purple-light);
+      border: 1px solid var(--border)
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1.25rem
+    }
+
+    .card-title {
+      font-size: .95rem;
+      font-weight: 700;
+      color: var(--purple-light);
+      margin-bottom: 1.25rem
+    }
+
+    .form-group {
+      margin-bottom: 1rem
+    }
+
+    .form-group label {
+      display: block;
+      font-size: .72rem;
+      font-weight: 600;
+      color: var(--gray-dim);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: .4rem
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: .75rem 1rem;
+      background: var(--bg-raised);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-sm);
+      color: var(--white);
+      font-size: .9rem;
+      outline: none;
+      font-family: var(--font);
+      transition: border-color .2s
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--purple)
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem
+    }
+
+    .chips-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin-top: .5rem
+    }
+
+    .chip {
+      font-size: .72rem;
+      font-weight: 600;
+      color: var(--purple-light);
+      background: var(--purple-dim);
+      border: 1px solid var(--border);
+      padding: .25rem .7rem;
+      border-radius: 100px;
+      cursor: pointer
+    }
+
+    .chip:hover {
+      background: rgba(122, 99, 255, .3)
+    }
+
+    .chip-input-row {
+      display: flex;
+      gap: .5rem;
+      margin-top: .5rem
+    }
+
+    .chip-input-row input {
+      flex: 1;
+      padding: .5rem .75rem;
+      background: var(--bg-raised);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-sm);
+      color: var(--white);
+      font-size: .82rem;
+      outline: none;
+      font-family: var(--font)
+    }
+
+    .chip-input-row input:focus {
+      border-color: var(--purple)
+    }
+
+    .chip-add-btn {
+      padding: .5rem .9rem;
+      background: var(--purple-dim);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--purple-light);
+      font-size: .82rem;
+      cursor: pointer;
+      font-weight: 700
+    }
+
+    .work-card {
+      background: var(--bg-raised);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-sm);
+      margin-bottom: .75rem;
+      overflow: hidden
+    }
+
+    .work-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .9rem 1.1rem;
+      cursor: pointer;
+      transition: background .2s
+    }
+
+    .work-card-header:hover {
+      background: rgba(122, 99, 255, .06)
+    }
+
+    .work-card-thumb {
+      width: 50px;
+      height: 34px;
+      border-radius: 5px;
+      object-fit: cover;
+      border: 1px solid var(--border-card)
+    }
+
+    .work-card-thumb-placeholder {
+      width: 50px;
+      height: 34px;
+      border-radius: 5px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .8rem
+    }
+
+    .work-card-info {
+      flex: 1;
+      margin-right: .75rem
+    }
+
+    .work-card-info strong {
+      font-size: .85rem;
+      display: block
+    }
+
+    .work-card-info span {
+      font-size: .72rem;
+      color: var(--gray-dim)
+    }
+
+    .work-card-actions {
+      display: flex;
+      gap: .5rem;
+      align-items: center
+    }
+
+    .work-card-body {
+      padding: 1.1rem;
+      border-top: 1px solid var(--border-card);
+      display: none
+    }
+
+    .work-card-body.open {
+      display: block
+    }
+
+    .link-preview {
+      font-size: .72rem;
+      color: var(--gray-dim);
+      background: var(--bg-card);
+      padding: .4rem .75rem;
+      border-radius: var(--radius-sm);
+      margin-top: .5rem;
+      border: 1px solid var(--border-card)
+    }
+
+    .link-preview span {
+      color: var(--purple-light)
+    }
+
+    .upload-zone {
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      background: var(--bg-raised);
+      margin-bottom: .75rem
+    }
+
+    .upload-zone:hover,
+    .upload-zone.drag {
+      border-color: var(--purple);
+      background: var(--purple-dim)
+    }
+
+    .upload-zone p {
+      font-size: .8rem;
+      color: var(--gray-dim);
+      margin-top: .5rem
+    }
+
+    .upload-zone small {
+      font-size: .7rem;
+      color: var(--gray-dim);
+      opacity: .6
+    }
+
+    .img-preview-wrap {
+      margin-bottom: .75rem
+    }
+
+    .img-preview {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-card);
+      display: block
+    }
+
+    .img-preview-btns {
+      display: flex;
+      gap: .5rem;
+      margin-top: .5rem
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: .75rem
+    }
+
+    .stat-mini {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-sm);
+      padding: .9rem;
+      text-align: center
+    }
+
+    .stat-mini input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--purple);
+      font-weight: 800;
+      text-align: center;
+      outline: none;
+      font-family: var(--font)
+    }
+
+    .stat-mini label {
+      display: block;
+      font-size: .62rem;
+      color: var(--gray-dim);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: .3rem
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .55rem 1.1rem;
+      border-radius: 100px;
+      font-size: .8rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      font-family: var(--font);
+      transition: all .2s
+    }
+
+    .btn-purple {
+      background: var(--purple);
+      color: var(--white)
+    }
+
+    .btn-purple:hover {
+      background: var(--purple-light)
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--gray);
+      border: 1px solid var(--border-card)
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--purple);
+      color: var(--purple-light)
+    }
+
+    .btn-danger {
+      background: transparent;
+      color: var(--red);
+      border: 1px solid rgba(248, 113, 113, .3);
+      font-size: .75rem;
+      padding: .4rem .8rem
+    }
+
+    .btn-danger:hover {
+      background: rgba(248, 113, 113, .1)
+    }
+
+    .btn-sm {
+      padding: .4rem .8rem;
+      font-size: .75rem
+    }
+
+    .cs-card {
+      background: var(--bg-raised);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-sm);
+      padding: 1.1rem;
+      margin-bottom: .75rem
+    }
+
+    .cs-nums {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: .75rem;
+      margin-top: .75rem
+    }
+
+    .cs-num-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-sm);
+      padding: .6rem;
+      text-align: center
+    }
+
+    .cs-num-box label {
+      font-size: .6rem;
+      color: var(--gray-dim);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      display: block;
+      margin-bottom: .25rem
+    }
+
+    .cs-num-box input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--purple);
+      font-size: 1rem;
+      font-weight: 800;
+      text-align: center;
+      outline: none;
+      font-family: var(--font)
+    }
+
+    .services-grid-admin {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .75rem
+    }
+
+    .service-admin-card {
+      background: var(--bg-raised);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-sm);
+      padding: .9rem
+    }
+
+    .deploy-log {
+      background: var(--bg-raised);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-sm);
+      padding: .75rem 1rem;
+      font-family: monospace;
+      font-size: .75rem;
+      color: var(--gray-dim);
+      max-height: 130px;
+      overflow-y: auto;
+      margin-top: 1rem;
+      display: none
+    }
+
+    .deploy-log.open {
+      display: block
+    }
+
+    .log-line {
+      padding: .1rem 0;
+      line-height: 1.5
+    }
+
+    .log-line.ok {
+      color: var(--green)
+    }
+
+    .log-line.err {
+      color: var(--red)
+    }
+
+    .log-line.info {
+      color: var(--purple-light)
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg)
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--purple);
+      border-radius: 3px
+    }
+
+    @media(max-width:768px) {
+      .app {
+        grid-template-columns: 1fr
+      }
+
+      .sidebar {
+        display: none
+      }
+
+      .grid-2 {
+        grid-template-columns: 1fr
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(3, 1fr)
+      }
+
+      .services-grid-admin {
+        grid-template-columns: 1fr 1fr
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="toast"></div>
+
+  <div id="lockScreen">
+    <div class="lock-box">
+      <div class="lock-logo">M<span>.</span>ElSayed</div>
+      <p class="lock-subtitle">Admin Dashboard</p>
+      <div class="lock-field">
+        <label>GitHub Token</label>
+        <input type="password" id="tokenInput" placeholder="ghp_..." autocomplete="off" />
+      </div>
+      <button class="lock-btn" onclick="unlock()">دخول ←</button>
+      <p class="lock-note">
+        التوكن بيتحفظ في المتصفح فقط وما بيتبعتش لأي سيرفر.<br />
+        Repo: <strong>moataz-elsayed-1 / metoo</strong>
+      </p>
+    </div>
+  </div>
+
+  <div class="app" id="mainApp" style="display:none">
+    <aside class="sidebar">
+      <div class="sidebar-logo">M<span>.</span>ElSayed<div><span class="sidebar-badge">Admin</span></div>
+      </div>
+      <nav>
+        <div class="nav-item active" onclick="showTab('work')" id="nav-work"><span>💼</span> Work Section</div>
+        <div class="nav-item" onclick="showTab('hero')" id="nav-hero"><span>🏠</span> Hero Section</div>
+        <div class="nav-item" onclick="showTab('stats')" id="nav-stats"><span>📈</span> الإحصائيات</div>
+        <div class="nav-item" onclick="showTab('cs')" id="nav-cs"><span>📊</span> Case Studies</div>
+        <div class="nav-item" onclick="showTab('services')" id="nav-services"><span>⚙️</span> الخدمات</div>
+      </nav>
+      <div class="sidebar-bottom">
+        <div style="font-size:.72rem;color:var(--gray-dim);margin-bottom:.5rem"><span class="status-dot"></span>متصل بـ
+          GitHub</div>
+        <div style="font-size:.7rem;color:var(--gray-dim);opacity:.6">moataz-elsayed-1/metoo</div>
+        <div style="margin-top:.75rem"><button class="btn btn-ghost btn-sm" onclick="logout()"
+            style="width:100%;justify-content:center">تسجيل خروج</button></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="main-header">
+        <div class="main-title">لوحة التحكم <span id="tabLabel">— Work Section</span></div>
+        <button class="deploy-btn" id="deployBtn" onclick="deployToGitHub()">🚀 حفظ ونشر على الموقع</button>
+      </div>
+      <div class="deploy-log" id="deployLog"></div>
+
+      <div id="tab-work">
+        <div
+          style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.75rem">
+          <p style="font-size:.82rem;color:var(--gray-dim)">كل كارد بيتله صورة screenshot تظهر في الـ carousel</p>
+          <button class="btn btn-purple" onclick="addWorkCard()">+ مشروع جديد</button>
+        </div>
+        <div id="workCards"></div>
+      </div>
+
+      <div id="tab-hero" style="display:none">
+        <div class="card">
+          <div class="card-title">🏠 Hero Section</div>
+          <div class="grid-2">
+            <div class="form-group"><label>الاسم</label><input id="h-name" type="text" /></div>
+            <div class="form-group"><label>الوظيفة</label><input id="h-role" type="text" /></div>
+          </div>
+          <div class="form-group"><label>التاجلاين</label><textarea id="h-tagline" rows="2"></textarea></div>
+          <div class="form-group"><label>الوصف</label><textarea id="h-desc" rows="3"></textarea></div>
+          <div class="grid-2">
+            <div class="form-group"><label>التليفون</label><input id="h-phone" type="text" /></div>
+            <div class="form-group"><label>الإيميل</label><input id="h-email" type="text" /></div>
+            <div class="form-group"><label>ROAS Pill</label><input id="h-roas" type="text" /></div>
+            <div class="form-group"><label>Ad Spend Pill</label><input id="h-spend" type="text" /></div>
+          </div>
+          <div class="form-group"><label>Availability Badge</label><input id="h-avail" type="text" /></div>
+        </div>
+      </div>
+
+      <div id="tab-stats" style="display:none">
+        <div class="card">
+          <div class="card-title">📈 Stats Bar</div>
+          <div class="stats-grid" id="statsGrid"></div>
+        </div>
+      </div>
+
+      <div id="tab-cs" style="display:none">
+        <div id="csCards"></div>
+      </div>
+
+      <div id="tab-services" style="display:none">
+        <div class="card">
+          <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+            <span>⚙️ الخدمات</span>
+            <button class="btn btn-ghost btn-sm" onclick="addService()">+ خدمة</button>
+          </div>
+          <div class="services-grid-admin" id="servicesGrid"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const OWNER = 'moataz-elsayed-1', REPO = 'metoo', FILE = 'index.html';
+    let STATE = {
+      hero: { name: 'Moataz ElSayed', role: 'Media Buyer · Full Stack Developer', tagline: "I Don't Run Ads.\nI Build Performance Systems.", desc: 'Scaling brands with data-driven Facebook & Instagram campaigns. Every strategy, every creative, every dollar — fully accountable', phone: '+20 109 091 6639', email: 'moatazelsayed61@gmail.com', roas: '3×', adSpend: '$20k+', availability: 'Available for new projects' },
+      stats: [{ num: '1+', lbl: 'Years Experience' }, { num: '$20k+', lbl: 'Ad Spend Managed' }, { num: '20+', lbl: 'Campaigns Launched' }, { num: '3×', lbl: 'Average ROAS' }, { num: '3+', lbl: 'Brands Scaled' }],
+      work: [
+        { id: 1, title: 'Bilingual Website Templates — Arab Businesses', desc: 'Clean, bilingual (AR/EN) website templates built for Arab businesses — restaurants, clinics, and more.', link: 'https://payhip.com/MoatazElSayed', btnText: 'Browse Templates →', badge: 'HTML · CSS · JS', chips: ['AR / EN Switch', 'Full RTL Support', 'Mobile Responsive', 'Multiple Niches'], image: '' },
+        { id: 2, title: 'Luxury Automotive — Lead Generation', desc: 'Full-funnel Facebook & Instagram strategy targeting high-income auto buyers.', link: 'case-studies.html', btnText: 'View Full Case Study →', badge: 'Facebook · Instagram', chips: ['640 WhatsApp Conversations', 'Avg. CPL: 18.21 EGP', 'Spend: 16,655 EGP'], image: '' }
+      ],
+      caseStudies: [
+        { id: 1, title: 'Golden Camel — Luxury Cars', subtitle: 'WhatsApp Messaging Conversations Campaign', conversations: '640', reach: '204K', avgCpl: '18.21', bestCpl: '10.89', spend: '16,655.85 EGP' },
+        { id: 2, title: 'Luxotic — Luxury Cars', subtitle: 'WhatsApp Messaging Conversations Campaign', conversations: '536', reach: '125K', avgCpl: '14.01', bestCpl: '8.72', spend: '7,508.47 EGP' }
+      ],
+      services: [
+        { icon: '📘', title: 'Meta Ads Management', desc: 'Full-cycle Facebook & Instagram campaign management.' },
+        { icon: '💬', title: 'WhatsApp Messaging Campaigns', desc: 'Click-to-WhatsApp strategies.' },
+        { icon: '🎯', title: 'Lead Generation Campaigns', desc: 'Precision lead-gen funnels.' },
+        { icon: '🔀', title: 'Full Funnel Strategy', desc: 'TOF → MOF → BOF architecture.' },
+        { icon: '🚀', title: 'Campaign Structuring & Scaling', desc: 'Vertical and horizontal scaling.' },
+        { icon: '🧪', title: 'Creative Testing & Optimization', desc: 'A/B and multivariate testing.' },
+        { icon: '🔍', title: 'Audience Research & Positioning', desc: 'Deep market positioning.' },
+        { icon: '🌐', title: 'Website Development', desc: 'Bilingual AR/EN websites.' }
+      ]
+    };
+    let openCards = {}, TOKEN = '';
+
+    function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+    function unlock() {
+      const t = document.getElementById('tokenInput').value.trim();
+      if (!t || t.length < 30) { showToast('توكن غير صحيح — لازم يبدأ بـ ghp_', 'error'); return; }
+      TOKEN = t; localStorage.setItem('gh_admin_token', t);
+      document.getElementById('lockScreen').style.display = 'none';
+      document.getElementById('mainApp').style.display = 'grid';
+      document.getElementById('deployLog').classList.add('open');
+      loadFromStorage();
+      renderAll();
+      showToast('أهلاً بيك يا Moataz 👋', 'info');
+      loadFromGitHub(); // يحمل البيانات الحقيقية من الموقع ويحدث الشاشة
+    }
+    function logout() { localStorage.removeItem('gh_admin_token'); localStorage.removeItem('admin_state'); location.reload(); }
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('gh_admin_token');
+      if (saved && saved.startsWith('ghp_')) {
+        TOKEN = saved; document.getElementById('tokenInput').value = saved;
+        document.getElementById('lockScreen').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'grid';
+        document.getElementById('deployLog').classList.add('open');
+        loadFromStorage();
+        renderAll();
+        loadFromGitHub(); // يحمل البيانات الحقيقية من GitHub
+      }
+    });
+
+    function saveToStorage() { localStorage.setItem('admin_state', JSON.stringify(STATE)); }
+    function loadFromStorage() { const s = localStorage.getItem('admin_state'); if (s) { try { STATE = JSON.parse(s); } catch (_) { } } }
+
+    // LOAD LIVE STATE FROM GITHUB — مصدر الحقيقة هو الملف على GitHub مش localStorage
+    async function loadFromGitHub() {
+      if (!TOKEN) return;
+      try {
+        log('جاري قراءة البيانات الحالية من GitHub...', 'info');
+        const res = await fetch(`https://api.github.com/repos/moataz-elsayed-1/metoo/contents/index.html`, {
+          headers: { Authorization: `token ${TOKEN}`, Accept: 'application/vnd.github.v3+json' }
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        const html = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
+
+        // استخرج البيانات من HTML الحالي
+        const parsed = parseStateFromHTML(html);
+        if (parsed) {
+          // دمج مع localStorage — نأخذ أي حاجة جديدة من localStorage مش موجودة على GitHub
+          const local = localStorage.getItem('admin_state');
+          if (local) {
+            try {
+              const localState = JSON.parse(local);
+              // لو عنده work cards أكتر من GitHub — ضيفهم
+              if (localState.work && localState.work.length > parsed.work.length) {
+                parsed.work = localState.work;
+              }
+              // hero و stats من local لو اتعدلوا
+              if (localState._localVersion > (parsed._localVersion || 0)) {
+                parsed.hero = localState.hero || parsed.hero;
+                parsed.stats = localState.stats || parsed.stats;
+              }
+            } catch (_) { }
+          }
+          STATE = parsed;
+          saveToStorage();
+          renderAll();
+          log('✓ تم تحميل البيانات من GitHub', 'ok');
+        }
+      } catch (e) {
+        log('تعذر قراءة GitHub — تم استخدام البيانات المحلية', 'info');
+      }
+    }
+
+    function parseStateFromHTML(html) {
+      try {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const parsed = { ...STATE };
+
+        // استخرج Work Cards
+        const cards = doc.querySelectorAll('.case-single-wrap');
+        if (cards.length > 0) {
+          parsed.work = Array.from(cards).map((card, i) => {
+            const title = card.querySelector('.case-title-big')?.textContent?.trim() || '';
+            const desc = card.querySelector('.case-desc-big')?.textContent?.trim() || '';
+            const link = card.querySelector('.case-footer-big a')?.getAttribute('href') || '';
+            const btnText = card.querySelector('.case-footer-big a')?.textContent?.trim() || '';
+            const badge = card.querySelector('.case-platform-badge')?.textContent?.trim() || '';
+            const chipEls = card.querySelectorAll('.result-chip');
+            const chips = Array.from(chipEls).map(c => c.textContent.trim());
+            const imgEl = card.querySelector('.case-thumb-big img');
+            const image = imgEl ? imgEl.getAttribute('src') : '';
+            return { id: i + 1, title, desc, link, btnText, badge, chips, image };
+          });
+        }
+
+        // استخرج Stats
+        const statItems = doc.querySelectorAll('.stat-item');
+        if (statItems.length > 0) {
+          parsed.stats = Array.from(statItems).map(s => ({
+            num: s.querySelector('.s-num')?.textContent?.trim() || '',
+            lbl: s.querySelector('.s-lbl')?.textContent?.trim() || ''
+          }));
+        }
+
+        // استخرج Hero
+        const heroName = doc.querySelector('.hero-name')?.textContent?.trim() || '';
+        if (heroName) parsed.hero.name = heroName;
+        const heroRole = doc.querySelector('.hero-role')?.textContent?.trim() || '';
+        if (heroRole) parsed.hero.role = heroRole;
+        const heroDesc = doc.querySelector('.hero-desc')?.textContent?.trim() || '';
+        if (heroDesc) parsed.hero.desc = heroDesc;
+        const phone = doc.querySelector('.contact-chip span')?.textContent?.trim() || '';
+        if (phone) parsed.hero.phone = phone;
+        const avail = doc.querySelector('.availability')?.textContent?.trim() || '';
+        if (avail) parsed.hero.availability = avail;
+        const roas = doc.querySelector('.stat-pill-1 .sp-num')?.textContent?.trim() || '';
+        if (roas) parsed.hero.roas = roas;
+        const spend = doc.querySelector('.stat-pill-2 .sp-num')?.textContent?.trim() || '';
+        if (spend) parsed.hero.adSpend = spend;
+
+        // استخرج Services
+        const serviceCards = doc.querySelectorAll('.service-card');
+        if (serviceCards.length > 0) {
+          parsed.services = Array.from(serviceCards).map(s => ({
+            icon: s.querySelector('.service-icon')?.textContent?.trim() || '',
+            title: s.querySelector('.service-title')?.textContent?.trim() || '',
+            desc: s.querySelector('.service-desc')?.textContent?.trim() || ''
+          }));
+        }
+
+        return parsed;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    // TABS
+    const TABS = ['work', 'hero', 'stats', 'cs', 'services'];
+    const LABELS = { work: 'Work Section', hero: 'Hero Section', stats: 'الإحصائيات', cs: 'Case Studies', services: 'الخدمات' };
+    function showTab(name) {
+      TABS.forEach(t => { document.getElementById('tab-' + t).style.display = t === name ? 'block' : 'none'; document.getElementById('nav-' + t).classList.toggle('active', t === name); });
+      document.getElementById('tabLabel').textContent = '— ' + LABELS[name];
+      if (name === 'stats') renderStats(); if (name === 'cs') renderCS(); if (name === 'services') renderServices();
+    }
+
+    let toastT;
+    function showToast(msg, type = 'info') { const t = document.getElementById('toast'); t.textContent = msg; t.className = type; t.style.display = 'block'; clearTimeout(toastT); toastT = setTimeout(() => { t.style.display = 'none'; }, 3500); }
+
+    function log(msg, type = 'info') {
+      const el = document.getElementById('deployLog'); el.classList.add('open');
+      const line = document.createElement('div'); line.className = 'log-line ' + type;
+      line.textContent = '[' + new Date().toLocaleTimeString('ar') + '] ' + msg;
+      el.appendChild(line); el.scrollTop = el.scrollHeight;
+    }
+
+    function renderAll() { renderWorkCards(); renderHero(); renderStats(); renderCS(); renderServices(); }
+
+    // HERO
+    function renderHero() {
+      const h = STATE.hero;
+      const map = { name: 'name', role: 'role', tagline: 'tagline', desc: 'desc', phone: 'phone', email: 'email', roas: 'roas', spend: 'adSpend', avail: 'availability' };
+      Object.entries(map).forEach(([k, sk]) => {
+        const el = document.getElementById('h-' + k);
+        if (el) { el.value = h[sk] || ''; el.oninput = e => { STATE.hero[sk] = e.target.value; saveToStorage(); }; }
       });
     }
 
-    // استخرج Stats
-    const statItems=doc.querySelectorAll('.stat-item');
-    if(statItems.length>0){
-      parsed.stats=Array.from(statItems).map(s=>({
-        num:s.querySelector('.s-num')?.textContent?.trim()||'',
-        lbl:s.querySelector('.s-lbl')?.textContent?.trim()||''
-      }));
-    }
-
-    // استخرج Hero
-    const heroName=doc.querySelector('.hero-name')?.textContent?.trim()||'';
-    if(heroName) parsed.hero.name=heroName;
-    const heroRole=doc.querySelector('.hero-role')?.textContent?.trim()||'';
-    if(heroRole) parsed.hero.role=heroRole;
-    const heroDesc=doc.querySelector('.hero-desc')?.textContent?.trim()||'';
-    if(heroDesc) parsed.hero.desc=heroDesc;
-    const phone=doc.querySelector('.contact-chip span')?.textContent?.trim()||'';
-    if(phone) parsed.hero.phone=phone;
-    const avail=doc.querySelector('.availability')?.textContent?.trim()||'';
-    if(avail) parsed.hero.availability=avail;
-    const roas=doc.querySelector('.stat-pill-1 .sp-num')?.textContent?.trim()||'';
-    if(roas) parsed.hero.roas=roas;
-    const spend=doc.querySelector('.stat-pill-2 .sp-num')?.textContent?.trim()||'';
-    if(spend) parsed.hero.adSpend=spend;
-
-    // استخرج Services
-    const serviceCards=doc.querySelectorAll('.service-card');
-    if(serviceCards.length>0){
-      parsed.services=Array.from(serviceCards).map(s=>({
-        icon:s.querySelector('.service-icon')?.textContent?.trim()||'',
-        title:s.querySelector('.service-title')?.textContent?.trim()||'',
-        desc:s.querySelector('.service-desc')?.textContent?.trim()||''
-      }));
-    }
-
-    return parsed;
-  }catch(e){
-    return null;
-  }
-}
-
-// TABS
-const TABS=['work','hero','stats','cs','services'];
-const LABELS={work:'Work Section',hero:'Hero Section',stats:'الإحصائيات',cs:'Case Studies',services:'الخدمات'};
-function showTab(name){
-  TABS.forEach(t=>{document.getElementById('tab-'+t).style.display=t===name?'block':'none';document.getElementById('nav-'+t).classList.toggle('active',t===name);});
-  document.getElementById('tabLabel').textContent='— '+LABELS[name];
-  if(name==='stats')renderStats();if(name==='cs')renderCS();if(name==='services')renderServices();
-}
-
-let toastT;
-function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className=type;t.style.display='block';clearTimeout(toastT);toastT=setTimeout(()=>{t.style.display='none';},3500);}
-
-function log(msg,type='info'){
-  const el=document.getElementById('deployLog');el.classList.add('open');
-  const line=document.createElement('div');line.className='log-line '+type;
-  line.textContent='['+new Date().toLocaleTimeString('ar')+'] '+msg;
-  el.appendChild(line);el.scrollTop=el.scrollHeight;
-}
-
-function renderAll(){renderWorkCards();renderHero();renderStats();renderCS();renderServices();}
-
-// HERO
-function renderHero(){
-  const h=STATE.hero;
-  const map={name:'name',role:'role',tagline:'tagline',desc:'desc',phone:'phone',email:'email',roas:'roas',spend:'adSpend',avail:'availability'};
-  Object.entries(map).forEach(([k,sk])=>{
-    const el=document.getElementById('h-'+k);
-    if(el){el.value=h[sk]||'';el.oninput=e=>{STATE.hero[sk]=e.target.value;saveToStorage();};}
-  });
-}
-
-// STATS
-function renderStats(){
-  document.getElementById('statsGrid').innerHTML=STATE.stats.map((s,i)=>`
+    // STATS
+    function renderStats() {
+      document.getElementById('statsGrid').innerHTML = STATE.stats.map((s, i) => `
     <div class="stat-mini">
       <label>${s.lbl}</label>
       <input value="${esc(s.num)}" style="font-size:1.2rem" oninput="STATE.stats[${i}].num=this.value;saveToStorage()"/>
       <input value="${esc(s.lbl)}" style="font-size:.65rem;color:var(--gray-dim);margin-top:.25rem" oninput="STATE.stats[${i}].lbl=this.value;saveToStorage()"/>
     </div>`).join('');
-}
+    }
 
-// CASE STUDIES
-function renderCS(){
-  document.getElementById('csCards').innerHTML=STATE.caseStudies.map((cs,i)=>`
+    // CASE STUDIES
+    function renderCS() {
+      document.getElementById('csCards').innerHTML = STATE.caseStudies.map((cs, i) => `
     <div class="cs-card">
       <div class="grid-2">
         <div class="form-group"><label>العنوان</label><input value="${esc(cs.title)}" oninput="STATE.caseStudies[${i}].title=this.value;saveToStorage()"/></div>
@@ -419,11 +1083,11 @@ function renderCS(){
         <div class="cs-num-box"><label>Best CPL</label><input value="${esc(cs.bestCpl)}" oninput="STATE.caseStudies[${i}].bestCpl=this.value;saveToStorage()"/></div>
       </div>
     </div>`).join('');
-}
+    }
 
-// SERVICES
-function renderServices(){
-  document.getElementById('servicesGrid').innerHTML=STATE.services.map((s,i)=>`
+    // SERVICES
+    function renderServices() {
+      document.getElementById('servicesGrid').innerHTML = STATE.services.map((s, i) => `
     <div class="service-admin-card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem">
         <input type="text" value="${s.icon}" oninput="STATE.services[${i}].icon=this.value;saveToStorage()" style="width:42px;font-size:1.3rem;text-align:center;background:var(--bg-card);border:1px solid var(--border-card);border-radius:6px;padding:.25rem;outline:none;color:var(--white)"/>
@@ -432,33 +1096,33 @@ function renderServices(){
       <div class="form-group"><label>العنوان</label><input value="${esc(s.title)}" oninput="STATE.services[${i}].title=this.value;saveToStorage()"/></div>
       <div class="form-group"><label>الوصف</label><textarea rows="2" oninput="STATE.services[${i}].desc=this.value;saveToStorage()">${esc(s.desc)}</textarea></div>
     </div>`).join('');
-}
-function addService(){STATE.services.push({icon:'⭐',title:'خدمة جديدة',desc:''});saveToStorage();renderServices();}
-function removeService(i){STATE.services.splice(i,1);saveToStorage();renderServices();}
+    }
+    function addService() { STATE.services.push({ icon: '⭐', title: 'خدمة جديدة', desc: '' }); saveToStorage(); renderServices(); }
+    function removeService(i) { STATE.services.splice(i, 1); saveToStorage(); renderServices(); }
 
-// WORK CARDS
-function renderWorkCards(){
-  const g=document.getElementById('workCards');g.innerHTML='';
-  STATE.work.forEach((item)=>{
-    const div=document.createElement('div');div.className='work-card';div.id='wc-'+item.id;
-    const isOpen=openCards[item.id];
-    div.innerHTML=`
+    // WORK CARDS
+    function renderWorkCards() {
+      const g = document.getElementById('workCards'); g.innerHTML = '';
+      STATE.work.forEach((item) => {
+        const div = document.createElement('div'); div.className = 'work-card'; div.id = 'wc-' + item.id;
+        const isOpen = openCards[item.id];
+        div.innerHTML = `
       <div class="work-card-header" onclick="toggleCard(${item.id})">
-        ${item.image?`<img class="work-card-thumb" src="${item.image}" alt=""/>`:`<div class="work-card-thumb-placeholder">🖼️</div>`}
+        ${item.image ? `<img class="work-card-thumb" src="${item.image}" alt=""/>` : `<div class="work-card-thumb-placeholder">🖼️</div>`}
         <div class="work-card-info" style="margin-right:.75rem">
-          <strong>${esc(item.title)||'بدون عنوان'}</strong>
-          <span>${esc(item.badge)||'—'}</span>
+          <strong>${esc(item.title) || 'بدون عنوان'}</strong>
+          <span>${esc(item.badge) || '—'}</span>
         </div>
         <div class="work-card-actions">
-          <span style="font-size:.7rem;color:var(--gray-dim)">${isOpen?'▲':'▼'}</span>
+          <span style="font-size:.7rem;color:var(--gray-dim)">${isOpen ? '▲' : '▼'}</span>
           <button class="btn btn-danger" onclick="event.stopPropagation();removeWork(${item.id})">حذف</button>
         </div>
       </div>
-      <div class="work-card-body ${isOpen?'open':''}">
+      <div class="work-card-body ${isOpen ? 'open' : ''}">
         <input type="file" accept="image/*" id="file-${item.id}" style="display:none" onchange="handleFile(event,${item.id})"/>
         ${item.image
-          ?`<div class="img-preview-wrap"><img class="img-preview" src="${item.image}" alt=""/><div class="img-preview-btns"><button class="btn btn-ghost btn-sm" onclick="triggerUpload(${item.id})">تغيير الصورة</button><button class="btn btn-danger btn-sm" onclick="removeImg(${item.id})">حذف الصورة</button></div></div>`
-          :`<div class="upload-zone" onclick="triggerUpload(${item.id})" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event,${item.id})"><div style="font-size:2rem">🖼️</div><p>اضغط أو اسحب صورة الـ Screenshot</p><small>PNG · JPG · WebP</small></div>`}
+            ? `<div class="img-preview-wrap"><img class="img-preview" src="${item.image}" alt=""/><div class="img-preview-btns"><button class="btn btn-ghost btn-sm" onclick="triggerUpload(${item.id})">تغيير الصورة</button><button class="btn btn-danger btn-sm" onclick="removeImg(${item.id})">حذف الصورة</button></div></div>`
+            : `<div class="upload-zone" onclick="triggerUpload(${item.id})" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event,${item.id})"><div style="font-size:2rem">🖼️</div><p>اضغط أو اسحب صورة الـ Screenshot</p><small>PNG · JPG · WebP</small></div>`}
         <div class="grid-2">
           <div class="form-group"><label>العنوان</label><input value="${esc(item.title)}" oninput="updateWork(${item.id},'title',this.value)"/></div>
           <div class="form-group"><label>Badge</label><input value="${esc(item.badge)}" oninput="updateWork(${item.id},'badge',this.value)"/></div>
@@ -470,39 +1134,39 @@ function renderWorkCards(){
         </div>
         <div class="form-group">
           <label>الـ Chips</label>
-          <div class="chips-wrap">${(item.chips||[]).map((c,ci)=>`<span class="chip" onclick="removeChip(${item.id},${ci})">${esc(c)} ✕</span>`).join('')}</div>
+          <div class="chips-wrap">${(item.chips || []).map((c, ci) => `<span class="chip" onclick="removeChip(${item.id},${ci})">${esc(c)} ✕</span>`).join('')}</div>
           <div class="chip-input-row"><input id="chip-inp-${item.id}" placeholder="اكتب chip واضغط Enter" onkeydown="if(event.key==='Enter')addChip(${item.id})"/><button class="chip-add-btn" onclick="addChip(${item.id})">+</button></div>
         </div>
         <div class="link-preview">🔗 الزرار "<strong>${esc(item.btnText)}</strong>" هيروح على: <span>${esc(item.link)}</span></div>
       </div>`;
-    g.appendChild(div);
-  });
-}
+        g.appendChild(div);
+      });
+    }
 
-function toggleCard(id){openCards[id]=!openCards[id];renderWorkCards();}
-function updateWork(id,f,v){const i=STATE.work.findIndex(w=>w.id===id);if(i>-1){STATE.work[i][f]=v;saveToStorage();}}
-function removeWork(id){STATE.work=STATE.work.filter(w=>w.id!==id);delete openCards[id];saveToStorage();renderWorkCards();}
-function addWorkCard(){const id=Date.now();STATE.work.push({id,title:'مشروع جديد',desc:'',link:'https://',btnText:'View Project →',badge:'',chips:[],image:''});openCards[id]=true;saveToStorage();renderWorkCards();document.getElementById('wc-'+id)?.scrollIntoView({behavior:'smooth'});}
-function addChip(id){const inp=document.getElementById('chip-inp-'+id);if(!inp||!inp.value.trim())return;const i=STATE.work.findIndex(w=>w.id===id);if(i>-1){STATE.work[i].chips=[...(STATE.work[i].chips||[]),inp.value.trim()];saveToStorage();}inp.value='';renderWorkCards();}
-function removeChip(id,ci){const i=STATE.work.findIndex(w=>w.id===id);if(i>-1){STATE.work[i].chips.splice(ci,1);saveToStorage();}renderWorkCards();}
-function triggerUpload(id){document.getElementById('file-'+id)?.click();}
-function handleFile(e,id){const f=e.target.files[0];if(f)processImage(f,id);}
-function handleDrop(e,id){e.preventDefault();e.currentTarget.classList.remove('drag');const f=e.dataTransfer.files[0];if(f)processImage(f,id);}
-function processImage(file,id){
-  if(!file.type.startsWith('image/')){showToast('الملف ده مش صورة','error');return;}
-  const reader=new FileReader();
-  reader.onload=ev=>{const i=STATE.work.findIndex(w=>w.id===id);if(i>-1){STATE.work[i].image=ev.target.result;saveToStorage();}renderWorkCards();showToast('✓ تم رفع الصورة','info');};
-  reader.readAsDataURL(file);
-}
-function removeImg(id){const i=STATE.work.findIndex(w=>w.id===id);if(i>-1){STATE.work[i].image='';saveToStorage();}renderWorkCards();}
+    function toggleCard(id) { openCards[id] = !openCards[id]; renderWorkCards(); }
+    function updateWork(id, f, v) { const i = STATE.work.findIndex(w => w.id === id); if (i > -1) { STATE.work[i][f] = v; saveToStorage(); } }
+    function removeWork(id) { STATE.work = STATE.work.filter(w => w.id !== id); delete openCards[id]; saveToStorage(); renderWorkCards(); }
+    function addWorkCard() { const id = Date.now(); STATE.work.push({ id, title: 'مشروع جديد', desc: '', link: 'https://', btnText: 'View Project →', badge: '', chips: [], image: '' }); openCards[id] = true; saveToStorage(); renderWorkCards(); document.getElementById('wc-' + id)?.scrollIntoView({ behavior: 'smooth' }); }
+    function addChip(id) { const inp = document.getElementById('chip-inp-' + id); if (!inp || !inp.value.trim()) return; const i = STATE.work.findIndex(w => w.id === id); if (i > -1) { STATE.work[i].chips = [...(STATE.work[i].chips || []), inp.value.trim()]; saveToStorage(); } inp.value = ''; renderWorkCards(); }
+    function removeChip(id, ci) { const i = STATE.work.findIndex(w => w.id === id); if (i > -1) { STATE.work[i].chips.splice(ci, 1); saveToStorage(); } renderWorkCards(); }
+    function triggerUpload(id) { document.getElementById('file-' + id)?.click(); }
+    function handleFile(e, id) { const f = e.target.files[0]; if (f) processImage(f, id); }
+    function handleDrop(e, id) { e.preventDefault(); e.currentTarget.classList.remove('drag'); const f = e.dataTransfer.files[0]; if (f) processImage(f, id); }
+    function processImage(file, id) {
+      if (!file.type.startsWith('image/')) { showToast('الملف ده مش صورة', 'error'); return; }
+      const reader = new FileReader();
+      reader.onload = ev => { const i = STATE.work.findIndex(w => w.id === id); if (i > -1) { STATE.work[i].image = ev.target.result; saveToStorage(); } renderWorkCards(); showToast('✓ تم رفع الصورة', 'info'); };
+      reader.readAsDataURL(file);
+    }
+    function removeImg(id) { const i = STATE.work.findIndex(w => w.id === id); if (i > -1) { STATE.work[i].image = ''; saveToStorage(); } renderWorkCards(); }
 
-// GENERATE HTML
-function generateHTML(){
-  const h=STATE.hero;
-  const workCards=STATE.work.map(item=>{
-    const chips=(item.chips||[]).map(c=>`<span class="result-chip">${esc(c)}</span>`).join('\n                ');
-    const thumb=item.image?`<img src="${item.image}" alt="${esc(item.title)}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0"/>`:`<!-- لا توجد صورة -->`;
-    return `        <div class="case-single-wrap reveal">
+    // GENERATE HTML
+    function generateHTML() {
+      const h = STATE.hero;
+      const workCards = STATE.work.map(item => {
+        const chips = (item.chips || []).map(c => `<span class="result-chip">${esc(c)}</span>`).join('\n                ');
+        const thumb = item.image ? `<img src="${item.image}" alt="${esc(item.title)}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0"/>` : `<!-- لا توجد صورة -->`;
+        return `        <div class="case-single-wrap reveal">
           <div class="case-card-big">
             <div class="case-thumb-big" style="position:relative;overflow:hidden;">
               ${thumb}
@@ -518,12 +1182,12 @@ function generateHTML(){
             </div>
           </div>
         </div>`;
-  }).join('\n');
+      }).join('\n');
 
-  const statsHTML=STATE.stats.map(s=>`<div class="stat-item"><div class="s-num">${esc(s.num)}</div><div class="s-lbl">${esc(s.lbl)}</div></div>`).join('\n        <div class="stat-divider"></div>\n        ');
-  const servicesHTML=STATE.services.map(s=>`<div class="service-card reveal"><div class="service-icon">${s.icon}</div><h3 class="service-title">${esc(s.title)}</h3><p class="service-desc">${esc(s.desc)}</p></div>`).join('\n        ');
+      const statsHTML = STATE.stats.map(s => `<div class="stat-item"><div class="s-num">${esc(s.num)}</div><div class="s-lbl">${esc(s.lbl)}</div></div>`).join('\n        <div class="stat-divider"></div>\n        ');
+      const servicesHTML = STATE.services.map(s => `<div class="service-card reveal"><div class="service-icon">${s.icon}</div><h3 class="service-title">${esc(s.title)}</h3><p class="service-desc">${esc(s.desc)}</p></div>`).join('\n        ');
 
-  return `<!DOCTYPE html>
+      return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <link rel="icon" type="image/png" href="images/favicon.png">
@@ -542,7 +1206,7 @@ function generateHTML(){
   <link rel="stylesheet" href="Style.css" />
 </head>
 <body>
-  <a href="https://wa.me/${h.phone.replace(/\D/g,'')}" target="_blank" class="wa-float" aria-label="Chat on WhatsApp">
+  <a href="https://wa.me/+201090916639" target="_blank" class="wa-float" aria-label="Chat on WhatsApp">
     <div class="wa-float-pulse"></div>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
   </a>
@@ -568,7 +1232,7 @@ function generateHTML(){
         <div class="availability">${esc(h.availability)}</div>
         <p class="hero-role">${esc(h.role)}</p>
         <h1 class="hero-name"><span class="grad">${esc(h.name.split(' ')[0])}</span><br>${esc(h.name.split(' ').slice(1).join(' '))}</h1>
-        <p class="hero-tagline">${esc(h.tagline).replace(/\n/g,'<br>')}</p>
+        <p class="hero-tagline">${esc(h.tagline).replace(/\n/g, '<br>')}</p>
         <p class="hero-desc">${esc(h.desc)}</p>
         <div class="hero-contact-row">
           <div class="contact-chip"><div class="chip-icon">📞</div><span>${esc(h.phone)}</span></div>
@@ -675,7 +1339,7 @@ ${workCards}
         <p class="contact-info-text">Prefer to message directly? I'm active on all platforms and typically respond within a few hours.</p>
         <div class="social-links">
           <a href="http://www.linkedin.com/in/moatazelsayed1" target="_blank" class="social-link"><div class="sl-icon sl-linkedin"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#0077B5" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></div><div class="sl-text"><strong>LinkedIn</strong><span>linkedin.com/in/moatazelsayed1</span></div><svg style="margin-left:auto;opacity:.4" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-          <a href="https://wa.me/${h.phone.replace(/\D/g,'')}" target="_blank" class="social-link"><div class="sl-icon sl-whatsapp"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#25D366" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></div><div class="sl-text"><strong>WhatsApp</strong><span>${esc(h.phone)}</span></div><svg style="margin-left:auto;opacity:.4" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          <a href="https://wa.me/+201090916639" target="_blank" class="social-link"><div class="sl-icon sl-whatsapp"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#25D366" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></div><div class="sl-text"><strong>WhatsApp</strong><span>${esc(h.phone)}</span></div><svg style="margin-left:auto;opacity:.4" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
           <a href="https://www.instagram.com/moataz_elsayed.1" target="_blank" class="social-link"><div class="sl-icon sl-instagram"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#C13584" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></div><div class="sl-text"><strong>Instagram</strong><span>@moataz_elsayed.1</span></div><svg style="margin-left:auto;opacity:.4" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
           <a href="https://www.facebook.com/moatazelsayed11" target="_blank" class="social-link"><div class="sl-icon sl-facebook"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#1877F2" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></div><div class="sl-text"><strong>Facebook</strong><span>facebook.com/moatazelsayed</span></div><svg style="margin-left:auto;opacity:.4" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
         </div>
@@ -700,7 +1364,7 @@ ${workCards}
     <div class="footer-socials" aria-label="Social media links">
       <a href="http://www.linkedin.com/in/moatazelsayed1" target="_blank" rel="noopener" aria-label="LinkedIn">in</a>
       <a href="https://www.instagram.com/moataz_elsayed.1" target="_blank" rel="noopener" aria-label="Instagram">ig</a>
-      <a href="https://wa.me/${h.phone.replace(/\D/g,'')}" target="_blank" rel="noopener" aria-label="WhatsApp">wa</a>
+      <a href="https://wa.me/+201090916639" target="_blank" rel="noopener" aria-label="WhatsApp">wa</a>
       <a href="https://www.facebook.com/moatazelsayed11/" target="_blank" rel="noopener" aria-label="Facebook">fb</a>
     </div>
   </div></footer>
@@ -722,41 +1386,42 @@ ${workCards}
   <\/script>
 </body>
 </html>`;
-}
+    }
 
-// DEPLOY
-async function deployToGitHub(){
-  if(!TOKEN){showToast('مفيش توكن','error');return;}
-  const btn=document.getElementById('deployBtn');
-  btn.disabled=true;btn.textContent='⏳ جاري النشر...';
-  document.getElementById('deployLog').innerHTML='';
-  try{
-    log('جاري بناء index.html...','info');
-    const newContent=generateHTML();
-    const encoded=btoa(unescape(encodeURIComponent(newContent)));
-    log('جاري جلب SHA الملف الحالي...','info');
-    const getRes=await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`,{headers:{Authorization:`token ${TOKEN}`,Accept:'application/vnd.github.v3+json'}});
-    if(!getRes.ok){const e=await getRes.json();throw new Error(e.message||'فشل جلب الملف');}
-    const fileData=await getRes.json();
-    log('✓ SHA: '+fileData.sha.slice(0,8)+'...','ok');
-    log('جاري رفع التحديثات...','info');
-    const putRes=await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`,{
-      method:'PUT',
-      headers:{Authorization:`token ${TOKEN}`,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},
-      body:JSON.stringify({message:'dashboard update: '+new Date().toLocaleString('ar'),content:encoded,sha:fileData.sha})
-    });
-    if(!putRes.ok){const e=await putRes.json();throw new Error(e.message||'فشل الرفع');}
-    log('✓ تم الرفع على GitHub بنجاح!','ok');
-    log('⏳ Netlify بيعمل deploy — انتظر 1-2 دقيقة','info');
-    log('🌐 https://moatazelsayed1.netlify.app','info');
-    showToast('✓ تم النشر! الموقع هيتحدث خلال دقيقتين 🚀','success');
-  }catch(err){
-    log('✗ خطأ: '+err.message,'err');
-    showToast('خطأ: '+err.message,'error');
-  }finally{
-    btn.disabled=false;btn.textContent='🚀 حفظ ونشر على الموقع';
-  }
-}
-</script>
+    // DEPLOY
+    async function deployToGitHub() {
+      if (!TOKEN) { showToast('مفيش توكن', 'error'); return; }
+      const btn = document.getElementById('deployBtn');
+      btn.disabled = true; btn.textContent = '⏳ جاري النشر...';
+      document.getElementById('deployLog').innerHTML = '';
+      try {
+        log('جاري بناء index.html...', 'info');
+        const newContent = generateHTML();
+        const encoded = btoa(unescape(encodeURIComponent(newContent)));
+        log('جاري جلب SHA الملف الحالي...', 'info');
+        const getRes = await fetch(`https://api.github.com/repos/moataz-elsayed-1/metoo/contents/index.html`, { headers: { Authorization: `token ${TOKEN}`, Accept: 'application/vnd.github.v3+json' } });
+        if (!getRes.ok) { const e = await getRes.json(); throw new Error(e.message || 'فشل جلب الملف'); }
+        const fileData = await getRes.json();
+        log('✓ SHA: ' + fileData.sha.slice(0, 8) + '...', 'ok');
+        log('جاري رفع التحديثات...', 'info');
+        const putRes = await fetch(`https://api.github.com/repos/moataz-elsayed-1/metoo/contents/index.html`, {
+          method: 'PUT',
+          headers: { Authorization: `token ${TOKEN}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: 'dashboard update: ' + new Date().toLocaleString('ar'), content: encoded, sha: fileData.sha })
+        });
+        if (!putRes.ok) { const e = await putRes.json(); throw new Error(e.message || 'فشل الرفع'); }
+        log('✓ تم الرفع على GitHub بنجاح!', 'ok');
+        log('⏳ Netlify بيعمل deploy — انتظر 1-2 دقيقة', 'info');
+        log('🌐 https://moatazelsayed1.netlify.app', 'info');
+        showToast('✓ تم النشر! الموقع هيتحدث خلال دقيقتين 🚀', 'success');
+      } catch (err) {
+        log('✗ خطأ: ' + err.message, 'err');
+        showToast('خطأ: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false; btn.textContent = '🚀 حفظ ونشر على الموقع';
+      }
+    }
+  </script>
 </body>
+
 </html>
