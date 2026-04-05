@@ -234,8 +234,8 @@ nav.scrolled {
     display: block;
     width: 22px;
     height: 2px;
-    background: var(--gray);
-    border-radius: 2px;
+    background: var(--gray-dim);
+    border-radius: 1px;
     transition: var(--t)
 }
 
@@ -1483,7 +1483,7 @@ footer {
     }
 
     .btn-cv {
-        display: none !important;
+        display: none;
     }
 
     /* Hero */
@@ -1614,7 +1614,7 @@ footer {
 
     /* Hero */
     .hero-name {
-        font-size: clamp(2.2rem, 10vw, 3.5rem);
+        font-size: clamp(2.2rem, 10vw, 3rem);
     }
 
     .hero-tagline {
