@@ -228,29 +228,139 @@ let openCards={},TOKEN='';
 
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-// LOCK
 function unlock(){
   const t=document.getElementById('tokenInput').value.trim();
   if(!t||!t.startsWith('ghp_')){showToast('توكن غير صحيح — لازم يبدأ بـ ghp_','error');return;}
   TOKEN=t; localStorage.setItem('gh_admin_token',t);
   document.getElementById('lockScreen').style.display='none';
   document.getElementById('mainApp').style.display='grid';
-  loadFromStorage(); renderAll();
+  document.getElementById('deployLog').classList.add('open');
+  loadFromStorage();
+  renderAll();
   showToast('أهلاً بيك يا Moataz 👋','info');
+  loadFromGitHub(); // يحمل البيانات الحقيقية من الموقع ويحدث الشاشة
 }
-function logout(){localStorage.removeItem('gh_admin_token');location.reload();}
+function logout(){localStorage.removeItem('gh_admin_token');localStorage.removeItem('admin_state');location.reload();}
 window.addEventListener('DOMContentLoaded',()=>{
   const saved=localStorage.getItem('gh_admin_token');
   if(saved&&saved.startsWith('ghp_')){
     TOKEN=saved; document.getElementById('tokenInput').value=saved;
     document.getElementById('lockScreen').style.display='none';
     document.getElementById('mainApp').style.display='grid';
-    loadFromStorage(); renderAll();
+    document.getElementById('deployLog').classList.add('open');
+    loadFromStorage();
+    renderAll();
+    loadFromGitHub(); // يحمل البيانات الحقيقية من GitHub
   }
 });
 
 function saveToStorage(){localStorage.setItem('admin_state',JSON.stringify(STATE));}
 function loadFromStorage(){const s=localStorage.getItem('admin_state');if(s){try{STATE=JSON.parse(s);}catch(_){}}}
+
+// LOAD LIVE STATE FROM GITHUB — مصدر الحقيقة هو الملف على GitHub مش localStorage
+async function loadFromGitHub(){
+  if(!TOKEN)return;
+  try{
+    log('جاري قراءة البيانات الحالية من GitHub...','info');
+    const res=await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`,{
+      headers:{Authorization:`token ${TOKEN}`,Accept:'application/vnd.github.v3+json'}
+    });
+    if(!res.ok)return;
+    const data=await res.json();
+    const html=decodeURIComponent(escape(atob(data.content.replace(/\n/g,''))));
+
+    // استخرج البيانات من HTML الحالي
+    const parsed=parseStateFromHTML(html);
+    if(parsed){
+      // دمج مع localStorage — نأخذ أي حاجة جديدة من localStorage مش موجودة على GitHub
+      const local=localStorage.getItem('admin_state');
+      if(local){
+        try{
+          const localState=JSON.parse(local);
+          // لو عنده work cards أكتر من GitHub — ضيفهم
+          if(localState.work && localState.work.length > parsed.work.length){
+            parsed.work=localState.work;
+          }
+          // hero و stats من local لو اتعدلوا
+          if(localState._localVersion > (parsed._localVersion||0)){
+            parsed.hero=localState.hero||parsed.hero;
+            parsed.stats=localState.stats||parsed.stats;
+          }
+        }catch(_){}
+      }
+      STATE=parsed;
+      saveToStorage();
+      renderAll();
+      log('✓ تم تحميل البيانات من GitHub','ok');
+    }
+  }catch(e){
+    log('تعذر قراءة GitHub — تم استخدام البيانات المحلية','info');
+  }
+}
+
+function parseStateFromHTML(html){
+  try{
+    const parser=new DOMParser();
+    const doc=parser.parseFromString(html,'text/html');
+    const parsed={...STATE};
+
+    // استخرج Work Cards
+    const cards=doc.querySelectorAll('.case-single-wrap');
+    if(cards.length>0){
+      parsed.work=Array.from(cards).map((card,i)=>{
+        const title=card.querySelector('.case-title-big')?.textContent?.trim()||'';
+        const desc=card.querySelector('.case-desc-big')?.textContent?.trim()||'';
+        const link=card.querySelector('.case-footer-big a')?.getAttribute('href')||'';
+        const btnText=card.querySelector('.case-footer-big a')?.textContent?.trim()||'';
+        const badge=card.querySelector('.case-platform-badge')?.textContent?.trim()||'';
+        const chipEls=card.querySelectorAll('.result-chip');
+        const chips=Array.from(chipEls).map(c=>c.textContent.trim());
+        const imgEl=card.querySelector('.case-thumb-big img');
+        const image=imgEl?imgEl.getAttribute('src'):'';
+        return{id:i+1,title,desc,link,btnText,badge,chips,image};
+      });
+    }
+
+    // استخرج Stats
+    const statItems=doc.querySelectorAll('.stat-item');
+    if(statItems.length>0){
+      parsed.stats=Array.from(statItems).map(s=>({
+        num:s.querySelector('.s-num')?.textContent?.trim()||'',
+        lbl:s.querySelector('.s-lbl')?.textContent?.trim()||''
+      }));
+    }
+
+    // استخرج Hero
+    const heroName=doc.querySelector('.hero-name')?.textContent?.trim()||'';
+    if(heroName) parsed.hero.name=heroName;
+    const heroRole=doc.querySelector('.hero-role')?.textContent?.trim()||'';
+    if(heroRole) parsed.hero.role=heroRole;
+    const heroDesc=doc.querySelector('.hero-desc')?.textContent?.trim()||'';
+    if(heroDesc) parsed.hero.desc=heroDesc;
+    const phone=doc.querySelector('.contact-chip span')?.textContent?.trim()||'';
+    if(phone) parsed.hero.phone=phone;
+    const avail=doc.querySelector('.availability')?.textContent?.trim()||'';
+    if(avail) parsed.hero.availability=avail;
+    const roas=doc.querySelector('.stat-pill-1 .sp-num')?.textContent?.trim()||'';
+    if(roas) parsed.hero.roas=roas;
+    const spend=doc.querySelector('.stat-pill-2 .sp-num')?.textContent?.trim()||'';
+    if(spend) parsed.hero.adSpend=spend;
+
+    // استخرج Services
+    const serviceCards=doc.querySelectorAll('.service-card');
+    if(serviceCards.length>0){
+      parsed.services=Array.from(serviceCards).map(s=>({
+        icon:s.querySelector('.service-icon')?.textContent?.trim()||'',
+        title:s.querySelector('.service-title')?.textContent?.trim()||'',
+        desc:s.querySelector('.service-desc')?.textContent?.trim()||''
+      }));
+    }
+
+    return parsed;
+  }catch(e){
+    return null;
+  }
+}
 
 // TABS
 const TABS=['work','hero','stats','cs','services'];
