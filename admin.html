@@ -1930,8 +1930,7 @@
       const y = (e.clientY / window.innerHeight - 0.5) * 30;
       document.querySelectorAll('.blob').forEach((b, i) => {
         const d = i % 2 === 0 ? 1 : -1;
-        b.style.transform = 'translate(${ x * d * .4}px, ${ y * d * .4}px)';
-      });
+        // b.style.transform = `translate(${ x * d}px, ${ y * d}px)`; });
     });
     </script>
     <script>
