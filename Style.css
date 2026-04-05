@@ -1423,15 +1423,7 @@ footer {
     }
 }
 
-/* CASE STUDIES - HORIZONTAL SCROLL */
-.case-studies-scroll {
-    display: flex;
-    gap: 1.5rem;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    padding-bottom: 1rem;
-    cursor: grab;
-}
+
 
 .case-studies-scroll:active {
     cursor: grabbing;
@@ -1573,27 +1565,8 @@ footer {
     }
 }
 
-.social-links {
-    display: grid;
-    grid-template-columns: repeat(2, 550px);
-    /* عرض ثابت لكل كارد */
-    justify-content: center;
-    /* 👈 يوسّطهم في النص */
-    gap: 15px;
-
-}
-
-/* للموبايل */
-@media (max-width: 600px) {
-    .social-links {
-        grid-template-columns: 1fr;
-        justify-content: center;
-    }
-}
-
-
-
-
+/* ================= SOCIAL ================= */
+.social-links { display: grid; grid-template-columns: repeat(2, 550px); /* عرض ثابت لكل كارد */ justify-content: center; /* 👈 يوسّطهم في النص */ gap: 15px; } /* للموبايل */ @media (max-width: 600px) { .social-links { grid-template-columns: 1fr; justify-content: center; -webkit-overflow-scrolling: touch; /* مهم للموبايل */ cursor: grab; overflow-x: auto; } }
 
 /* ===== SCROLL بدون حدود ===== */
 .case-studies-scroll {
@@ -1695,4 +1668,24 @@ footer {
 /* ===== وقف الحركة عند hover ===== */
 .scroll-wrapper:hover .case-studies-scroll {
     animation-play-state: paused;
+}
+
+/* ===== Animation Auto Scroll ===== */
+@keyframes scrollX {
+    0% {
+        transform: translateX(100vw); /* تبدأ من خارج الشاشة */
+    }
+    100% {
+        transform: translateX(-100%); /* تنتهي بعد الكروت */
+    }
+}
+
+/* موبايل: يسمح بالسحب */
+@media(max-width:768px){
+    .case-studies-scroll {
+        animation: none;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        gap: 15px;
+    }
 }
