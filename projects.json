@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "title": "Bilingual Website Templates — Arab Businesses",
+    "desc": "Clean, bilingual (AR/EN) website templates built for Arab businesses — restaurants, clinics, and more.",
+    "badge": "HTML · CSS · JS",
+    "chips": ["AR / EN Switch", "Full RTL Support", "Mobile Responsive", "Multiple Niches", "Zero Dependencies"],
+    "link": "https://payhip.com/MoatazElSayed",
+    "btnText": "Browse Templates →",
+    "image": "temp.png"
+  },
+  {
+    "id": 2,
+    "title": "Luxury Automotive — Lead Generation",
+    "desc": "Full-funnel Facebook & Instagram strategy targeting high-income auto buyers.",
+    "badge": "Facebook · Instagram",
+    "chips": ["640 WhatsApp Conversations", "Reach: 204,532", "Avg. CPL: 18.21 EGP", "Spend: 16,655 EGP", "Best CPL: 10.89 EGP"],
+    "link": "case-studies.html",
+    "btnText": "View Full Case Study →",
+    "image": "golden.png"
+  }
+]
