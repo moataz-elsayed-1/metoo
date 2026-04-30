@@ -402,126 +402,97 @@
 
   <script>
     (function () {
-      // 1. دالة تنظيف النصوص لمنع أي كود خبيث
-      function esc(s) {
-        return String(s || '')
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;');
-      }
+      // دالة بناء الكارد (زي ما هي عندك)
+      function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
-      // 2. دالة بناء كارت المشروع (تستخدم البيانات من JSON)
       function buildCard(item) {
-        const chips = (item.chips || [])
-          .map(c => `<span class="result-chip">${esc(c)}</span>`)
-          .join('');
-
-        const thumb = item.image
-          ? `<img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy"
-           style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0"/>`
-          : `<div style="width:100%;height:100%;background:#1a1a35;display:flex;align-items:center;justify-content:center;">No Image</div>`;
-
         return `
         <div class="case-single-wrap">
           <div class="case-card-big">
             <div class="case-thumb-big" style="position:relative;overflow:hidden;">
-              ${thumb}
-              <span class="case-platform-badge">${esc(item.badge || '')}</span>
+              <img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0"/>
+              <span class="case-platform-badge">${esc(item.badge)}</span>
             </div>
             <div class="case-body-big">
-              <h3 class="case-title-big">${esc(item.title || '')}</h3>
-              <p class="case-desc-big">${esc(item.desc || '')}</p>
-              <div class="case-results-big">${chips}</div>
+              <h3 class="case-title-big">${esc(item.title)}</h3>
+              <p class="case-desc-big">${esc(item.desc)}</p>
+              <div class="case-results-big">${(item.chips || []).map(c => `<span class="result-chip">${esc(c)}</span>`).join('')}</div>
             </div>
             <div class="case-footer-big">
-              <a href="${esc(item.link || '#')}" target="_blank" class="btn btn-purple">
-                ${esc(item.btnText || 'View Details')}
-              </a>
+              <a href="${esc(item.link)}" target="_blank" class="btn btn-purple">${esc(item.btnText || 'View')}</a>
             </div>
           </div>
         </div>`;
       }
 
-      // 3. دالة جلب المشاريع من ملف JSON
       async function loadProjects() {
         const track = document.getElementById('projectsTrack');
-        if (!track) return;
+        const wrapper = document.querySelector('.scroll-wrapper');
+        if (!track || !wrapper) return;
 
         try {
-          // إضافة ?v= لمنع المتصفح من تخزين النسخة القديمة (Cache)
           const res = await fetch('projects.json?v=' + Date.now());
+          const data = await res.json();
 
-          if (!res.ok) throw new Error("Could not find projects.json");
+          // اللووب: تكرار الداتا 3 مرات
+          const items = [...data, ...data, ...data];
+          track.innerHTML = items.map(buildCard).join('');
 
-          const projects = await res.json();
+          setTimeout(() => {
+            const itemWidth = track.scrollWidth / 3;
+            wrapper.scrollLeft = itemWidth; // البداية من النص
 
-          if (!Array.isArray(projects)) {
-            console.error("Data format is incorrect: Expected an Array");
-            return;
-          }
-
-          // مسح المحتوى القديم ثم إضافة المشاريع الجديدة
-          track.innerHTML = projects.map(buildCard).join('');
-
-          // تشغيل نظام التمرير بعد تحميل البيانات
-          setTimeout(initScroll, 100);
-
-        } catch (err) {
-          console.error('Error loading projects:', err);
-          track.innerHTML = `<p style="color:red; padding:20px;">خطأ في تحميل المشاريع. تأكد من وجود ملف projects.json بشكل صحيح.</p>`;
-        }
+            // تشغيل المراقب
+            initInfiniteScroll(wrapper, track, itemWidth);
+          }, 200);
+        } catch (e) { console.error(e); }
       }
 
-      // 4. نظام السكرول (التحريك)
-      function initScroll() {
-        const wrapper = document.querySelector('.scroll-wrapper');
-        const btnLeft = document.getElementById('scrollLeft');
-        const btnRight = document.getElementById('scrollRight');
+      function initInfiniteScroll(wrapper, track, offset) {
+        const update = () => {
+          const cards = track.querySelectorAll('.case-single-wrap');
+          const center = wrapper.scrollLeft + (wrapper.offsetWidth / 2);
 
-        if (!wrapper || !btnLeft || !btnRight) return;
+          cards.forEach(card => {
+            const cardCenter = card.offsetLeft + (card.offsetWidth / 2);
+            const distance = Math.abs(center - cardCenter);
 
-        const STEP = 440;
+            // تفعيل الأنيميشن لو الكارد في منتصف الشاشة
+            if (distance < 150) {
+              card.classList.add('is-active');
+            } else {
+              card.classList.remove('is-active');
+            }
+          });
 
-        function updateBtns() {
-          btnLeft.disabled = wrapper.scrollLeft <= 0;
-          btnRight.disabled = wrapper.scrollLeft + wrapper.offsetWidth >= wrapper.scrollWidth - 5;
-        }
+          // منطق اللووب اللانهائي
+          if (wrapper.scrollLeft <= 0) {
+            wrapper.scrollLeft = offset;
+          } else if (wrapper.scrollLeft >= track.scrollWidth - wrapper.offsetWidth) {
+            wrapper.scrollLeft = offset;
+          }
+        };
 
-        btnLeft.onclick = () => wrapper.scrollBy({ left: -STEP, behavior: 'smooth' });
-        btnRight.onclick = () => wrapper.scrollBy({ left: STEP, behavior: 'smooth' });
+        wrapper.addEventListener('scroll', update);
 
-        wrapper.addEventListener('scroll', updateBtns);
-        window.addEventListener('resize', updateBtns);
+        // أزرار التحكم
+        document.getElementById('scrollRight').onclick = () => wrapper.scrollBy({ left: 350, behavior: 'smooth' });
+        document.getElementById('scrollLeft').onclick = () => wrapper.scrollBy({ left: -350, behavior: 'smooth' });
 
-        // دعم السحب بالماوس (Drag Scroll)
-        let isDown = false, startX, scrollLeft;
-        wrapper.addEventListener('mousedown', e => {
-          isDown = true;
-          wrapper.classList.add('active');
-          startX = e.pageX - wrapper.offsetLeft;
-          scrollLeft = wrapper.scrollLeft;
-        });
-        wrapper.addEventListener('mouseleave', () => isDown = false);
+        // سحب الماوس
+        let isDown = false, startX, scrollL;
+        wrapper.addEventListener('mousedown', e => { isDown = true; startX = e.pageX - wrapper.offsetLeft; scrollL = wrapper.scrollLeft; });
         wrapper.addEventListener('mouseup', () => isDown = false);
         wrapper.addEventListener('mousemove', e => {
           if (!isDown) return;
-          e.preventDefault();
           const x = e.pageX - wrapper.offsetLeft;
-          const walk = (x - startX) * 1.5;
-          wrapper.scrollLeft = scrollLeft - walk;
+          wrapper.scrollLeft = scrollL - (x - startX) * 1.5;
         });
 
-        updateBtns();
+        update();
       }
 
-      // تشغيل الدالة فور تحميل الصفحة
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', loadProjects);
-      } else {
-        loadProjects();
-      }
-
+      loadProjects();
     })();
   </script>
 
