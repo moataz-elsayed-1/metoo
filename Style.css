@@ -1277,8 +1277,7 @@ footer {
 
 .case-single-wrap {
     flex: 0 0 auto;
-    width: 380px;
-    /* عرض كل كارد، غيّره على حسب تصميمك */
+    width: 250px;
 }
 
 /* إخفاء الـ scrollbar */
