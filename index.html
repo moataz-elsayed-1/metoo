@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Moataz ElSayed – Media Buyer & Full Stack Developer</title>
   <meta name="google-site-verification" content="90o9MLkuCFx5QtkCwwcJfSA5UEPqp0JXamRcUK-8F-g" />
-
+  <link rel="canonical" href="https://moatazelsayed1.netlify.app/" />
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-5K7PLZEYGE"></script>
   <!-- Google tag (gtag.js) -->
@@ -18,6 +18,7 @@
     gtag('js', new Date());
 
     gtag('config', 'G-5K7PLZEYGE');
+    gtag('config', 'G-1Z8ZQZ5VZP');
   </script>
 
   <!-- ── SEO Meta Tags ── -->
@@ -401,8 +402,7 @@
 
   <script>
     (function () {
-
-      // ─── Escape ─────────────────────────────
+      // 1. دالة تنظيف النصوص لمنع أي كود خبيث
       function esc(s) {
         return String(s || '')
           .replace(/&/g, '&amp;')
@@ -411,70 +411,69 @@
           .replace(/"/g, '&quot;');
       }
 
-      // ─── Build Card ─────────────────────────
+      // 2. دالة بناء كارت المشروع (تستخدم البيانات من JSON)
       function buildCard(item) {
         const chips = (item.chips || [])
           .map(c => `<span class="result-chip">${esc(c)}</span>`)
           .join('');
 
         const thumb = item.image
-          ? `<img src="${esc(item.image)}" alt="${esc(item.title)}"
-          style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0"/>`
-          : `<!-- no image -->`;
+          ? `<img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy"
+           style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0"/>`
+          : `<div style="width:100%;height:100%;background:#1a1a35;display:flex;align-items:center;justify-content:center;">No Image</div>`;
 
         return `
-      <div class="case-single-wrap">
-        <div class="case-card-big">
-
-          <div class="case-thumb-big" style="position:relative;overflow:hidden;">
-            ${thumb}
-            <span class="case-platform-badge">${esc(item.badge || '')}</span>
+        <div class="case-single-wrap">
+          <div class="case-card-big">
+            <div class="case-thumb-big" style="position:relative;overflow:hidden;">
+              ${thumb}
+              <span class="case-platform-badge">${esc(item.badge || '')}</span>
+            </div>
+            <div class="case-body-big">
+              <h3 class="case-title-big">${esc(item.title || '')}</h3>
+              <p class="case-desc-big">${esc(item.desc || '')}</p>
+              <div class="case-results-big">${chips}</div>
+            </div>
+            <div class="case-footer-big">
+              <a href="${esc(item.link || '#')}" target="_blank" class="btn btn-purple">
+                ${esc(item.btnText || 'View Details')}
+              </a>
+            </div>
           </div>
-
-          <div class="case-body-big">
-            <h3 class="case-title-big">${esc(item.title || '')}</h3>
-            <p class="case-desc-big">${esc(item.desc || '')}</p>
-            <div class="case-results-big">${chips}</div>
-          </div>
-
-          <div class="case-footer-big">
-            <a href="${esc(item.link || '#')}" target="_blank" class="btn btn-purple">
-              ${esc(item.btnText || 'View')}
-            </a>
-          </div>
-
-        </div>
-      </div>`;
+        </div>`;
       }
 
-      // ─── Load Projects ──────────────────────
+      // 3. دالة جلب المشاريع من ملف JSON
       async function loadProjects() {
+        const track = document.getElementById('projectsTrack');
+        if (!track) return;
+
         try {
+          // إضافة ?v= لمنع المتصفح من تخزين النسخة القديمة (Cache)
           const res = await fetch('projects.json?v=' + Date.now());
 
-          if (!res.ok) throw new Error("فشل تحميل المشاريع");
+          if (!res.ok) throw new Error("Could not find projects.json");
 
           const projects = await res.json();
 
-          const track = document.getElementById('projectsTrack');
-          if (!track) return;
-
-          // ⚠️ مهم: تأكد إن دي Array
           if (!Array.isArray(projects)) {
-            console.warn("projects.json مش Array");
+            console.error("Data format is incorrect: Expected an Array");
             return;
           }
 
+          // مسح المحتوى القديم ثم إضافة المشاريع الجديدة
           track.innerHTML = projects.map(buildCard).join('');
 
-          initScroll();
+          // تشغيل نظام التمرير بعد تحميل البيانات
+          setTimeout(initScroll, 100);
 
         } catch (err) {
-          console.warn('projects.json error:', err);
+          console.error('Error loading projects:', err);
+          track.innerHTML = `<p style="color:red; padding:20px;">خطأ في تحميل المشاريع. تأكد من وجود ملف projects.json بشكل صحيح.</p>`;
         }
       }
 
-      // ─── Scroll System ──────────────────────
+      // 4. نظام السكرول (التحريك)
       function initScroll() {
         const wrapper = document.querySelector('.scroll-wrapper');
         const btnLeft = document.getElementById('scrollLeft');
@@ -486,42 +485,42 @@
 
         function updateBtns() {
           btnLeft.disabled = wrapper.scrollLeft <= 0;
-          btnRight.disabled =
-            wrapper.scrollLeft + wrapper.offsetWidth >= wrapper.scrollWidth - 1;
+          btnRight.disabled = wrapper.scrollLeft + wrapper.offsetWidth >= wrapper.scrollWidth - 5;
         }
 
-        btnLeft.onclick = () =>
-          wrapper.scrollBy({ left: -STEP, behavior: 'smooth' });
-
-        btnRight.onclick = () =>
-          wrapper.scrollBy({ left: STEP, behavior: 'smooth' });
+        btnLeft.onclick = () => wrapper.scrollBy({ left: -STEP, behavior: 'smooth' });
+        btnRight.onclick = () => wrapper.scrollBy({ left: STEP, behavior: 'smooth' });
 
         wrapper.addEventListener('scroll', updateBtns);
+        window.addEventListener('resize', updateBtns);
 
-        // Drag Scroll
+        // دعم السحب بالماوس (Drag Scroll)
         let isDown = false, startX, scrollLeft;
-
         wrapper.addEventListener('mousedown', e => {
           isDown = true;
+          wrapper.classList.add('active');
           startX = e.pageX - wrapper.offsetLeft;
           scrollLeft = wrapper.scrollLeft;
         });
-
         wrapper.addEventListener('mouseleave', () => isDown = false);
         wrapper.addEventListener('mouseup', () => isDown = false);
-
         wrapper.addEventListener('mousemove', e => {
           if (!isDown) return;
           e.preventDefault();
-          wrapper.scrollLeft =
-            scrollLeft - (e.pageX - wrapper.offsetLeft - startX) * 1.2;
+          const x = e.pageX - wrapper.offsetLeft;
+          const walk = (x - startX) * 1.5;
+          wrapper.scrollLeft = scrollLeft - walk;
         });
 
         updateBtns();
       }
 
-      // ─── Start ──────────────────────────────
-      loadProjects();
+      // تشغيل الدالة فور تحميل الصفحة
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', loadProjects);
+      } else {
+        loadProjects();
+      }
 
     })();
   </script>
