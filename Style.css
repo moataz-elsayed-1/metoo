@@ -1,4 +1,3 @@
-
 :root {
   --bg: #07071a;
   --bg-card: #0e0e28;
@@ -753,14 +752,14 @@ nav.scrolled {
    SERVICES
    ================================================================ */
 #services {
-  padding: 8rem 0;
+  padding: 5rem 0;
   background: var(--bg);
 }
 
 .section-header {
   text-align: center;
   max-width: 620px;
-  margin: 0 auto 4rem;
+  margin: 0 auto 3rem;
 }
 
 .section-sub {
@@ -773,18 +772,20 @@ nav.scrolled {
 .services-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
+  gap: 12px;
 }
 
 .service-card {
-  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
   background: var(--bg-card);
   border: 1px solid var(--border-card);
   border-radius: var(--r);
-  padding: 1.75rem 1.4rem;
+  padding: 1.15rem 1.35rem;
   transition: var(--t);
+  position: relative;
   overflow: hidden;
-  cursor: default;
 }
 
 .service-card::after {
@@ -807,19 +808,16 @@ nav.scrolled {
 }
 
 .service-icon {
-  width: 50px;
-  height: 50px;
-  font-size: 1.3rem;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
   background: var(--purple-dim);
   border: 1px solid var(--border);
-  border-radius: var(--r-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.25rem;
-  transition: var(--t);
-  position: relative;
-  z-index: 1;
+  font-size: 1.1rem;
+  flex-shrink: 0;
 }
 
 .service-card:hover .service-icon {
@@ -828,19 +826,17 @@ nav.scrolled {
 }
 
 .service-title {
-  font-family: var(--font-h);
-  font-size: .97rem;
+  font-size: 1.0rem;
   font-weight: 700;
   color: var(--white);
-  position: relative;
-  z-index: 1;
+  margin-bottom: .25rem;
 }
 
 /* ================================================================
    WHY
    ================================================================ */
 #why {
-  padding: 8rem 0;
+  padding: 5rem 0;
   background: var(--bg-card);
 }
 
@@ -852,14 +848,16 @@ nav.scrolled {
 }
 
 .why-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
   background: var(--bg-raised);
   border: 1px solid var(--border-card);
   border-radius: var(--r);
-  padding: 1.85rem 1.6rem;
+  padding: 1.15rem 1.35rem;
   transition: var(--t);
   position: relative;
   overflow: hidden;
-  cursor: default;
 }
 
 .why-card::before {
@@ -1505,7 +1503,7 @@ nav.scrolled {
 footer {
   background: var(--bg-card);
   border-top: 1px solid var(--border-subtle);
-  padding: 2.75rem 0;
+  padding: 1.8rem 0;
 }
 
 .footer-inner {
@@ -1611,7 +1609,7 @@ footer {
    ================================================================ */
 @media (max-width: 1200px) {
   .hero-inner {
-    gap: 3rem;
+    gap: 2rem;
   }
 
   .stat-pill-1 {
@@ -1639,9 +1637,9 @@ footer {
 @media (max-width: 1024px) {
   .hero-inner {
     grid-template-columns: 1fr;
-    gap: 3.5rem;
+    gap: 2.5rem;
     text-align: center;
-    padding: 4rem 0 3rem;
+    padding: 1rem 0 2rem;
   }
 
   .hero-photo-col {
@@ -1734,11 +1732,11 @@ footer {
   }
 
   .btn-cv {
-    display: none !important;
+    display: flex !important;
   }
 
   #hero {
-    padding-top: 4.5rem;
+    padding-top: 3.5rem;
   }
 
   .stat-divider {
@@ -1754,7 +1752,7 @@ footer {
   #services,
   #case-studies,
   #contact {
-    padding: 5.5rem 0;
+    padding: 2.5rem 0;
   }
 
   .services-grid {
