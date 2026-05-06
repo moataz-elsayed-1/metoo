@@ -5,7 +5,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard — Moataz ElSayed</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
+    /* ─── TOKENS ────────────────────────────────────────── */
     :root {
       --bg: #0a0a18;
       --bg-card: #12122a;
@@ -22,257 +25,21 @@
       --radius-sm: 8px;
       --green: #4ade80;
       --red: #f87171;
-      --font: 'Inter', sans-serif
+      --font: 'Inter', sans-serif;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0
-    }
+    /* ─── RESET ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font); background: var(--bg); color: var(--white); min-height: 100vh; direction: rtl; }
+    a { color: inherit; text-decoration: none; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 3px; }
 
-    body {
-      font-family: var(--font);
-      background: var(--bg);
-      color: var(--white);
-      min-height: 100vh;
-      direction: rtl
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none
-    }
-
-    /* LOCK */
-    #lockScreen {
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem
-    }
-
-    .lock-box {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 2.5rem;
-      width: 100%;
-      max-width: 420px;
-      text-align: center
-    }
-
-    .lock-logo {
-      font-size: 2rem;
-      font-weight: 800;
-      margin-bottom: .5rem
-    }
-
-    .lock-logo span {
-      color: var(--purple)
-    }
-
-    .lock-subtitle {
-      font-size: .85rem;
-      color: var(--gray-dim);
-      margin-bottom: 2rem
-    }
-
-    .lock-field {
-      margin-bottom: 1rem;
-      text-align: right
-    }
-
-    .lock-field label {
-      display: block;
-      font-size: .75rem;
-      color: var(--gray-dim);
-      margin-bottom: .4rem
-    }
-
-    .lock-field input {
-      width: 100%;
-      padding: .75rem 1rem;
-      background: var(--bg-raised);
-      border: 1px solid var(--border-card);
-      border-radius: var(--radius-sm);
-      color: var(--white);
-      font-size: .9rem;
-      outline: none;
-      font-family: var(--font)
-    }
-
-    .lock-field input:focus {
-      border-color: var(--purple)
-    }
-
-    .lock-btn {
-      width: 100%;
-      padding: .85rem;
-      background: var(--purple);
-      color: var(--white);
-      border: none;
-      border-radius: 100px;
-      font-size: .9rem;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: .5rem
-    }
-
-    .lock-btn:hover {
-      background: var(--purple-light)
-    }
-
-    .lock-note {
-      font-size: .72rem;
-      color: var(--gray-dim);
-      margin-top: 1rem;
-      line-height: 1.8
-    }
-
-    /* APP */
-    .app {
-      display: grid;
-      grid-template-columns: 220px 1fr;
-      min-height: 100vh
-    }
-
-    .sidebar {
-      background: var(--bg-card);
-      border-left: 1px solid var(--border-card);
-      padding: 1.5rem 0;
-      display: flex;
-      flex-direction: column
-    }
-
-    .sidebar-logo {
-      padding: .5rem 1.5rem 1.5rem;
-      font-size: 1rem;
-      font-weight: 800;
-      border-bottom: 1px solid var(--border-card);
-      margin-bottom: 1rem
-    }
-
-    .sidebar-logo span {
-      color: var(--purple)
-    }
-
-    .sidebar-badge {
-      display: inline-block;
-      font-size: .6rem;
-      font-weight: 700;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      background: var(--purple-dim);
-      color: var(--purple-light);
-      border: 1px solid var(--border);
-      padding: .2rem .6rem;
-      border-radius: 100px;
-      margin-top: .3rem
-    }
-
-    .sidebar-bottom {
-      margin-top: auto;
-      padding: 1rem 1.5rem;
-      border-top: 1px solid var(--border-card)
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--green);
-      display: inline-block;
-      margin-left: .5rem;
-      animation: pulse 2s infinite
-    }
-
-    @keyframes pulse {
-
-      0%,
-      100% {
-        box-shadow: 0 0 0 0 rgba(74, 222, 128, .4)
-      }
-
-      50% {
-        box-shadow: 0 0 0 6px rgba(74, 222, 128, 0)
-      }
-    }
-
-    /* MAIN */
-    .main {
-      padding: 2rem;
-      overflow-y: auto;
-      max-height: 100vh
-    }
-
-    .main-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-      gap: 1rem
-    }
-
-    .main-title {
-      font-size: 1.3rem;
-      font-weight: 800
-    }
-
-    .main-title span {
-      color: var(--purple)
-    }
-
-    .main-desc {
-      font-size: .82rem;
-      color: var(--gray-dim);
-      margin-bottom: 1.5rem;
-      background: var(--bg-card);
-      border: 1px solid var(--border-card);
-      border-radius: var(--radius-sm);
-      padding: .75rem 1rem;
-      line-height: 1.7
-    }
-
-    .main-desc strong {
-      color: var(--purple-light)
-    }
-
-    /* DEPLOY BTN */
-    .deploy-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: .5rem;
-      padding: .7rem 1.4rem;
-      background: var(--purple);
-      color: var(--white);
-      border: none;
-      border-radius: 100px;
-      font-size: .85rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all .2s
-    }
-
-    .deploy-btn:hover {
-      background: var(--purple-light)
-    }
-
-    .deploy-btn:disabled {
-      opacity: .5;
-      cursor: not-allowed
-    }
-
-    /* TOAST */
+    /* ─── TOAST ─────────────────────────────────────────── */
     #toast {
       position: fixed;
-      top: 1.5rem;
-      left: 50%;
+      top: 1.5rem; left: 50%;
       transform: translateX(-50%);
       z-index: 9998;
       padding: .75rem 1.5rem;
@@ -280,379 +47,261 @@
       font-size: .85rem;
       font-weight: 600;
       display: none;
-      white-space: nowrap
+      white-space: nowrap;
     }
+    #toast.success { background: #166534; color: #bbf7d0; border: 1px solid #4ade80; }
+    #toast.error   { background: #7f1d1d; color: #fecaca; border: 1px solid #f87171; }
+    #toast.info    { background: var(--bg-raised); color: var(--purple-light); border: 1px solid var(--border); }
 
-    #toast.success {
-      background: #166534;
-      color: #bbf7d0;
-      border: 1px solid #4ade80
+    /* ─── LOCK SCREEN ────────────────────────────────────── */
+    #lockScreen {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex; align-items: center; justify-content: center;
+      padding: 2rem;
     }
-
-    #toast.error {
-      background: #7f1d1d;
-      color: #fecaca;
-      border: 1px solid #f87171
+    .lock-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      width: 100%; max-width: 420px;
+      text-align: center;
     }
-
-    #toast.info {
-      background: var(--bg-raised);
-      color: var(--purple-light);
-      border: 1px solid var(--border)
-    }
-
-    /* LOG */
-    .deploy-log {
+    .lock-logo { font-size: 2rem; font-weight: 800; margin-bottom: .5rem; }
+    .lock-logo span { color: var(--purple); }
+    .lock-subtitle { font-size: .85rem; color: var(--gray-dim); margin-bottom: 2rem; }
+    .lock-field { margin-bottom: 1rem; text-align: right; }
+    .lock-field label { display: block; font-size: .75rem; color: var(--gray-dim); margin-bottom: .4rem; }
+    .lock-field input {
+      width: 100%; padding: .75rem 1rem;
       background: var(--bg-raised);
       border: 1px solid var(--border-card);
       border-radius: var(--radius-sm);
-      padding: .75rem 1rem;
-      font-family: monospace;
-      font-size: .75rem;
-      color: var(--gray-dim);
-      max-height: 130px;
+      color: var(--white); font-size: .9rem; outline: none; font-family: var(--font);
+      transition: border-color .2s;
+    }
+    .lock-field input:focus { border-color: var(--purple); }
+    .lock-btn {
+      width: 100%; padding: .85rem;
+      background: var(--purple); color: var(--white);
+      border: none; border-radius: 100px;
+      font-size: .9rem; font-weight: 700; cursor: pointer; margin-top: .5rem;
+      transition: background .2s;
+    }
+    .lock-btn:hover { background: var(--purple-light); }
+    .lock-note { font-size: .72rem; color: var(--gray-dim); margin-top: 1rem; line-height: 1.8; }
+
+    /* ─── APP LAYOUT ─────────────────────────────────────── */
+    .app { display: grid; grid-template-columns: 230px 1fr; min-height: 100vh; }
+
+    /* ─── SIDEBAR ────────────────────────────────────────── */
+    .sidebar {
+      background: var(--bg-card);
+      border-left: 1px solid var(--border-card);
+      padding: 1.5rem 0;
+      display: flex; flex-direction: column;
+      position: sticky; top: 0; height: 100vh;
       overflow-y: auto;
-      margin-bottom: 1.5rem;
-      display: none
     }
-
-    .deploy-log.open {
-      display: block
+    .sidebar-logo { padding: .5rem 1.5rem 1.5rem; font-size: 1rem; font-weight: 800; border-bottom: 1px solid var(--border-card); margin-bottom: 1rem; }
+    .sidebar-logo span { color: var(--purple); }
+    .sidebar-badge {
+      display: inline-block; font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      background: var(--purple-dim); color: var(--purple-light); border: 1px solid var(--border);
+      padding: .2rem .6rem; border-radius: 100px; margin-top: .3rem;
     }
-
-    .log-line {
-      padding: .1rem 0;
-      line-height: 1.5
+    .sidebar-section { padding: 1rem 1.5rem 0; }
+    .sidebar-section-title { font-size: .65rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--gray-dim); margin-bottom: .75rem; }
+    .sidebar-info {
+      font-size: .78rem; color: var(--purple-light);
+      background: var(--purple-dim); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: .5rem .75rem; font-family: monospace;
     }
+    .sidebar-bottom { margin-top: auto; padding: 1rem 1.5rem; border-top: 1px solid var(--border-card); }
+    .status-row { display: flex; align-items: center; gap: .5rem; font-size: .72rem; color: var(--gray-dim); margin-bottom: .5rem; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(74,222,128,.4); } 50% { box-shadow: 0 0 0 6px rgba(74,222,128,0); } }
+    .sidebar-repo { font-size: .7rem; color: var(--gray-dim); opacity: .6; margin-bottom: .75rem; }
 
-    .log-line.ok {
-      color: var(--green)
+    /* ─── MAIN ───────────────────────────────────────────── */
+    .main { padding: 2rem; overflow-y: auto; max-height: 100vh; }
+    .main-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+    .main-title { font-size: 1.3rem; font-weight: 800; }
+    .main-title span { color: var(--purple); }
+
+    .info-banner {
+      font-size: .82rem; color: var(--gray-dim);
+      background: var(--bg-card); border: 1px solid var(--border-card);
+      border-radius: var(--radius-sm); padding: .75rem 1rem; line-height: 1.7;
+      margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: .5rem;
     }
+    .info-banner strong { color: var(--purple-light); }
 
-    .log-line.err {
-      color: var(--red)
+    /* ─── DEPLOY LOG ─────────────────────────────────────── */
+    .deploy-log {
+      background: var(--bg-raised); border: 1px solid var(--border-card);
+      border-radius: var(--radius-sm); padding: .75rem 1rem;
+      font-family: monospace; font-size: .75rem; color: var(--gray-dim);
+      max-height: 130px; overflow-y: auto; margin-bottom: 1.5rem; display: none;
     }
+    .deploy-log.open { display: block; }
+    .log-line { padding: .1rem 0; line-height: 1.5; }
+    .log-line.ok   { color: var(--green); }
+    .log-line.err  { color: var(--red); }
+    .log-line.info { color: var(--purple-light); }
 
-    .log-line.info {
-      color: var(--purple-light)
-    }
-
-    /* BUTTONS */
+    /* ─── BUTTONS ────────────────────────────────────────── */
     .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: .4rem;
-      padding: .55rem 1.1rem;
-      border-radius: 100px;
-      font-size: .8rem;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      font-family: var(--font);
-      transition: all .2s
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .55rem 1.1rem; border-radius: 100px; font-size: .8rem; font-weight: 600;
+      cursor: pointer; border: none; font-family: var(--font); transition: all .2s;
     }
+    .btn-purple { background: var(--purple); color: var(--white); }
+    .btn-purple:hover { background: var(--purple-light); }
+    .btn-ghost { background: transparent; color: var(--gray); border: 1px solid var(--border-card); }
+    .btn-ghost:hover { border-color: var(--purple); color: var(--purple-light); }
+    .btn-danger { background: transparent; color: var(--red); border: 1px solid rgba(248,113,113,.3); font-size: .75rem; padding: .4rem .8rem; }
+    .btn-danger:hover { background: rgba(248,113,113,.1); }
+    .btn-sm { padding: .4rem .8rem; font-size: .75rem; }
 
-    .btn-purple {
-      background: var(--purple);
-      color: var(--white)
+    .deploy-btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .7rem 1.4rem; background: var(--purple); color: var(--white);
+      border: none; border-radius: 100px; font-size: .85rem; font-weight: 700;
+      cursor: pointer; font-family: var(--font); transition: all .2s;
     }
+    .deploy-btn:hover { background: var(--purple-light); }
+    .deploy-btn:disabled { opacity: .5; cursor: not-allowed; }
 
-    .btn-purple:hover {
-      background: var(--purple-light)
+    /* ─── PROJECTS TOOLBAR ───────────────────────────────── */
+    .projects-toolbar {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: .75rem; margin-bottom: 1.25rem;
     }
+    .projects-count { font-size: .82rem; color: var(--gray-dim); }
+    .projects-count span { color: var(--purple-light); font-weight: 600; }
 
-    .btn-ghost {
-      background: transparent;
-      color: var(--gray);
-      border: 1px solid var(--border-card)
-    }
-
-    .btn-ghost:hover {
-      border-color: var(--purple);
-      color: var(--purple-light)
-    }
-
-    .btn-danger {
-      background: transparent;
-      color: var(--red);
-      border: 1px solid rgba(248, 113, 113, .3);
-      font-size: .75rem;
-      padding: .4rem .8rem
-    }
-
-    .btn-danger:hover {
-      background: rgba(248, 113, 113, .1)
-    }
-
-    .btn-sm {
-      padding: .4rem .8rem;
-      font-size: .75rem
-    }
-
-    /* WORK CARDS */
+    /* ─── WORK CARDS ─────────────────────────────────────── */
     .work-card {
       background: var(--bg-raised);
       border: 1px solid var(--border-card);
       border-radius: var(--radius-sm);
       margin-bottom: .75rem;
-      overflow: hidden
+      overflow: hidden;
+      transition: border-color .2s;
     }
+    .work-card:hover { border-color: var(--border); }
 
     .work-card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: .9rem 1.1rem;
-      cursor: pointer;
-      transition: background .2s
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .9rem 1.1rem; cursor: pointer;
+      transition: background .2s;
     }
+    .work-card-header:hover { background: rgba(122,99,255,.06); }
 
-    .work-card-header:hover {
-      background: rgba(122, 99, 255, .06)
-    }
-
-    .work-card-thumb {
-      width: 50px;
-      height: 34px;
-      border-radius: 5px;
-      object-fit: cover;
-      border: 1px solid var(--border-card)
-    }
-
+    .work-card-left { display: flex; align-items: center; gap: .75rem; flex: 1; min-width: 0; }
+    .work-card-thumb { width: 56px; height: 38px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border-card); flex-shrink: 0; }
     .work-card-thumb-placeholder {
-      width: 50px;
-      height: 34px;
-      border-radius: 5px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-card);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: .8rem
+      width: 56px; height: 38px; border-radius: 6px;
+      background: var(--bg-card); border: 1px solid var(--border-card);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
     }
+    .work-card-info { min-width: 0; }
+    .work-card-info strong { font-size: .875rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .work-card-info span { font-size: .72rem; color: var(--gray-dim); }
 
-    .work-card-info {
-      flex: 1;
-      margin-right: .75rem
-    }
+    .work-card-actions { display: flex; gap: .5rem; align-items: center; flex-shrink: 0; margin-right: .75rem; }
+    .work-card-chevron { font-size: .7rem; color: var(--gray-dim); flex-shrink: 0; }
 
-    .work-card-info strong {
-      font-size: .85rem;
-      display: block
-    }
+    .work-card-body { padding: 1.25rem; border-top: 1px solid var(--border-card); display: none; }
+    .work-card-body.open { display: block; }
 
-    .work-card-info span {
-      font-size: .72rem;
-      color: var(--gray-dim)
-    }
-
-    .work-card-actions {
-      display: flex;
-      gap: .5rem;
-      align-items: center
-    }
-
-    .work-card-body {
-      padding: 1.1rem;
-      border-top: 1px solid var(--border-card);
-      display: none
-    }
-
-    .work-card-body.open {
-      display: block
-    }
-
-    /* FORM */
-    .form-group {
-      margin-bottom: 1rem
-    }
-
+    /* ─── FORM ───────────────────────────────────────────── */
+    .form-group { margin-bottom: 1rem; }
     .form-group label {
-      display: block;
-      font-size: .72rem;
-      font-weight: 600;
-      color: var(--gray-dim);
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      margin-bottom: .4rem
+      display: block; font-size: .72rem; font-weight: 600;
+      color: var(--gray-dim); letter-spacing: .08em; text-transform: uppercase; margin-bottom: .4rem;
     }
-
     .form-group input,
     .form-group textarea {
-      width: 100%;
-      padding: .75rem 1rem;
-      background: var(--bg-card);
-      border: 1px solid var(--border-card);
-      border-radius: var(--radius-sm);
-      color: var(--white);
-      font-size: .9rem;
-      outline: none;
-      font-family: var(--font);
-      transition: border-color .2s
+      width: 100%; padding: .75rem 1rem;
+      background: var(--bg-card); border: 1px solid var(--border-card);
+      border-radius: var(--radius-sm); color: var(--white);
+      font-size: .9rem; outline: none; font-family: var(--font);
+      transition: border-color .2s;
     }
-
     .form-group input:focus,
-    .form-group textarea:focus {
-      border-color: var(--purple)
-    }
+    .form-group textarea:focus { border-color: var(--purple); }
+    .form-group textarea { resize: vertical; min-height: 80px; }
 
-    .form-group textarea {
-      resize: vertical;
-      min-height: 80px
-    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem
-    }
-
-    /* CHIPS */
-    .chips-wrap {
-      display: flex;
-      flex-wrap: wrap;
-      gap: .5rem;
-      margin-top: .5rem
-    }
-
+    /* ─── CHIPS ──────────────────────────────────────────── */
+    .chips-wrap { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
     .chip {
-      font-size: .72rem;
-      font-weight: 600;
-      color: var(--purple-light);
-      background: var(--purple-dim);
-      border: 1px solid var(--border);
-      padding: .25rem .7rem;
-      border-radius: 100px;
-      cursor: pointer
+      font-size: .72rem; font-weight: 600;
+      color: var(--purple-light); background: var(--purple-dim);
+      border: 1px solid var(--border); padding: .25rem .7rem;
+      border-radius: 100px; cursor: pointer; transition: background .2s;
     }
-
-    .chip:hover {
-      background: rgba(122, 99, 255, .3)
-    }
-
-    .chip-input-row {
-      display: flex;
-      gap: .5rem;
-      margin-top: .5rem
-    }
-
+    .chip:hover { background: rgba(122,99,255,.3); }
+    .chip-input-row { display: flex; gap: .5rem; margin-top: .5rem; }
     .chip-input-row input {
-      flex: 1;
-      padding: .5rem .75rem;
-      background: var(--bg-card);
-      border: 1px solid var(--border-card);
-      border-radius: var(--radius-sm);
-      color: var(--white);
-      font-size: .82rem;
-      outline: none;
-      font-family: var(--font)
+      flex: 1; padding: .5rem .75rem;
+      background: var(--bg-card); border: 1px solid var(--border-card);
+      border-radius: var(--radius-sm); color: var(--white);
+      font-size: .82rem; outline: none; font-family: var(--font);
+      transition: border-color .2s;
     }
-
-    .chip-input-row input:focus {
-      border-color: var(--purple)
-    }
-
+    .chip-input-row input:focus { border-color: var(--purple); }
     .chip-add-btn {
       padding: .5rem .9rem;
-      background: var(--purple-dim);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--purple-light);
-      font-size: .82rem;
-      cursor: pointer;
-      font-weight: 700
+      background: var(--purple-dim); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); color: var(--purple-light);
+      font-size: .82rem; cursor: pointer; font-weight: 700;
     }
+    .chip-add-btn:hover { background: var(--purple); color: var(--white); }
 
-    /* UPLOAD */
+    /* ─── IMAGE UPLOAD ───────────────────────────────────── */
     .upload-zone {
-      border: 1.5px dashed var(--border);
-      border-radius: var(--radius-sm);
-      padding: 1.5rem;
-      text-align: center;
-      cursor: pointer;
-      transition: all .2s;
-      background: var(--bg-raised);
-      margin-bottom: .75rem
+      border: 1.5px dashed var(--border); border-radius: var(--radius-sm);
+      padding: 1.5rem; text-align: center; cursor: pointer;
+      transition: all .2s; background: var(--bg-card); margin-bottom: .75rem;
     }
+    .upload-zone:hover, .upload-zone.drag { border-color: var(--purple); background: var(--purple-dim); }
+    .upload-zone p { font-size: .8rem; color: var(--gray-dim); margin-top: .5rem; }
+    .upload-zone small { font-size: .7rem; color: var(--gray-dim); opacity: .6; }
 
-    .upload-zone:hover,
-    .upload-zone.drag {
-      border-color: var(--purple);
-      background: var(--purple-dim)
-    }
+    .img-preview-wrap { margin-bottom: .75rem; }
+    .img-preview { width: 100%; height: 150px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border-card); display: block; }
+    .img-preview-btns { display: flex; gap: .5rem; margin-top: .5rem; }
 
-    .upload-zone p {
-      font-size: .8rem;
-      color: var(--gray-dim);
-      margin-top: .5rem
-    }
-
-    .upload-zone small {
-      font-size: .7rem;
-      color: var(--gray-dim);
-      opacity: .6
-    }
-
-    .img-preview-wrap {
-      margin-bottom: .75rem
-    }
-
-    .img-preview {
-      width: 100%;
-      height: 140px;
-      object-fit: cover;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-card);
-      display: block
-    }
-
-    .img-preview-btns {
-      display: flex;
-      gap: .5rem;
-      margin-top: .5rem
-    }
-
-    /* LINK PREVIEW */
+    /* ─── LINK PREVIEW ───────────────────────────────────── */
     .link-preview {
-      font-size: .72rem;
-      color: var(--gray-dim);
-      background: var(--bg-card);
-      padding: .4rem .75rem;
-      border-radius: var(--radius-sm);
-      margin-top: .5rem;
-      border: 1px solid var(--border-card)
+      font-size: .72rem; color: var(--gray-dim);
+      background: var(--bg-card); padding: .4rem .75rem;
+      border-radius: var(--radius-sm); margin-top: .5rem; border: 1px solid var(--border-card);
     }
+    .link-preview span { color: var(--purple-light); }
 
-    .link-preview span {
-      color: var(--purple-light)
+    /* ─── EMPTY STATE ────────────────────────────────────── */
+    .empty-state {
+      text-align: center; padding: 3rem; color: var(--gray-dim);
+      background: var(--bg-card); border: 1px dashed var(--border-card);
+      border-radius: var(--radius); margin-bottom: 1rem;
     }
+    .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .empty-state p { font-size: .875rem; margin-bottom: 1.25rem; }
 
-    ::-webkit-scrollbar {
-      width: 5px;
-      height: 5px
-    }
-
-    ::-webkit-scrollbar-track {
-      background: var(--bg)
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: var(--purple);
-      border-radius: 3px
-    }
-
-    @media(max-width:768px) {
-      .app {
-        grid-template-columns: 1fr
-      }
-
-      .sidebar {
-        display: none
-      }
-
-      .grid-2 {
-        grid-template-columns: 1fr
-      }
+    /* ─── RESPONSIVE ─────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .main { padding: 1.25rem; }
     }
   </style>
 </head>
@@ -661,66 +310,75 @@
 
   <div id="toast"></div>
 
-  <!-- LOCK SCREEN -->
+  <!-- ─── LOCK SCREEN ──────────────────────────────────────── -->
   <div id="lockScreen">
     <div class="lock-box">
       <div class="lock-logo">M<span>.</span>ElSayed</div>
-      <p class="lock-subtitle">Projects Dashboard</p>
+      <p class="lock-subtitle">Projects Dashboard — Admin</p>
       <div class="lock-field">
         <label>GitHub Token</label>
         <input type="password" id="tokenInput" placeholder="ghp_..." autocomplete="off" />
       </div>
       <button class="lock-btn" onclick="unlock()">دخول ←</button>
       <p class="lock-note">
-        التوكن بيتحفظ في المتصفح فقط.<br />
+        التوكن بيتحفظ في المتصفح فقط — لا يُرسل لأي خادم.<br />
         Repo: <strong>moataz-elsayed-1 / metoo</strong><br />
-        الداشبورد ده بيعدل على <strong>projects.json</strong> فقط 🎯
+        الداشبورد بيعدل على <strong>projects.json</strong> فقط 🎯
       </p>
     </div>
   </div>
 
-  <!-- MAIN APP -->
+  <!-- ─── MAIN APP ──────────────────────────────────────────── -->
   <div class="app" id="mainApp" style="display:none">
+
+    <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-logo">
         M<span>.</span>ElSayed
-        <div><span class="sidebar-badge">Projects</span></div>
+        <div><span class="sidebar-badge">Admin</span></div>
       </div>
-      <div style="padding:.5rem 1.5rem">
-        <div
-          style="font-size:.75rem;color:var(--gray-dim);margin-bottom:.5rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em">
-          ملف البيانات</div>
-        <div
-          style="font-size:.78rem;color:var(--purple-light);background:var(--purple-dim);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.5rem .75rem;font-family:monospace">
-          projects.json</div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">ملف البيانات</div>
+        <div class="sidebar-info">projects.json</div>
       </div>
+
+      <div class="sidebar-section" style="margin-top:1.5rem;">
+        <div class="sidebar-section-title">الموقع</div>
+        <a href="/" target="_blank" style="font-size:.78rem; color: var(--purple-light); display:flex; align-items:center; gap:.4rem;">
+          🌐 عرض الموقع
+          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </div>
+
       <div class="sidebar-bottom">
-        <div style="font-size:.72rem;color:var(--gray-dim);margin-bottom:.5rem"><span class="status-dot"></span>متصل بـ
-          GitHub</div>
-        <div style="font-size:.7rem;color:var(--gray-dim);opacity:.6">moataz-elsayed-1/metoo</div>
-        <div style="margin-top:.75rem">
-          <button class="btn btn-ghost btn-sm" onclick="logout()" style="width:100%;justify-content:center">تسجيل
-            خروج</button>
+        <div class="status-row">
+          <span class="status-dot"></span>
+          متصل بـ GitHub
         </div>
+        <div class="sidebar-repo">moataz-elsayed-1/metoo</div>
+        <button class="btn btn-ghost btn-sm" onclick="logout()" style="width:100%;justify-content:center">تسجيل خروج</button>
       </div>
     </aside>
 
+    <!-- Main Content -->
     <main class="main">
       <div class="main-header">
         <div class="main-title">مشاريع <span>My Work</span></div>
-        <button class="deploy-btn" id="deployBtn" onclick="saveToGitHub()">💾 حفظ projects.json</button>
+        <button class="deploy-btn" id="deployBtn" onclick="saveToGitHub()">
+          💾 حفظ على GitHub
+        </button>
       </div>
 
-      <div class="main-desc">
-        ✅ الداشبورد ده بيعدل على <strong>projects.json</strong> فقط — مش بيبني HTML من الأول.<br />
-        الموقع بيقرأ المشاريع من الـ JSON تلقائياً عند كل تحميل.
+      <div class="info-banner">
+        <span>✅</span>
+        <div>الداشبورد يعدل على <strong>projects.json</strong> فقط — الموقع يقرأ المشاريع تلقائياً بدون deploy. الصور المرفوعة تُحوّل لـ base64 وتُحفظ داخل الـ JSON.</div>
       </div>
 
       <div class="deploy-log" id="deployLog"></div>
 
-      <div
-        style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.75rem">
-        <p style="font-size:.82rem;color:var(--gray-dim)">اضغط على أي مشروع لتعديله</p>
+      <div class="projects-toolbar">
+        <div class="projects-count">المشاريع: <span id="projectCount">0</span></div>
         <button class="btn btn-purple" onclick="addProject()">+ مشروع جديد</button>
       </div>
 
@@ -729,39 +387,47 @@
   </div>
 
   <script>
+    /* ─── CONFIG ──────────────────────────────────────────── */
     const OWNER = 'moataz-elsayed-1';
-    const REPO = 'metoo';
-    const FILE = 'projects.json';
+    const REPO  = 'metoo';
+    const FILE  = 'projects.json';
 
-    let PROJECTS = [];
+    let PROJECTS  = [];
     let openCards = {};
-    let TOKEN = '';
+    let TOKEN     = '';
 
-    // ─── ESC ───────────────────────────────────────────
-    function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+    /* ─── HELPERS ─────────────────────────────────────────── */
+    function esc(s) {
+      return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
 
-    // ─── TOAST ─────────────────────────────────────────
-    let toastT;
+    /* ─── TOAST ───────────────────────────────────────────── */
+    let toastTimer;
     function showToast(msg, type = 'info') {
       const t = document.getElementById('toast');
       t.textContent = msg; t.className = type; t.style.display = 'block';
-      clearTimeout(toastT); toastT = setTimeout(() => { t.style.display = 'none'; }, 3500);
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => { t.style.display = 'none'; }, 3500);
     }
 
-    // ─── LOG ───────────────────────────────────────────
+    /* ─── LOG ─────────────────────────────────────────────── */
     function log(msg, type = 'info') {
       const el = document.getElementById('deployLog');
       el.classList.add('open');
       const line = document.createElement('div');
       line.className = 'log-line ' + type;
       line.textContent = '[' + new Date().toLocaleTimeString('ar') + '] ' + msg;
-      el.appendChild(line); el.scrollTop = el.scrollHeight;
+      el.appendChild(line);
+      el.scrollTop = el.scrollHeight;
     }
 
-    // ─── AUTH ──────────────────────────────────────────
+    /* ─── AUTH ────────────────────────────────────────────── */
     function unlock() {
       const t = document.getElementById('tokenInput').value.trim();
-      if (!t || !t.startsWith('ghp_')) { showToast('توكن غير صحيح — لازم يبدأ بـ ghp_', 'error'); return; }
+      if (!t || !t.startsWith('ghp_')) {
+        showToast('توكن غير صحيح — لازم يبدأ بـ ghp_', 'error');
+        return;
+      }
       TOKEN = t;
       localStorage.setItem('gh_admin_token', t);
       document.getElementById('lockScreen').style.display = 'none';
@@ -774,6 +440,7 @@
       location.reload();
     }
 
+    /* Auto-login */
     window.addEventListener('DOMContentLoaded', () => {
       const saved = localStorage.getItem('gh_admin_token');
       if (saved && saved.startsWith('ghp_')) {
@@ -783,9 +450,14 @@
         document.getElementById('mainApp').style.display = 'grid';
         loadFromGitHub();
       }
+
+      /* Enter key on token field */
+      document.getElementById('tokenInput').addEventListener('keydown', e => {
+        if (e.key === 'Enter') unlock();
+      });
     });
 
-    // ─── LOAD FROM GITHUB ──────────────────────────────
+    /* ─── LOAD FROM GITHUB ────────────────────────────────── */
     async function loadFromGitHub() {
       if (!TOKEN) return;
       try {
@@ -795,8 +467,7 @@
           { headers: { Authorization: `token ${TOKEN}`, Accept: 'application/vnd.github.v3+json' } }
         );
         if (!res.ok) {
-          // الملف مش موجود — ابدأ بقائمة فاضية
-          log('projects.json مش موجود — هيتنشأ عند الحفظ لأول مرة', 'info');
+          log('projects.json غير موجود — سيُنشأ عند الحفظ', 'info');
           PROJECTS = [];
           renderCards();
           return;
@@ -804,17 +475,20 @@
         const data = await res.json();
         const content = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
         PROJECTS = JSON.parse(content);
+        if (!Array.isArray(PROJECTS)) PROJECTS = [];
         log('✓ تم تحميل ' + PROJECTS.length + ' مشروع', 'ok');
         renderCards();
       } catch (e) {
         log('خطأ في التحميل: ' + e.message, 'err');
         showToast('فشل التحميل من GitHub', 'error');
+        PROJECTS = [];
+        renderCards();
       }
     }
 
-    // ─── SAVE TO GITHUB ────────────────────────────────
+    /* ─── SAVE TO GITHUB ──────────────────────────────────── */
     async function saveToGitHub() {
-      if (!TOKEN) { showToast('مفيش توكن', 'error'); return; }
+      if (!TOKEN) { showToast('لا يوجد توكن', 'error'); return; }
       const btn = document.getElementById('deployBtn');
       btn.disabled = true; btn.textContent = '⏳ جاري الحفظ...';
       document.getElementById('deployLog').innerHTML = '';
@@ -823,7 +497,7 @@
         const content = JSON.stringify(PROJECTS, null, 2);
         const encoded = btoa(unescape(encodeURIComponent(content)));
 
-        // جيب الـ SHA الحالي (لو الملف موجود)
+        /* Get current SHA */
         let sha = null;
         const getRes = await fetch(
           `https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`,
@@ -834,14 +508,11 @@
           sha = fileData.sha;
           log('✓ SHA: ' + sha.slice(0, 8) + '...', 'ok');
         } else {
-          log('الملف جديد — سيتم إنشاؤه', 'info');
+          log('ملف جديد — سيُنشأ', 'info');
         }
 
-        // ارفع الملف
-        const body = {
-          message: 'projects update: ' + new Date().toLocaleString('ar'),
-          content: encoded
-        };
+        /* Push */
+        const body = { message: 'update projects: ' + new Date().toLocaleString('ar'), content: encoded };
         if (sha) body.sha = sha;
 
         const putRes = await fetch(
@@ -855,95 +526,136 @@
         if (!putRes.ok) { const e = await putRes.json(); throw new Error(e.message || 'فشل الرفع'); }
 
         log('✓ تم حفظ projects.json على GitHub!', 'ok');
-        log('🌐 الموقع هيعرض التغييرات فوراً بدون deploy', 'info');
-        showToast('✓ تم الحفظ! الموقع هيتحدث تلقائياً 🎯', 'success');
+        log('🌐 الموقع سيعرض التغييرات فوراً', 'info');
+        showToast('✓ تم الحفظ! الموقع سيتحدث تلقائياً 🎯', 'success');
 
       } catch (err) {
         log('✗ خطأ: ' + err.message, 'err');
         showToast('خطأ: ' + err.message, 'error');
       } finally {
-        btn.disabled = false; btn.textContent = '💾 حفظ projects.json';
+        btn.disabled = false; btn.textContent = '💾 حفظ على GitHub';
       }
     }
 
-    // ─── RENDER CARDS ──────────────────────────────────
+    /* ─── RENDER CARDS ────────────────────────────────────── */
     function renderCards() {
       const g = document.getElementById('projectCards');
+      document.getElementById('projectCount').textContent = PROJECTS.length;
+
+      if (!PROJECTS.length) {
+        g.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">📂</div>
+            <p>لا توجد مشاريع بعد. أضف مشروعاً جديداً للبدء.</p>
+            <button class="btn btn-purple" onclick="addProject()">+ أضف أول مشروع</button>
+          </div>`;
+        return;
+      }
+
       g.innerHTML = '';
-      PROJECTS.forEach((item, idx) => {
+      PROJECTS.forEach(item => {
         const div = document.createElement('div');
         div.className = 'work-card';
         div.id = 'pc-' + item.id;
-        const isOpen = openCards[item.id];
+        const isOpen = !!openCards[item.id];
 
+        /* Thumbnail */
         const thumbHTML = item.image && item.image.startsWith('data:')
           ? `<img class="work-card-thumb" src="${item.image}" alt=""/>`
-          : item.image
-            ? `<div class="work-card-thumb" style="display:flex;align-items:center;justify-content:center;font-size:.6rem;color:var(--gray-dim);background:var(--bg-card);border:1px solid var(--border-card);border-radius:5px;">${item.image}</div>`
-            : `<div class="work-card-thumb-placeholder">🖼️</div>`;
+          : `<div class="work-card-thumb-placeholder">🖼️</div>`;
 
         div.innerHTML = `
-      <div class="work-card-header" onclick="toggleCard(${item.id})">
-        ${thumbHTML}
-        <div class="work-card-info" style="margin-right:.75rem">
-          <strong>${esc(item.title) || 'بدون عنوان'}</strong>
-          <span>${esc(item.badge) || '—'}</span>
-        </div>
-        <div class="work-card-actions">
-          <span style="font-size:.7rem;color:var(--gray-dim)">${isOpen ? '▲' : '▼'}</span>
-          <button class="btn btn-danger" onclick="event.stopPropagation();removeProject(${item.id})">حذف</button>
-        </div>
-      </div>
-      <div class="work-card-body ${isOpen ? 'open' : ''}">
-        <input type="file" accept="image/*" id="file-${item.id}" style="display:none" onchange="handleFile(event,${item.id})"/>
-
-        ${item.image && item.image.startsWith('data:')
-            ? `<div class="img-preview-wrap">
-               <img class="img-preview" src="${item.image}" alt=""/>
-               <div class="img-preview-btns">
-                 <button class="btn btn-ghost btn-sm" onclick="triggerUpload(${item.id})">تغيير الصورة</button>
-                 <button class="btn btn-danger btn-sm" onclick="removeImg(${item.id})">حذف الصورة</button>
-               </div>
-             </div>`
-            : `<div class="upload-zone" onclick="triggerUpload(${item.id})"
-                ondragover="event.preventDefault();this.classList.add('drag')"
-                ondragleave="this.classList.remove('drag')"
-                ondrop="handleDrop(event,${item.id})">
-               <div style="font-size:2rem">🖼️</div>
-               <p>${item.image ? '📁 ' + item.image + ' — ارفع base64 لتبديلها' : 'اضغط أو اسحب صورة'}</p>
-               <small>PNG · JPG · WebP</small>
-             </div>`
-          }
-
-        <div class="grid-2">
-          <div class="form-group"><label>العنوان</label><input value="${esc(item.title)}" oninput="update(${item.id},'title',this.value)"/></div>
-          <div class="form-group"><label>Badge</label><input value="${esc(item.badge)}" oninput="update(${item.id},'badge',this.value)"/></div>
-        </div>
-        <div class="form-group"><label>الوصف</label><textarea rows="3" oninput="update(${item.id},'desc',this.value)">${esc(item.desc)}</textarea></div>
-        <div class="grid-2">
-          <div class="form-group"><label>الرابط</label><input value="${esc(item.link)}" oninput="update(${item.id},'link',this.value)"/></div>
-          <div class="form-group"><label>نص الزرار</label><input value="${esc(item.btnText)}" oninput="update(${item.id},'btnText',this.value)"/></div>
-        </div>
-        <div class="form-group">
-          <label>الـ Chips</label>
-          <div class="chips-wrap">${(item.chips || []).map((c, ci) => `<span class="chip" onclick="removeChip(${item.id},${ci})">${esc(c)} ✕</span>`).join('')}</div>
-          <div class="chip-input-row">
-            <input id="chip-inp-${item.id}" placeholder="اكتب chip واضغط Enter" onkeydown="if(event.key==='Enter')addChip(${item.id})"/>
-            <button class="chip-add-btn" onclick="addChip(${item.id})">+</button>
+          <div class="work-card-header" onclick="toggleCard(${item.id})">
+            <div class="work-card-left">
+              ${thumbHTML}
+              <div class="work-card-info">
+                <strong>${esc(item.title) || 'بدون عنوان'}</strong>
+                <span>${esc(item.badge) || '—'}</span>
+              </div>
+            </div>
+            <div class="work-card-actions">
+              <button class="btn btn-danger" onclick="event.stopPropagation();removeProject(${item.id})">حذف</button>
+            </div>
+            <span class="work-card-chevron">${isOpen ? '▲' : '▼'}</span>
           </div>
-        </div>
-        <div class="link-preview">🔗 الزرار "<strong>${esc(item.btnText)}</strong>" هيروح على: <span>${esc(item.link)}</span></div>
-      </div>`;
+
+          <div class="work-card-body ${isOpen ? 'open' : ''}">
+            <input type="file" accept="image/*" id="file-${item.id}" style="display:none" onchange="handleFile(event,${item.id})"/>
+
+            ${item.image && item.image.startsWith('data:')
+              ? `<div class="img-preview-wrap">
+                   <img class="img-preview" src="${item.image}" alt=""/>
+                   <div class="img-preview-btns">
+                     <button class="btn btn-ghost btn-sm" onclick="triggerUpload(${item.id})">🔄 تغيير الصورة</button>
+                     <button class="btn btn-danger btn-sm" onclick="removeImg(${item.id})">🗑️ حذف</button>
+                   </div>
+                 </div>`
+              : `<div class="upload-zone"
+                      onclick="triggerUpload(${item.id})"
+                      ondragover="event.preventDefault();this.classList.add('drag')"
+                      ondragleave="this.classList.remove('drag')"
+                      ondrop="handleDrop(event,${item.id})">
+                   <div style="font-size:2rem">🖼️</div>
+                   <p>${item.image ? '📁 ' + esc(item.image) + ' — ارفع صورة لتبديلها' : 'اضغط أو اسحب صورة هنا'}</p>
+                   <small>PNG · JPG · WebP — تُحوّل لـ base64 تلقائياً</small>
+                 </div>`
+            }
+
+            <div class="grid-2">
+              <div class="form-group">
+                <label>العنوان</label>
+                <input value="${esc(item.title)}" oninput="update(${item.id},'title',this.value)" placeholder="اسم المشروع"/>
+              </div>
+              <div class="form-group">
+                <label>Badge (تصنيف)</label>
+                <input value="${esc(item.badge)}" oninput="update(${item.id},'badge',this.value)" placeholder="Meta Ads / Product..."/>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>الوصف</label>
+              <textarea rows="3" oninput="update(${item.id},'desc',this.value)" placeholder="وصف قصير للمشروع...">${esc(item.desc)}</textarea>
+            </div>
+
+            <div class="grid-2">
+              <div class="form-group">
+                <label>الرابط</label>
+                <input value="${esc(item.link)}" oninput="update(${item.id},'link',this.value)" placeholder="https://..."/>
+              </div>
+              <div class="form-group">
+                <label>نص الزرار</label>
+                <input value="${esc(item.btnText)}" oninput="update(${item.id},'btnText',this.value)" placeholder="View Project →"/>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>الـ Chips (نتائج / تقنيات)</label>
+              <div class="chips-wrap">
+                ${(item.chips || []).map((c, ci) => `<span class="chip" onclick="removeChip(${item.id},${ci})">${esc(c)} ✕</span>`).join('')}
+              </div>
+              <div class="chip-input-row">
+                <input id="chip-inp-${item.id}" placeholder="مثال: 640+ Conversations" onkeydown="if(event.key==='Enter')addChip(${item.id})"/>
+                <button class="chip-add-btn" onclick="addChip(${item.id})">+</button>
+              </div>
+            </div>
+
+            <div class="link-preview">
+              🔗 الزرار "<strong>${esc(item.btnText || 'View')}</strong>" سيفتح: <span>${esc(item.link || '#')}</span>
+            </div>
+          </div>`;
         g.appendChild(div);
       });
     }
 
-    // ─── CARD ACTIONS ──────────────────────────────────
-    function toggleCard(id) { openCards[id] = !openCards[id]; renderCards(); }
+    /* ─── CARD ACTIONS ────────────────────────────────────── */
+    function toggleCard(id) {
+      openCards[id] = !openCards[id];
+      renderCards();
+    }
 
     function update(id, field, val) {
       const i = PROJECTS.findIndex(p => p.id === id);
-      if (i > -1) { PROJECTS[i][field] = val; }
+      if (i > -1) PROJECTS[i][field] = val;
     }
 
     function removeProject(id) {
@@ -951,40 +663,57 @@
       PROJECTS = PROJECTS.filter(p => p.id !== id);
       delete openCards[id];
       renderCards();
+      showToast('تم الحذف — لا تنسى الحفظ', 'info');
     }
 
     function addProject() {
       const id = Date.now();
-      PROJECTS.push({ id, title: 'مشروع جديد', desc: '', badge: '', chips: [], link: 'https://', btnText: 'View Project →', image: '' });
+      PROJECTS.push({
+        id,
+        title: 'مشروع جديد',
+        desc: '',
+        badge: '',
+        chips: [],
+        link: 'https://',
+        btnText: 'View Project →',
+        image: ''
+      });
       openCards[id] = true;
       renderCards();
-      document.getElementById('pc-' + id)?.scrollIntoView({ behavior: 'smooth' });
+      document.getElementById('pc-' + id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function addChip(id) {
       const inp = document.getElementById('chip-inp-' + id);
       if (!inp || !inp.value.trim()) return;
       const i = PROJECTS.findIndex(p => p.id === id);
-      if (i > -1) { PROJECTS[i].chips = [...(PROJECTS[i].chips || []), inp.value.trim()]; }
+      if (i > -1) PROJECTS[i].chips = [...(PROJECTS[i].chips || []), inp.value.trim()];
       inp.value = '';
       renderCards();
     }
 
     function removeChip(id, ci) {
       const i = PROJECTS.findIndex(p => p.id === id);
-      if (i > -1) { PROJECTS[i].chips.splice(ci, 1); }
+      if (i > -1) PROJECTS[i].chips.splice(ci, 1);
       renderCards();
     }
 
+    /* ─── IMAGE HANDLING ──────────────────────────────────── */
     function triggerUpload(id) { document.getElementById('file-' + id)?.click(); }
     function handleFile(e, id) { const f = e.target.files[0]; if (f) processImage(f, id); }
-    function handleDrop(e, id) { e.preventDefault(); e.currentTarget.classList.remove('drag'); const f = e.dataTransfer.files[0]; if (f) processImage(f, id); }
+    function handleDrop(e, id) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('drag');
+      const f = e.dataTransfer.files[0];
+      if (f) processImage(f, id);
+    }
     function processImage(file, id) {
-      if (!file.type.startsWith('image/')) { showToast('الملف ده مش صورة', 'error'); return; }
+      if (!file.type.startsWith('image/')) { showToast('الملف ليس صورة', 'error'); return; }
+      if (file.size > 4 * 1024 * 1024) { showToast('الصورة أكبر من 4MB — يُفضل ضغطها أولاً', 'error'); return; }
       const reader = new FileReader();
       reader.onload = ev => {
         const i = PROJECTS.findIndex(p => p.id === id);
-        if (i > -1) { PROJECTS[i].image = ev.target.result; }
+        if (i > -1) PROJECTS[i].image = ev.target.result;
         renderCards();
         showToast('✓ تم رفع الصورة — لا تنسى الحفظ', 'info');
       };
@@ -992,10 +721,9 @@
     }
     function removeImg(id) {
       const i = PROJECTS.findIndex(p => p.id === id);
-      if (i > -1) { PROJECTS[i].image = ''; }
+      if (i > -1) PROJECTS[i].image = '';
       renderCards();
     }
   </script>
 </body>
-
 </html>
