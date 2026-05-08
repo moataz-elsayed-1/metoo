@@ -3,305 +3,865 @@
 
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="favicon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard — Moataz ElSayed</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    /* ─── TOKENS ────────────────────────────────────────── */
     :root {
-      --bg: #0a0a18;
-      --bg-card: #12122a;
-      --bg-raised: #1a1a35;
+      --bg: #07071a;
+      --bg-card: #0e0e28;
+      --bg-raised: #14143a;
       --purple: #7a63ff;
-      --purple-light: #9d8fff;
-      --purple-dim: rgba(122, 99, 255, .12);
-      --white: #fff;
-      --gray: #ccc;
-      --gray-dim: #888899;
-      --border: rgba(122, 99, 255, .18);
+      --purple-l: #a593ff;
+      --purple-dim: rgba(122, 99, 255, .10);
+      --border: rgba(122, 99, 255, .20);
       --border-card: rgba(255, 255, 255, .06);
-      --radius: 12px;
-      --radius-sm: 8px;
+      --white: #fff;
+      --gray-1: #e4e4f0;
+      --gray-2: #a8a8c0;
+      --gray-3: #56566e;
       --green: #4ade80;
       --red: #f87171;
+      --r: 12px;
+      --rsm: 8px;
       --font: 'Inter', sans-serif;
     }
 
-    /* ─── RESET ─────────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: var(--font); background: var(--bg); color: var(--white); min-height: 100vh; direction: rtl; }
-    a { color: inherit; text-decoration: none; }
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 3px; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    /* ─── TOAST ─────────────────────────────────────────── */
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--white);
+      min-height: 100vh;
+      direction: rtl;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font-family: var(--font);
+    }
+
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--purple);
+      border-radius: 2px;
+    }
+
+    /* ── TOAST ──────────────────────────────────── */
     #toast {
       position: fixed;
-      top: 1.5rem; left: 50%;
+      top: 1.25rem;
+      left: 50%;
       transform: translateX(-50%);
-      z-index: 9998;
-      padding: .75rem 1.5rem;
+      z-index: 9999;
+      padding: .7rem 1.4rem;
       border-radius: 100px;
-      font-size: .85rem;
+      font-size: .82rem;
       font-weight: 600;
       display: none;
       white-space: nowrap;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, .4);
     }
-    #toast.success { background: #166534; color: #bbf7d0; border: 1px solid #4ade80; }
-    #toast.error   { background: #7f1d1d; color: #fecaca; border: 1px solid #f87171; }
-    #toast.info    { background: var(--bg-raised); color: var(--purple-light); border: 1px solid var(--border); }
 
-    /* ─── LOCK SCREEN ────────────────────────────────────── */
+    #toast.success {
+      background: #14532d;
+      color: #bbf7d0;
+      border: 1px solid #4ade80;
+    }
+
+    #toast.error {
+      background: #7f1d1d;
+      color: #fecaca;
+      border: 1px solid #f87171;
+    }
+
+    #toast.info {
+      background: var(--bg-raised);
+      color: var(--purple-l);
+      border: 1px solid var(--border);
+    }
+
+    /* ── LOCK SCREEN ────────────────────────────── */
     #lockScreen {
-      position: fixed; inset: 0;
+      position: fixed;
+      inset: 0;
       background: var(--bg);
-      z-index: 9999;
-      display: flex; align-items: center; justify-content: center;
+      z-index: 9000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       padding: 2rem;
     }
+
+    #lockScreen::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(122, 99, 255, .12) 1px, transparent 1px);
+      background-size: 34px 34px;
+      mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 40%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 40%, transparent 100%);
+    }
+
     .lock-box {
+      position: relative;
+      z-index: 1;
       background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 2.5rem;
-      width: 100%; max-width: 420px;
+      border-radius: 20px;
+      padding: 2.75rem 2.5rem;
+      width: 100%;
+      max-width: 420px;
       text-align: center;
+      box-shadow: 0 40px 80px rgba(0, 0, 0, .5), 0 0 0 1px var(--border-card);
     }
-    .lock-logo { font-size: 2rem; font-weight: 800; margin-bottom: .5rem; }
-    .lock-logo span { color: var(--purple); }
-    .lock-subtitle { font-size: .85rem; color: var(--gray-dim); margin-bottom: 2rem; }
-    .lock-field { margin-bottom: 1rem; text-align: right; }
-    .lock-field label { display: block; font-size: .75rem; color: var(--gray-dim); margin-bottom: .4rem; }
+
+    .lock-logo {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: .4rem;
+      letter-spacing: -.02em;
+    }
+
+    .lock-logo span {
+      color: var(--purple);
+    }
+
+    .lock-sub {
+      font-size: .82rem;
+      color: var(--gray-3);
+      margin-bottom: 2rem;
+    }
+
+    .lock-field {
+      margin-bottom: .85rem;
+      text-align: right;
+    }
+
+    .lock-field label {
+      display: block;
+      font-size: .7rem;
+      font-weight: 600;
+      color: var(--gray-3);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-bottom: .4rem;
+    }
+
     .lock-field input {
-      width: 100%; padding: .75rem 1rem;
+      width: 100%;
+      padding: .78rem 1rem;
       background: var(--bg-raised);
       border: 1px solid var(--border-card);
-      border-radius: var(--radius-sm);
-      color: var(--white); font-size: .9rem; outline: none; font-family: var(--font);
+      border-radius: var(--rsm);
+      color: var(--white);
+      font-size: .9rem;
+      outline: none;
+      font-family: var(--font);
       transition: border-color .2s;
+      direction: ltr;
+      text-align: left;
     }
-    .lock-field input:focus { border-color: var(--purple); }
+
+    .lock-field input:focus {
+      border-color: var(--purple);
+    }
+
     .lock-btn {
-      width: 100%; padding: .85rem;
-      background: var(--purple); color: var(--white);
-      border: none; border-radius: 100px;
-      font-size: .9rem; font-weight: 700; cursor: pointer; margin-top: .5rem;
-      transition: background .2s;
+      width: 100%;
+      padding: .88rem;
+      margin-top: .5rem;
+      background: linear-gradient(135deg, var(--purple), #5a46e8);
+      color: var(--white);
+      border: none;
+      border-radius: 100px;
+      font-size: .9rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 0 28px rgba(122, 99, 255, .4);
+      transition: all .2s;
     }
-    .lock-btn:hover { background: var(--purple-light); }
-    .lock-note { font-size: .72rem; color: var(--gray-dim); margin-top: 1rem; line-height: 1.8; }
 
-    /* ─── APP LAYOUT ─────────────────────────────────────── */
-    .app { display: grid; grid-template-columns: 230px 1fr; min-height: 100vh; }
+    .lock-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 40px rgba(122, 99, 255, .6);
+    }
 
-    /* ─── SIDEBAR ────────────────────────────────────────── */
+    .lock-note {
+      font-size: .7rem;
+      color: var(--gray-3);
+      margin-top: 1.25rem;
+      line-height: 1.85;
+    }
+
+    .lock-note strong {
+      color: var(--purple-l);
+    }
+
+    /* ── APP SHELL ──────────────────────────────── */
+    .app {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ── SIDEBAR ────────────────────────────────── */
     .sidebar {
       background: var(--bg-card);
       border-left: 1px solid var(--border-card);
-      padding: 1.5rem 0;
-      display: flex; flex-direction: column;
-      position: sticky; top: 0; height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
       overflow-y: auto;
     }
-    .sidebar-logo { padding: .5rem 1.5rem 1.5rem; font-size: 1rem; font-weight: 800; border-bottom: 1px solid var(--border-card); margin-bottom: 1rem; }
-    .sidebar-logo span { color: var(--purple); }
-    .sidebar-badge {
-      display: inline-block; font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
-      background: var(--purple-dim); color: var(--purple-light); border: 1px solid var(--border);
-      padding: .2rem .6rem; border-radius: 100px; margin-top: .3rem;
-    }
-    .sidebar-section { padding: 1rem 1.5rem 0; }
-    .sidebar-section-title { font-size: .65rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--gray-dim); margin-bottom: .75rem; }
-    .sidebar-info {
-      font-size: .78rem; color: var(--purple-light);
-      background: var(--purple-dim); border: 1px solid var(--border);
-      border-radius: var(--radius-sm); padding: .5rem .75rem; font-family: monospace;
-    }
-    .sidebar-bottom { margin-top: auto; padding: 1rem 1.5rem; border-top: 1px solid var(--border-card); }
-    .status-row { display: flex; align-items: center; gap: .5rem; font-size: .72rem; color: var(--gray-dim); margin-bottom: .5rem; }
-    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
-    @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(74,222,128,.4); } 50% { box-shadow: 0 0 0 6px rgba(74,222,128,0); } }
-    .sidebar-repo { font-size: .7rem; color: var(--gray-dim); opacity: .6; margin-bottom: .75rem; }
 
-    /* ─── MAIN ───────────────────────────────────────────── */
-    .main { padding: 2rem; overflow-y: auto; max-height: 100vh; }
-    .main-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
-    .main-title { font-size: 1.3rem; font-weight: 800; }
-    .main-title span { color: var(--purple); }
-
-    .info-banner {
-      font-size: .82rem; color: var(--gray-dim);
-      background: var(--bg-card); border: 1px solid var(--border-card);
-      border-radius: var(--radius-sm); padding: .75rem 1rem; line-height: 1.7;
-      margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: .5rem;
+    .sb-logo {
+      padding: 1.5rem;
+      font-size: 1rem;
+      font-weight: 800;
+      border-bottom: 1px solid var(--border-card);
+      letter-spacing: -.01em;
     }
-    .info-banner strong { color: var(--purple-light); }
 
-    /* ─── DEPLOY LOG ─────────────────────────────────────── */
-    .deploy-log {
-      background: var(--bg-raised); border: 1px solid var(--border-card);
-      border-radius: var(--radius-sm); padding: .75rem 1rem;
-      font-family: monospace; font-size: .75rem; color: var(--gray-dim);
-      max-height: 130px; overflow-y: auto; margin-bottom: 1.5rem; display: none;
+    .sb-logo span {
+      color: var(--purple);
     }
-    .deploy-log.open { display: block; }
-    .log-line { padding: .1rem 0; line-height: 1.5; }
-    .log-line.ok   { color: var(--green); }
-    .log-line.err  { color: var(--red); }
-    .log-line.info { color: var(--purple-light); }
 
-    /* ─── BUTTONS ────────────────────────────────────────── */
-    .btn {
-      display: inline-flex; align-items: center; gap: .4rem;
-      padding: .55rem 1.1rem; border-radius: 100px; font-size: .8rem; font-weight: 600;
-      cursor: pointer; border: none; font-family: var(--font); transition: all .2s;
+    .sb-badge {
+      display: inline-block;
+      font-size: .58rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      background: var(--purple-dim);
+      color: var(--purple-l);
+      border: 1px solid var(--border);
+      padding: .18rem .6rem;
+      border-radius: 100px;
+      margin-top: .3rem;
     }
-    .btn-purple { background: var(--purple); color: var(--white); }
-    .btn-purple:hover { background: var(--purple-light); }
-    .btn-ghost { background: transparent; color: var(--gray); border: 1px solid var(--border-card); }
-    .btn-ghost:hover { border-color: var(--purple); color: var(--purple-light); }
-    .btn-danger { background: transparent; color: var(--red); border: 1px solid rgba(248,113,113,.3); font-size: .75rem; padding: .4rem .8rem; }
-    .btn-danger:hover { background: rgba(248,113,113,.1); }
-    .btn-sm { padding: .4rem .8rem; font-size: .75rem; }
 
-    .deploy-btn {
-      display: inline-flex; align-items: center; gap: .5rem;
-      padding: .7rem 1.4rem; background: var(--purple); color: var(--white);
-      border: none; border-radius: 100px; font-size: .85rem; font-weight: 700;
-      cursor: pointer; font-family: var(--font); transition: all .2s;
+    .sb-section {
+      padding: 1.25rem 1.5rem 0;
     }
-    .deploy-btn:hover { background: var(--purple-light); }
-    .deploy-btn:disabled { opacity: .5; cursor: not-allowed; }
 
-    /* ─── PROJECTS TOOLBAR ───────────────────────────────── */
-    .projects-toolbar {
-      display: flex; justify-content: space-between; align-items: center;
-      flex-wrap: wrap; gap: .75rem; margin-bottom: 1.25rem;
+    .sb-section-title {
+      font-size: .62rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--gray-3);
+      margin-bottom: .65rem;
     }
-    .projects-count { font-size: .82rem; color: var(--gray-dim); }
-    .projects-count span { color: var(--purple-light); font-weight: 600; }
 
-    /* ─── WORK CARDS ─────────────────────────────────────── */
-    .work-card {
+    .sb-info {
+      font-size: .78rem;
+      color: var(--purple-l);
+      background: var(--purple-dim);
+      border: 1px solid var(--border);
+      border-radius: var(--rsm);
+      padding: .5rem .8rem;
+      font-family: monospace;
+    }
+
+    .sb-link {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      font-size: .78rem;
+      color: var(--purple-l);
+      margin-top: .6rem;
+      transition: color .2s;
+    }
+
+    .sb-link:hover {
+      color: var(--white);
+    }
+
+    .sb-bottom {
+      margin-top: auto;
+      padding: 1.25rem 1.5rem;
+      border-top: 1px solid var(--border-card);
+    }
+
+    .sb-status {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: .72rem;
+      color: var(--gray-3);
+      margin-bottom: .4rem;
+    }
+
+    .dot-green {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(74, 222, 128, .4);
+      }
+
+      50% {
+        box-shadow: 0 0 0 5px rgba(74, 222, 128, 0);
+      }
+    }
+
+    .sb-repo {
+      font-size: .68rem;
+      color: var(--gray-3);
+      opacity: .5;
+      margin-bottom: .85rem;
+      font-family: monospace;
+    }
+
+    /* ── MAIN AREA ──────────────────────────────── */
+    .main {
+      padding: 2rem;
+      overflow-y: auto;
+      max-height: 100vh;
+    }
+
+    .main-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .main-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+    }
+
+    .main-title span {
+      color: var(--purple);
+    }
+
+    .info-box {
+      display: flex;
+      align-items: flex-start;
+      gap: .6rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--rsm);
+      padding: .8rem 1rem;
+      font-size: .8rem;
+      color: var(--gray-3);
+      line-height: 1.7;
+      margin-bottom: 1.4rem;
+    }
+
+    .info-box strong {
+      color: var(--purple-l);
+    }
+
+    /* ── LOG ────────────────────────────────────── */
+    .log-box {
       background: var(--bg-raised);
       border: 1px solid var(--border-card);
-      border-radius: var(--radius-sm);
+      border-radius: var(--rsm);
+      padding: .7rem 1rem;
+      font-family: monospace;
+      font-size: .73rem;
+      color: var(--gray-3);
+      max-height: 120px;
+      overflow-y: auto;
+      margin-bottom: 1.4rem;
+      display: none;
+    }
+
+    .log-box.open {
+      display: block;
+    }
+
+    .log-line {
+      padding: .1rem 0;
+      line-height: 1.5;
+    }
+
+    .log-line.ok {
+      color: var(--green);
+    }
+
+    .log-line.err {
+      color: var(--red);
+    }
+
+    .log-line.info {
+      color: var(--purple-l);
+    }
+
+    /* ── BUTTONS ────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .52rem 1.1rem;
+      border-radius: 100px;
+      border: none;
+      font-size: .78rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: all .2s;
+    }
+
+    .btn-purple {
+      background: var(--purple);
+      color: var(--white);
+    }
+
+    .btn-purple:hover {
+      background: var(--purple-l);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--gray-2);
+      border: 1px solid var(--border-card);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--purple);
+      color: var(--purple-l);
+    }
+
+    .btn-danger {
+      background: transparent;
+      color: var(--red);
+      border: 1px solid rgba(248, 113, 113, .25);
+      font-size: .73rem;
+      padding: .38rem .75rem;
+    }
+
+    .btn-danger:hover {
+      background: rgba(248, 113, 113, .08);
+    }
+
+    .btn-sm {
+      padding: .38rem .78rem;
+      font-size: .73rem;
+    }
+
+    .save-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .72rem 1.5rem;
+      background: linear-gradient(135deg, var(--purple), #5a46e8);
+      color: var(--white);
+      border: none;
+      border-radius: 100px;
+      font-size: .85rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--font);
+      box-shadow: 0 0 24px rgba(122, 99, 255, .35);
+      transition: all .2s;
+    }
+
+    .save-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 36px rgba(122, 99, 255, .55);
+    }
+
+    .save-btn:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ── TOOLBAR ────────────────────────────────── */
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: .75rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .count-badge {
+      font-size: .8rem;
+      color: var(--gray-3);
+    }
+
+    .count-badge span {
+      color: var(--purple-l);
+      font-weight: 700;
+    }
+
+    /* ── EMPTY STATE ────────────────────────────── */
+    .empty {
+      text-align: center;
+      padding: 3.5rem 2rem;
+      background: var(--bg-card);
+      border: 1px dashed var(--border-card);
+      border-radius: var(--r);
+      color: var(--gray-3);
+    }
+
+    .empty .ei {
+      font-size: 2.5rem;
+      margin-bottom: .85rem;
+      opacity: .5;
+    }
+
+    .empty p {
+      font-size: .85rem;
+      margin-bottom: 1.25rem;
+    }
+
+    /* ── PROJECT CARD ───────────────────────────── */
+    .proj-card {
+      background: var(--bg-raised);
+      border: 1px solid var(--border-card);
+      border-radius: var(--r);
       margin-bottom: .75rem;
       overflow: hidden;
       transition: border-color .2s;
     }
-    .work-card:hover { border-color: var(--border); }
 
-    .work-card-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: .9rem 1.1rem; cursor: pointer;
+    .proj-card:hover {
+      border-color: var(--border);
+    }
+
+    .proj-head {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .9rem 1.1rem;
+      cursor: pointer;
       transition: background .2s;
     }
-    .work-card-header:hover { background: rgba(122,99,255,.06); }
 
-    .work-card-left { display: flex; align-items: center; gap: .75rem; flex: 1; min-width: 0; }
-    .work-card-thumb { width: 56px; height: 38px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border-card); flex-shrink: 0; }
-    .work-card-thumb-placeholder {
-      width: 56px; height: 38px; border-radius: 6px;
-      background: var(--bg-card); border: 1px solid var(--border-card);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem; flex-shrink: 0;
+    .proj-head:hover {
+      background: rgba(122, 99, 255, .05);
     }
-    .work-card-info { min-width: 0; }
-    .work-card-info strong { font-size: .875rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .work-card-info span { font-size: .72rem; color: var(--gray-dim); }
 
-    .work-card-actions { display: flex; gap: .5rem; align-items: center; flex-shrink: 0; margin-right: .75rem; }
-    .work-card-chevron { font-size: .7rem; color: var(--gray-dim); flex-shrink: 0; }
-
-    .work-card-body { padding: 1.25rem; border-top: 1px solid var(--border-card); display: none; }
-    .work-card-body.open { display: block; }
-
-    /* ─── FORM ───────────────────────────────────────────── */
-    .form-group { margin-bottom: 1rem; }
-    .form-group label {
-      display: block; font-size: .72rem; font-weight: 600;
-      color: var(--gray-dim); letter-spacing: .08em; text-transform: uppercase; margin-bottom: .4rem;
+    .proj-thumb-wrap {
+      flex-shrink: 0;
     }
-    .form-group input,
-    .form-group textarea {
-      width: 100%; padding: .75rem 1rem;
-      background: var(--bg-card); border: 1px solid var(--border-card);
-      border-radius: var(--radius-sm); color: var(--white);
-      font-size: .9rem; outline: none; font-family: var(--font);
+
+    .proj-thumb {
+      width: 58px;
+      height: 40px;
+      border-radius: 6px;
+      object-fit: cover;
+      border: 1px solid var(--border-card);
+      display: block;
+    }
+
+    .proj-thumb-ph {
+      width: 58px;
+      height: 40px;
+      border-radius: 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .proj-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .proj-info strong {
+      display: block;
+      font-size: .85rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .proj-info span {
+      font-size: .7rem;
+      color: var(--gray-3);
+    }
+
+    .proj-actions {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      flex-shrink: 0;
+    }
+
+    .proj-chevron {
+      font-size: .65rem;
+      color: var(--gray-3);
+      transition: transform .2s;
+    }
+
+    .proj-chevron.open {
+      transform: rotate(180deg);
+    }
+
+    /* ── CARD BODY (EDITOR) ─────────────────────── */
+    .proj-body {
+      padding: 1.25rem;
+      border-top: 1px solid var(--border-card);
+      display: none;
+    }
+
+    .proj-body.open {
+      display: block;
+    }
+
+    /* ── FORM ELEMENTS ──────────────────────────── */
+    .fg {
+      margin-bottom: .9rem;
+    }
+
+    .fg label {
+      display: block;
+      font-size: .68rem;
+      font-weight: 700;
+      color: var(--gray-3);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-bottom: .38rem;
+    }
+
+    .fg input,
+    .fg textarea {
+      width: 100%;
+      padding: .72rem 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--rsm);
+      color: var(--white);
+      font-size: .88rem;
+      outline: none;
+      font-family: var(--font);
       transition: border-color .2s;
     }
-    .form-group input:focus,
-    .form-group textarea:focus { border-color: var(--purple); }
-    .form-group textarea { resize: vertical; min-height: 80px; }
 
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .fg input:focus,
+    .fg textarea:focus {
+      border-color: var(--purple);
+    }
 
-    /* ─── CHIPS ──────────────────────────────────────────── */
-    .chips-wrap { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
+    .fg textarea {
+      resize: vertical;
+      min-height: 75px;
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    /* ── CHIPS ──────────────────────────────────── */
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      margin-top: .45rem;
+    }
+
     .chip {
-      font-size: .72rem; font-weight: 600;
-      color: var(--purple-light); background: var(--purple-dim);
-      border: 1px solid var(--border); padding: .25rem .7rem;
-      border-radius: 100px; cursor: pointer; transition: background .2s;
+      font-size: .68rem;
+      font-weight: 600;
+      color: var(--purple-l);
+      background: var(--purple-dim);
+      border: 1px solid var(--border);
+      padding: .22rem .65rem;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: background .15s;
     }
-    .chip:hover { background: rgba(122,99,255,.3); }
-    .chip-input-row { display: flex; gap: .5rem; margin-top: .5rem; }
-    .chip-input-row input {
-      flex: 1; padding: .5rem .75rem;
-      background: var(--bg-card); border: 1px solid var(--border-card);
-      border-radius: var(--radius-sm); color: var(--white);
-      font-size: .82rem; outline: none; font-family: var(--font);
+
+    .chip:hover {
+      background: rgba(122, 99, 255, .28);
+    }
+
+    .chip-row {
+      display: flex;
+      gap: .45rem;
+      margin-top: .45rem;
+    }
+
+    .chip-row input {
+      flex: 1;
+      padding: .48rem .75rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--rsm);
+      color: var(--white);
+      font-size: .8rem;
+      outline: none;
+      font-family: var(--font);
       transition: border-color .2s;
     }
-    .chip-input-row input:focus { border-color: var(--purple); }
-    .chip-add-btn {
-      padding: .5rem .9rem;
-      background: var(--purple-dim); border: 1px solid var(--border);
-      border-radius: var(--radius-sm); color: var(--purple-light);
-      font-size: .82rem; cursor: pointer; font-weight: 700;
-    }
-    .chip-add-btn:hover { background: var(--purple); color: var(--white); }
 
-    /* ─── IMAGE UPLOAD ───────────────────────────────────── */
+    .chip-row input:focus {
+      border-color: var(--purple);
+    }
+
+    .chip-add {
+      padding: .48rem .9rem;
+      background: var(--purple-dim);
+      border: 1px solid var(--border);
+      border-radius: var(--rsm);
+      color: var(--purple-l);
+      font-size: .82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .chip-add:hover {
+      background: var(--purple);
+      color: var(--white);
+    }
+
+    /* ── IMAGE UPLOAD ───────────────────────────── */
     .upload-zone {
-      border: 1.5px dashed var(--border); border-radius: var(--radius-sm);
-      padding: 1.5rem; text-align: center; cursor: pointer;
-      transition: all .2s; background: var(--bg-card); margin-bottom: .75rem;
+      border: 1.5px dashed var(--border);
+      border-radius: var(--rsm);
+      padding: 1.4rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      background: var(--bg-card);
+      margin-bottom: .65rem;
     }
-    .upload-zone:hover, .upload-zone.drag { border-color: var(--purple); background: var(--purple-dim); }
-    .upload-zone p { font-size: .8rem; color: var(--gray-dim); margin-top: .5rem; }
-    .upload-zone small { font-size: .7rem; color: var(--gray-dim); opacity: .6; }
 
-    .img-preview-wrap { margin-bottom: .75rem; }
-    .img-preview { width: 100%; height: 150px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border-card); display: block; }
-    .img-preview-btns { display: flex; gap: .5rem; margin-top: .5rem; }
-
-    /* ─── LINK PREVIEW ───────────────────────────────────── */
-    .link-preview {
-      font-size: .72rem; color: var(--gray-dim);
-      background: var(--bg-card); padding: .4rem .75rem;
-      border-radius: var(--radius-sm); margin-top: .5rem; border: 1px solid var(--border-card);
+    .upload-zone:hover,
+    .upload-zone.drag {
+      border-color: var(--purple);
+      background: var(--purple-dim);
     }
-    .link-preview span { color: var(--purple-light); }
 
-    /* ─── EMPTY STATE ────────────────────────────────────── */
-    .empty-state {
-      text-align: center; padding: 3rem; color: var(--gray-dim);
-      background: var(--bg-card); border: 1px dashed var(--border-card);
-      border-radius: var(--radius); margin-bottom: 1rem;
+    .upload-zone p {
+      font-size: .78rem;
+      color: var(--gray-3);
+      margin-top: .4rem;
     }
-    .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 1rem; }
-    .empty-state p { font-size: .875rem; margin-bottom: 1.25rem; }
 
-    /* ─── RESPONSIVE ─────────────────────────────────────── */
-    @media (max-width: 768px) {
-      .app { grid-template-columns: 1fr; }
-      .sidebar { display: none; }
-      .grid-2 { grid-template-columns: 1fr; }
-      .main { padding: 1.25rem; }
+    .upload-zone small {
+      font-size: .68rem;
+      color: var(--gray-3);
+      opacity: .55;
+    }
+
+    .img-prev-wrap {
+      margin-bottom: .65rem;
+    }
+
+    .img-prev {
+      width: 100%;
+      height: 145px;
+      object-fit: cover;
+      border-radius: var(--rsm);
+      border: 1px solid var(--border-card);
+      display: block;
+    }
+
+    .img-prev-btns {
+      display: flex;
+      gap: .45rem;
+      margin-top: .45rem;
+    }
+
+    /* ── LINK PREVIEW ───────────────────────────── */
+    .link-prev {
+      font-size: .7rem;
+      color: var(--gray-3);
+      background: var(--bg-card);
+      padding: .38rem .75rem;
+      border-radius: var(--rsm);
+      margin-top: .5rem;
+      border: 1px solid var(--border-card);
+    }
+
+    .link-prev span {
+      color: var(--purple-l);
+    }
+
+    /* ── DRAG HANDLE ────────────────────────────── */
+    .drag-handle {
+      cursor: grab;
+      color: var(--gray-3);
+      font-size: 1rem;
+      padding: 0 .25rem;
+      flex-shrink: 0;
+    }
+
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .proj-card.drag-over {
+      border-color: var(--purple);
+      background: rgba(122, 99, 255, .04);
+    }
+
+    /* ── SECTION DIVIDER ────────────────────────── */
+    .section-div {
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--gray-3);
+      padding: .5rem 0;
+      margin-bottom: .5rem;
+      border-bottom: 1px solid var(--border-card);
+    }
+
+    @media(max-width:768px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .grid2 {
+        grid-template-columns: 1fr;
+      }
+
+      .main {
+        padding: 1.1rem;
+      }
     }
   </style>
 </head>
@@ -310,352 +870,484 @@
 
   <div id="toast"></div>
 
-  <!-- ─── LOCK SCREEN ──────────────────────────────────────── -->
+  <!-- ═══════════════════════════════════════
+     LOCK SCREEN
+     ═══════════════════════════════════════ -->
   <div id="lockScreen">
     <div class="lock-box">
       <div class="lock-logo">M<span>.</span>ElSayed</div>
-      <p class="lock-subtitle">Projects Dashboard — Admin</p>
+      <p class="lock-sub">Projects Dashboard — Admin</p>
+
       <div class="lock-field">
         <label>GitHub Token</label>
-        <input type="password" id="tokenInput" placeholder="ghp_..." autocomplete="off" />
+        <input type="password" id="tokenInput" placeholder="github_pat_…" autocomplete="off" />
       </div>
+
       <button class="lock-btn" onclick="unlock()">دخول ←</button>
+
       <p class="lock-note">
-        التوكن بيتحفظ في المتصفح فقط — لا يُرسل لأي خادم.<br />
-        Repo: <strong>moataz-elsayed-1 / metoo</strong><br />
-        الداشبورد بيعدل على <strong>projects.json</strong> فقط 🎯
+        التوكن بيتحفظ في المتصفح فقط — مش بيتبعت لأي سيرفر.<br />
+        Repo: <strong>moataz-elsayed-1 / metoo</strong> (private)<br />
+        الداشبورد بيعدل على <strong>projects.json</strong> فقط.
       </p>
     </div>
   </div>
 
-  <!-- ─── MAIN APP ──────────────────────────────────────────── -->
+  <!-- ═══════════════════════════════════════
+     MAIN APP
+     ═══════════════════════════════════════ -->
   <div class="app" id="mainApp" style="display:none">
 
-    <!-- Sidebar -->
+    <!-- ── SIDEBAR ─────────────────────────────────── -->
     <aside class="sidebar">
-      <div class="sidebar-logo">
+      <div class="sb-logo">
         M<span>.</span>ElSayed
-        <div><span class="sidebar-badge">Admin</span></div>
+        <div><span class="sb-badge">Admin</span></div>
       </div>
 
-      <div class="sidebar-section">
-        <div class="sidebar-section-title">ملف البيانات</div>
-        <div class="sidebar-info">projects.json</div>
+      <div class="sb-section">
+        <div class="sb-section-title">ملف البيانات</div>
+        <div class="sb-info">projects.json</div>
       </div>
 
-      <div class="sidebar-section" style="margin-top:1.5rem;">
-        <div class="sidebar-section-title">الموقع</div>
-        <a href="/" target="_blank" style="font-size:.78rem; color: var(--purple-light); display:flex; align-items:center; gap:.4rem;">
-          🌐 عرض الموقع
-          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      <div class="sb-section" style="margin-top:1.25rem">
+        <div class="sb-section-title">الريبو</div>
+        <div class="sb-info">moataz-elsayed-1 / metoo</div>
+        <a href="/" target="_blank" class="sb-link" style="margin-top:.65rem">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            <polyline points="15 3 21 3 21 9" />
+            <line x1="10" y1="14" x2="21" y2="3" />
+          </svg>
+          عرض الموقع
         </a>
       </div>
 
-      <div class="sidebar-bottom">
-        <div class="status-row">
-          <span class="status-dot"></span>
-          متصل بـ GitHub
+      <div class="sb-section" style="margin-top:1.25rem">
+        <div class="sb-section-title">إحصائيات</div>
+        <div style="font-size:.8rem;color:var(--gray-2);margin-top:.3rem">
+          المشاريع: <span id="sbCount" style="color:var(--purple-l);font-weight:700">0</span>
         </div>
-        <div class="sidebar-repo">moataz-elsayed-1/metoo</div>
-        <button class="btn btn-ghost btn-sm" onclick="logout()" style="width:100%;justify-content:center">تسجيل خروج</button>
+      </div>
+
+      <div class="sb-bottom">
+        <div class="sb-status"><span class="dot-green"></span>متصل بـ GitHub</div>
+        <div class="sb-repo">moataz-elsayed-1/metoo</div>
+        <button class="btn btn-ghost btn-sm" onclick="logout()" style="width:100%;justify-content:center">تسجيل
+          خروج</button>
       </div>
     </aside>
 
-    <!-- Main Content -->
+    <!-- ── MAIN ────────────────────────────────────── -->
     <main class="main">
+
       <div class="main-header">
         <div class="main-title">مشاريع <span>My Work</span></div>
-        <button class="deploy-btn" id="deployBtn" onclick="saveToGitHub()">
-          💾 حفظ على GitHub
+        <button class="save-btn" id="saveBtn" onclick="saveToGitHub()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" stroke="currentColor"
+            stroke-width="2.2" viewBox="0 0 24 24">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+            <polyline points="17 21 17 13 7 13 7 21" />
+            <polyline points="7 3 7 8 15 8" />
+          </svg>
+          حفظ على GitHub
         </button>
       </div>
 
-      <div class="info-banner">
+      <div class="info-box">
         <span>✅</span>
-        <div>الداشبورد يعدل على <strong>projects.json</strong> فقط — الموقع يقرأ المشاريع تلقائياً بدون deploy. الصور المرفوعة تُحوّل لـ base64 وتُحفظ داخل الـ JSON.</div>
+        <div>الداشبورد يعدل على <strong>projects.json</strong> مباشرةً — الموقع يقرأ المشاريع تلقائياً بدون deploy.
+          الصور تتحول لـ <strong>base64</strong> وتتحفظ جوّا الـ JSON.</div>
       </div>
 
-      <div class="deploy-log" id="deployLog"></div>
+      <div class="log-box" id="logBox"></div>
 
-      <div class="projects-toolbar">
-        <div class="projects-count">المشاريع: <span id="projectCount">0</span></div>
-        <button class="btn btn-purple" onclick="addProject()">+ مشروع جديد</button>
+      <div class="toolbar">
+        <div class="count-badge">المشاريع: <span id="projCount">0</span></div>
+        <button class="btn btn-purple" onclick="addProject()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" stroke="currentColor"
+            stroke-width="2.5" viewBox="0 0 24 24">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          مشروع جديد
+        </button>
       </div>
 
-      <div id="projectCards"></div>
+      <div id="projCards"></div>
+
     </main>
   </div>
 
+  <!-- ═══════════════════════════════════════
+     SCRIPTS
+     ═══════════════════════════════════════ -->
   <script>
-    /* ─── CONFIG ──────────────────────────────────────────── */
+    /* ── CONFIG ───────────────────────────────────────────────── */
     const OWNER = 'moataz-elsayed-1';
-    const REPO  = 'metoo';
-    const FILE  = 'projects.json';
+    const REPO = 'metoo';
+    const FILE = 'projects.json';
 
-    let PROJECTS  = [];
+    let PROJECTS = [];
     let openCards = {};
-    let TOKEN     = '';
+    let TOKEN = '';
+    let dragSrcId = null;
 
-    /* ─── HELPERS ─────────────────────────────────────────── */
+    /* ── HELPERS ──────────────────────────────────────────────── */
     function esc(s) {
-      return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
-    /* ─── TOAST ───────────────────────────────────────────── */
-    let toastTimer;
-    function showToast(msg, type = 'info') {
-      const t = document.getElementById('toast');
-      t.textContent = msg; t.className = type; t.style.display = 'block';
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => { t.style.display = 'none'; }, 3500);
+    /* Decode base64 content from GitHub API (UTF-8 safe) */
+    function decodeContent(b64) {
+      const bin = atob(b64.replace(/\s/g, ''));
+      const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+      return new TextDecoder('utf-8').decode(bytes);
     }
 
-    /* ─── LOG ─────────────────────────────────────────────── */
+    /* Encode JSON to base64 (UTF-8 safe) for GitHub API */
+    function encodeContent(str) {
+      const bytes = new TextEncoder().encode(str);
+      let bin = '';
+      bytes.forEach(b => bin += String.fromCharCode(b));
+      return btoa(bin);
+    }
+
+    /* ── TOAST ────────────────────────────────────────────────── */
+    let _tt;
+    function toast(msg, type = 'info') {
+      const el = document.getElementById('toast');
+      el.textContent = msg; el.className = type; el.style.display = 'block';
+      clearTimeout(_tt); _tt = setTimeout(() => { el.style.display = 'none'; }, 3600);
+    }
+
+    /* ── LOG ──────────────────────────────────────────────────── */
     function log(msg, type = 'info') {
-      const el = document.getElementById('deployLog');
-      el.classList.add('open');
+      const box = document.getElementById('logBox');
+      box.classList.add('open');
       const line = document.createElement('div');
       line.className = 'log-line ' + type;
-      line.textContent = '[' + new Date().toLocaleTimeString('ar') + '] ' + msg;
-      el.appendChild(line);
-      el.scrollTop = el.scrollHeight;
+      line.textContent = `[${new Date().toLocaleTimeString('ar')}] ${msg}`;
+      box.appendChild(line);
+      box.scrollTop = box.scrollHeight;
     }
 
-    /* ─── AUTH ────────────────────────────────────────────── */
+    /* ── UPDATE COUNTS ────────────────────────────────────────── */
+    function updateCounts() {
+      const n = PROJECTS.length;
+      document.getElementById('projCount').textContent = n;
+      document.getElementById('sbCount').textContent = n;
+    }
+
+    /* ── AUTH ─────────────────────────────────────────────────── */
     function unlock() {
       const t = document.getElementById('tokenInput').value.trim();
-      if (!t || !t.startsWith('ghp_')) {
-        showToast('توكن غير صحيح — لازم يبدأ بـ ghp_', 'error');
-        return;
-      }
+      if (!t) { toast('ادخل الـ Token أولاً', 'error'); return; }
       TOKEN = t;
-      localStorage.setItem('gh_admin_token', t);
+      localStorage.setItem('gh_token', t);
       document.getElementById('lockScreen').style.display = 'none';
       document.getElementById('mainApp').style.display = 'grid';
       loadFromGitHub();
     }
 
     function logout() {
-      localStorage.removeItem('gh_admin_token');
+      localStorage.removeItem('gh_token');
       location.reload();
     }
 
     /* Auto-login */
     window.addEventListener('DOMContentLoaded', () => {
-      const saved = localStorage.getItem('gh_admin_token');
-      if (saved && saved.startsWith('ghp_')) {
+      const saved = localStorage.getItem('gh_token');
+      if (saved) {
         TOKEN = saved;
         document.getElementById('tokenInput').value = saved;
         document.getElementById('lockScreen').style.display = 'none';
         document.getElementById('mainApp').style.display = 'grid';
         loadFromGitHub();
       }
-
-      /* Enter key on token field */
       document.getElementById('tokenInput').addEventListener('keydown', e => {
         if (e.key === 'Enter') unlock();
       });
     });
 
-    /* ─── LOAD FROM GITHUB ────────────────────────────────── */
+    /* ── GITHUB API ───────────────────────────────────────────── */
+    function ghHeaders() {
+      return {
+        'Authorization': `Bearer ${TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      };
+    }
+
     async function loadFromGitHub() {
       if (!TOKEN) return;
       try {
-        log('جاري تحميل projects.json من GitHub...', 'info');
-        const res = await fetch(
+        log('جاري التحميل من GitHub…', 'info');
+
+        /* Step 1 — get file metadata (sha + encoding) */
+        const metaRes = await fetch(
           `https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`,
-          { headers: { Authorization: `token ${TOKEN}`, Accept: 'application/vnd.github.v3+json' } }
+          { headers: ghHeaders() }
         );
-        if (!res.ok) {
-          log('projects.json غير موجود — سيُنشأ عند الحفظ', 'info');
-          PROJECTS = [];
-          renderCards();
-          return;
+        if (metaRes.status === 404) {
+          log('projects.json غير موجود — سيُنشأ عند أول حفظ', 'info');
+          PROJECTS = []; renderCards(); return;
         }
-        const data = await res.json();
-        const content = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
-        PROJECTS = JSON.parse(content);
-        if (!Array.isArray(PROJECTS)) PROJECTS = [];
-        log('✓ تم تحميل ' + PROJECTS.length + ' مشروع', 'ok');
+        if (!metaRes.ok) {
+          const e = await metaRes.json();
+          throw new Error(e.message || 'HTTP ' + metaRes.status);
+        }
+        const meta = await metaRes.json();
+
+        let text = '';
+
+        /* Step 2 — if content is inline (small file < 1MB) */
+        if (meta.encoding === 'base64' && meta.content) {
+          log('الملف صغير — قراءة مباشرة', 'info');
+          text = decodeContent(meta.content);
+
+          /* Step 3 — file > 1MB: fetch raw via Git Blobs API */
+        } else if (meta.sha) {
+          log(`الملف كبير (${(meta.size / 1024 / 1024).toFixed(1)} MB) — جاري الجلب عبر Git Blobs…`, 'info');
+          const blobRes = await fetch(
+            `https://api.github.com/repos/${OWNER}/${REPO}/git/blobs/${meta.sha}`,
+            { headers: { ...ghHeaders(), 'Accept': 'application/vnd.github.raw+json' } }
+          );
+          if (!blobRes.ok) throw new Error('فشل جلب الـ blob: HTTP ' + blobRes.status);
+          text = await blobRes.text();
+
+        } else {
+          throw new Error('لا يمكن قراءة الملف — encoding غير معروف');
+        }
+
+        const parsed = JSON.parse(text);
+        PROJECTS = Array.isArray(parsed) ? parsed : [];
+        log(`✓ تم تحميل ${PROJECTS.length} مشروع بنجاح`, 'ok');
+
+        /* warn if file is very large because of base64 images */
+        if (meta.size > 1024 * 1024) {
+          log(`⚠️ الملف ${(meta.size / 1024 / 1024).toFixed(1)} MB — يُفضل استخدام روابط صور خارجية بدل base64`, 'info');
+        }
+
         renderCards();
       } catch (e) {
-        log('خطأ في التحميل: ' + e.message, 'err');
-        showToast('فشل التحميل من GitHub', 'error');
-        PROJECTS = [];
-        renderCards();
+        console.error(e);
+        log('خطأ: ' + e.message, 'err');
+        toast('فشل التحميل: ' + e.message, 'error');
+        PROJECTS = []; renderCards();
       }
     }
 
-    /* ─── SAVE TO GITHUB ──────────────────────────────────── */
     async function saveToGitHub() {
-      if (!TOKEN) { showToast('لا يوجد توكن', 'error'); return; }
-      const btn = document.getElementById('deployBtn');
-      btn.disabled = true; btn.textContent = '⏳ جاري الحفظ...';
-      document.getElementById('deployLog').innerHTML = '';
+      if (!TOKEN) { toast('لا يوجد Token', 'error'); return; }
+      const btn = document.getElementById('saveBtn');
+      btn.disabled = true; btn.textContent = '⏳ جاري الحفظ…';
+      document.getElementById('logBox').innerHTML = '';
       try {
-        log('جاري تحضير projects.json...', 'info');
-        const content = JSON.stringify(PROJECTS, null, 2);
-        const encoded = btoa(unescape(encodeURIComponent(content)));
+        log('تحضير البيانات…', 'info');
+        const jsonStr = JSON.stringify(PROJECTS, null, 2);
+        const encoded = encodeContent(jsonStr);
 
         /* Get current SHA */
         let sha = null;
         const getRes = await fetch(
           `https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`,
-          { headers: { Authorization: `token ${TOKEN}`, Accept: 'application/vnd.github.v3+json' } }
+          { headers: ghHeaders() }
         );
         if (getRes.ok) {
-          const fileData = await getRes.json();
-          sha = fileData.sha;
-          log('✓ SHA: ' + sha.slice(0, 8) + '...', 'ok');
+          const fd = await getRes.json();
+          sha = fd.sha;
+          log('SHA: ' + sha.slice(0, 10) + '…', 'ok');
         } else {
           log('ملف جديد — سيُنشأ', 'info');
         }
 
-        /* Push */
-        const body = { message: 'update projects: ' + new Date().toLocaleString('ar'), content: encoded };
+        const body = {
+          message: `update projects.json — ${new Date().toLocaleString('ar')}`,
+          content: encoded
+        };
         if (sha) body.sha = sha;
 
         const putRes = await fetch(
           `https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`,
-          {
-            method: 'PUT',
-            headers: { Authorization: `token ${TOKEN}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
-          }
+          { method: 'PUT', headers: ghHeaders(), body: JSON.stringify(body) }
         );
-        if (!putRes.ok) { const e = await putRes.json(); throw new Error(e.message || 'فشل الرفع'); }
-
-        log('✓ تم حفظ projects.json على GitHub!', 'ok');
-        log('🌐 الموقع سيعرض التغييرات فوراً', 'info');
-        showToast('✓ تم الحفظ! الموقع سيتحدث تلقائياً 🎯', 'success');
-
+        if (!putRes.ok) {
+          const e = await putRes.json();
+          throw new Error(e.message || 'فشل الرفع');
+        }
+        log('✓ تم الحفظ على GitHub بنجاح!', 'ok');
+        log('🌐 الموقع يتحدث تلقائياً الآن', 'info');
+        toast('✓ تم الحفظ! الموقع اتحدث 🎯', 'success');
       } catch (err) {
-        log('✗ خطأ: ' + err.message, 'err');
-        showToast('خطأ: ' + err.message, 'error');
+        console.error(err);
+        log('✗ ' + err.message, 'err');
+        toast('خطأ: ' + err.message, 'error');
       } finally {
-        btn.disabled = false; btn.textContent = '💾 حفظ على GitHub';
+        btn.disabled = false;
+        btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>حفظ على GitHub`;
       }
     }
 
-    /* ─── RENDER CARDS ────────────────────────────────────── */
+    /* ── RENDER ───────────────────────────────────────────────── */
     function renderCards() {
-      const g = document.getElementById('projectCards');
-      document.getElementById('projectCount').textContent = PROJECTS.length;
-
+      updateCounts();
+      const g = document.getElementById('projCards');
       if (!PROJECTS.length) {
         g.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">📂</div>
-            <p>لا توجد مشاريع بعد. أضف مشروعاً جديداً للبدء.</p>
-            <button class="btn btn-purple" onclick="addProject()">+ أضف أول مشروع</button>
-          </div>`;
+      <div class="empty">
+        <div class="ei">📂</div>
+        <p>لا توجد مشاريع بعد</p>
+        <button class="btn btn-purple" onclick="addProject()">+ أضف أول مشروع</button>
+      </div>`;
         return;
       }
-
       g.innerHTML = '';
-      PROJECTS.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'work-card';
-        div.id = 'pc-' + item.id;
-        const isOpen = !!openCards[item.id];
-
-        /* Thumbnail */
-        const thumbHTML = item.image && item.image.startsWith('data:')
-          ? `<img class="work-card-thumb" src="${item.image}" alt=""/>`
-          : `<div class="work-card-thumb-placeholder">🖼️</div>`;
-
-        div.innerHTML = `
-          <div class="work-card-header" onclick="toggleCard(${item.id})">
-            <div class="work-card-left">
-              ${thumbHTML}
-              <div class="work-card-info">
-                <strong>${esc(item.title) || 'بدون عنوان'}</strong>
-                <span>${esc(item.badge) || '—'}</span>
-              </div>
-            </div>
-            <div class="work-card-actions">
-              <button class="btn btn-danger" onclick="event.stopPropagation();removeProject(${item.id})">حذف</button>
-            </div>
-            <span class="work-card-chevron">${isOpen ? '▲' : '▼'}</span>
-          </div>
-
-          <div class="work-card-body ${isOpen ? 'open' : ''}">
-            <input type="file" accept="image/*" id="file-${item.id}" style="display:none" onchange="handleFile(event,${item.id})"/>
-
-            ${item.image && item.image.startsWith('data:')
-              ? `<div class="img-preview-wrap">
-                   <img class="img-preview" src="${item.image}" alt=""/>
-                   <div class="img-preview-btns">
-                     <button class="btn btn-ghost btn-sm" onclick="triggerUpload(${item.id})">🔄 تغيير الصورة</button>
-                     <button class="btn btn-danger btn-sm" onclick="removeImg(${item.id})">🗑️ حذف</button>
-                   </div>
-                 </div>`
-              : `<div class="upload-zone"
-                      onclick="triggerUpload(${item.id})"
-                      ondragover="event.preventDefault();this.classList.add('drag')"
-                      ondragleave="this.classList.remove('drag')"
-                      ondrop="handleDrop(event,${item.id})">
-                   <div style="font-size:2rem">🖼️</div>
-                   <p>${item.image ? '📁 ' + esc(item.image) + ' — ارفع صورة لتبديلها' : 'اضغط أو اسحب صورة هنا'}</p>
-                   <small>PNG · JPG · WebP — تُحوّل لـ base64 تلقائياً</small>
-                 </div>`
-            }
-
-            <div class="grid-2">
-              <div class="form-group">
-                <label>العنوان</label>
-                <input value="${esc(item.title)}" oninput="update(${item.id},'title',this.value)" placeholder="اسم المشروع"/>
-              </div>
-              <div class="form-group">
-                <label>Badge (تصنيف)</label>
-                <input value="${esc(item.badge)}" oninput="update(${item.id},'badge',this.value)" placeholder="Meta Ads / Product..."/>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label>الوصف</label>
-              <textarea rows="3" oninput="update(${item.id},'desc',this.value)" placeholder="وصف قصير للمشروع...">${esc(item.desc)}</textarea>
-            </div>
-
-            <div class="grid-2">
-              <div class="form-group">
-                <label>الرابط</label>
-                <input value="${esc(item.link)}" oninput="update(${item.id},'link',this.value)" placeholder="https://..."/>
-              </div>
-              <div class="form-group">
-                <label>نص الزرار</label>
-                <input value="${esc(item.btnText)}" oninput="update(${item.id},'btnText',this.value)" placeholder="View Project →"/>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label>الـ Chips (نتائج / تقنيات)</label>
-              <div class="chips-wrap">
-                ${(item.chips || []).map((c, ci) => `<span class="chip" onclick="removeChip(${item.id},${ci})">${esc(c)} ✕</span>`).join('')}
-              </div>
-              <div class="chip-input-row">
-                <input id="chip-inp-${item.id}" placeholder="مثال: 640+ Conversations" onkeydown="if(event.key==='Enter')addChip(${item.id})"/>
-                <button class="chip-add-btn" onclick="addChip(${item.id})">+</button>
-              </div>
-            </div>
-
-            <div class="link-preview">
-              🔗 الزرار "<strong>${esc(item.btnText || 'View')}</strong>" سيفتح: <span>${esc(item.link || '#')}</span>
-            </div>
-          </div>`;
-        g.appendChild(div);
-      });
+      PROJECTS.forEach(item => g.appendChild(buildCard(item)));
+      initDragDrop();
     }
 
-    /* ─── CARD ACTIONS ────────────────────────────────────── */
+    function buildCard(item) {
+      const div = document.createElement('div');
+      div.className = 'proj-card';
+      div.id = 'pc-' + item.id;
+      div.draggable = true;
+      div.dataset.id = item.id;
+
+      const isOpen = !!openCards[item.id];
+
+      const thumbHTML = item.image && item.image.startsWith('data:')
+        ? `<img class="proj-thumb" src="${item.image}" alt=""/>`
+        : `<div class="proj-thumb-ph">🖼️</div>`;
+
+      /* Image area inside editor */
+      const isBase64 = item.image && item.image.startsWith('data:');
+      const isUrl = item.image && item.image.startsWith('http');
+
+      const imgPreviewHtml = item.image
+        ? `<div class="img-prev-wrap"><img class="img-prev" src="${esc(item.image)}" alt="" onerror="this.style.display='none'"/><div class="img-prev-btns"><button class="btn btn-danger btn-sm" onclick="removeImg(${item.id})">🗑️ حذف الصورة</button></div></div>`
+        : '';
+
+      const base64Warning = isBase64
+        ? `<p style="font-size:.7rem;color:#f87171;margin-top:.45rem;">⚠️ الصورة الحالية base64 وده بيكبّر حجم الملف. يُفضَّل تستبدلها برابط خارجي.</p>`
+        : '';
+
+      const imgArea = `
+    ${imgPreviewHtml}
+    <div style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--rsm);padding:.85rem 1rem;margin-bottom:.75rem;">
+      <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.55rem;">
+        <span style="font-size:.7rem;font-weight:700;color:var(--purple-l);letter-spacing:.1em;text-transform:uppercase;">رابط الصورة</span>
+        <span style="font-size:.65rem;background:#14532d;color:#bbf7d0;padding:.12rem .5rem;border-radius:100px;border:1px solid #4ade80;">يُفضَّل ✓</span>
+      </div>
+      <input value="${isUrl ? esc(item.image) : ''}" oninput="update(${item.id},'image',this.value)" placeholder="https://example.com/image.jpg" dir="ltr" style="text-align:left;font-size:.82rem;"/>
+      <p style="font-size:.68rem;color:var(--gray-3);margin-top:.38rem;line-height:1.5;">مثال: Cloudinary، ImgBB، أو raw GitHub لصورة في ريبو public</p>
+    </div>
+    ${base64Warning}
+    <details style="margin-bottom:.75rem;">
+      <summary style="font-size:.75rem;color:var(--gray-3);cursor:pointer;padding:.35rem 0;user-select:none;">أو ارفع صورة مباشرة (base64 — يكبّر حجم الملف)</summary>
+      <div style="margin-top:.55rem;">
+        <div class="upload-zone" onclick="triggerUpload(${item.id})" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event,${item.id})">
+          <div style="font-size:1.75rem">🖼️</div>
+          <p>اسحب صورة هنا أو اضغط للرفع</p>
+          <small>PNG · JPG · WebP · max 2MB</small>
+        </div>
+      </div>
+    </details>`;
+
+      const chipsHTML = (item.chips || []).map((c, ci) =>
+        `<span class="chip" onclick="removeChip(${item.id},${ci})" title="اضغط للحذف">${esc(c)} ✕</span>`
+      ).join('');
+
+      div.innerHTML = `
+    <!-- HEADER -->
+    <div class="proj-head" onclick="toggleCard(${item.id})">
+      <span class="drag-handle" title="اسحب لإعادة الترتيب" onclick="event.stopPropagation()">⠿</span>
+      <div class="proj-thumb-wrap">${thumbHTML}</div>
+      <div class="proj-info">
+        <strong>${esc(item.title) || 'بدون عنوان'}</strong>
+        <span>${esc(item.badge) || '—'}</span>
+      </div>
+      <div class="proj-actions" onclick="event.stopPropagation()">
+        <button class="btn btn-danger" onclick="removeProject(${item.id})">حذف</button>
+      </div>
+      <span class="proj-chevron${isOpen ? ' open' : ''}">▼</span>
+    </div>
+
+    <!-- BODY (EDITOR) -->
+    <div class="proj-body${isOpen ? ' open' : ''}">
+      <input type="file" accept="image/*" id="fu-${item.id}" style="display:none" onchange="handleFileInput(event,${item.id})"/>
+
+      ${imgArea}
+
+      <div class="section-div">معلومات المشروع</div>
+
+      <div class="grid2">
+        <div class="fg">
+          <label>العنوان</label>
+          <input value="${esc(item.title)}" oninput="update(${item.id},'title',this.value)" placeholder="اسم المشروع"/>
+        </div>
+        <div class="fg">
+          <label>Badge / تصنيف</label>
+          <input value="${esc(item.badge)}" oninput="update(${item.id},'badge',this.value)" placeholder="Meta Ads / Product…"/>
+        </div>
+      </div>
+
+      <div class="fg">
+        <label>الوصف</label>
+        <textarea oninput="update(${item.id},'desc',this.value)" placeholder="وصف قصير للمشروع…">${esc(item.desc)}</textarea>
+      </div>
+
+      <div class="section-div">رابط الزرار</div>
+
+      <div class="grid2">
+        <div class="fg">
+          <label>الرابط</label>
+          <input value="${esc(item.link)}" oninput="update(${item.id},'link',this.value)" placeholder="https://…" dir="ltr" style="text-align:left"/>
+        </div>
+        <div class="fg">
+          <label>نص الزرار</label>
+          <input value="${esc(item.btnText)}" oninput="update(${item.id},'btnText',this.value)" placeholder="View Project →"/>
+        </div>
+      </div>
+
+      <div class="link-prev">
+        🔗 الزرار "<strong>${esc(item.btnText || 'View')}</strong>" سيفتح: <span>${esc(item.link || '—')}</span>
+      </div>
+
+      <div class="section-div" style="margin-top:1rem">Chips (نتائج / تقنيات)</div>
+
+      <div class="chips">${chipsHTML || '<span style="font-size:.75rem;color:var(--gray-3)">لا توجد chips بعد</span>'}</div>
+      <div class="chip-row">
+        <input id="chi-${item.id}" placeholder="مثال: 640+ Conversations" onkeydown="if(event.key==='Enter')addChip(${item.id})"/>
+        <button class="chip-add" onclick="addChip(${item.id})">+</button>
+      </div>
+    </div>`;
+
+      return div;
+    }
+
+    /* ── CARD ACTIONS ─────────────────────────────────────────── */
     function toggleCard(id) {
       openCards[id] = !openCards[id];
-      renderCards();
+      const card = document.getElementById('pc-' + id);
+      if (!card) return;
+      card.querySelector('.proj-body').classList.toggle('open', !!openCards[id]);
+      card.querySelector('.proj-chevron').classList.toggle('open', !!openCards[id]);
     }
 
     function update(id, field, val) {
       const i = PROJECTS.findIndex(p => p.id === id);
       if (i > -1) PROJECTS[i][field] = val;
+      /* live-update link preview */
+      const card = document.getElementById('pc-' + id);
+      if (card) {
+        const lp = card.querySelector('.link-prev');
+        if (lp) {
+          const p = PROJECTS[i];
+          lp.innerHTML = `🔗 الزرار "<strong>${esc(p.btnText || 'View')}</strong>" سيفتح: <span>${esc(p.link || '—')}</span>`;
+        }
+      }
     }
 
     function removeProject(id) {
@@ -663,59 +1355,61 @@
       PROJECTS = PROJECTS.filter(p => p.id !== id);
       delete openCards[id];
       renderCards();
-      showToast('تم الحذف — لا تنسى الحفظ', 'info');
+      toast('تم الحذف — لا تنسى الحفظ', 'info');
     }
 
     function addProject() {
       const id = Date.now();
-      PROJECTS.push({
-        id,
-        title: 'مشروع جديد',
-        desc: '',
-        badge: '',
-        chips: [],
-        link: 'https://',
-        btnText: 'View Project →',
-        image: ''
-      });
+      PROJECTS.push({ id, title: 'مشروع جديد', desc: '', badge: '', chips: [], link: 'https://', btnText: 'View Project →', image: '' });
       openCards[id] = true;
       renderCards();
-      document.getElementById('pc-' + id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setTimeout(() => { document.getElementById('pc-' + id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 80);
     }
 
     function addChip(id) {
-      const inp = document.getElementById('chip-inp-' + id);
+      const inp = document.getElementById('chi-' + id);
       if (!inp || !inp.value.trim()) return;
       const i = PROJECTS.findIndex(p => p.id === id);
-      if (i > -1) PROJECTS[i].chips = [...(PROJECTS[i].chips || []), inp.value.trim()];
+      if (i > -1) { PROJECTS[i].chips = [...(PROJECTS[i].chips || []), inp.value.trim()]; }
       inp.value = '';
       renderCards();
     }
 
     function removeChip(id, ci) {
       const i = PROJECTS.findIndex(p => p.id === id);
-      if (i > -1) PROJECTS[i].chips.splice(ci, 1);
+      if (i > -1) { PROJECTS[i].chips.splice(ci, 1); }
       renderCards();
     }
 
-    /* ─── IMAGE HANDLING ──────────────────────────────────── */
-    function triggerUpload(id) { document.getElementById('file-' + id)?.click(); }
-    function handleFile(e, id) { const f = e.target.files[0]; if (f) processImage(f, id); }
+    /* ── IMAGE HANDLING ───────────────────────────────────────── */
+    function triggerUpload(id) { document.getElementById('fu-' + id)?.click(); }
+    function handleFileInput(e, id) { if (e.target.files[0]) processImage(e.target.files[0], id); }
     function handleDrop(e, id) {
-      e.preventDefault();
-      e.currentTarget.classList.remove('drag');
-      const f = e.dataTransfer.files[0];
-      if (f) processImage(f, id);
+      e.preventDefault(); e.currentTarget.classList.remove('drag');
+      const f = e.dataTransfer.files[0]; if (f) processImage(f, id);
     }
     function processImage(file, id) {
-      if (!file.type.startsWith('image/')) { showToast('الملف ليس صورة', 'error'); return; }
-      if (file.size > 4 * 1024 * 1024) { showToast('الصورة أكبر من 4MB — يُفضل ضغطها أولاً', 'error'); return; }
+      if (!file.type.startsWith('image/')) { toast('الملف ليس صورة!', 'error'); return; }
+      if (file.size > 2 * 1024 * 1024) { toast('الصورة أكبر من 2MB — استخدم رابط صورة خارجي بدلاً من الرفع المباشر', 'error'); return; }
+      const img = new Image();
       const reader = new FileReader();
       reader.onload = ev => {
-        const i = PROJECTS.findIndex(p => p.id === id);
-        if (i > -1) PROJECTS[i].image = ev.target.result;
-        renderCards();
-        showToast('✓ تم رفع الصورة — لا تنسى الحفظ', 'info');
+        img.onload = () => {
+          /* Compress: max width 900px, quality 0.75 */
+          const MAX = 900;
+          let w = img.width, h = img.height;
+          if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          const compressed = canvas.toDataURL('image/jpeg', 0.75);
+          const kb = Math.round(compressed.length * 0.75 / 1024);
+          const i = PROJECTS.findIndex(p => p.id === id);
+          if (i > -1) PROJECTS[i].image = compressed;
+          renderCards();
+          toast(`✓ تم رفع الصورة (~${kb}KB) — يُفضَّل استخدام رابط خارجي`, 'info');
+        };
+        img.src = ev.target.result;
       };
       reader.readAsDataURL(file);
     }
@@ -724,6 +1418,33 @@
       if (i > -1) PROJECTS[i].image = '';
       renderCards();
     }
+
+    /* ── DRAG & DROP REORDER ──────────────────────────────────── */
+    function initDragDrop() {
+      document.querySelectorAll('.proj-card').forEach(card => {
+        card.addEventListener('dragstart', e => {
+          dragSrcId = parseInt(card.dataset.id);
+          e.dataTransfer.effectAllowed = 'move';
+          setTimeout(() => card.style.opacity = '.4', 0);
+        });
+        card.addEventListener('dragend', () => { card.style.opacity = '1'; });
+        card.addEventListener('dragover', e => { e.preventDefault(); card.classList.add('drag-over'); });
+        card.addEventListener('dragleave', () => card.classList.remove('drag-over'));
+        card.addEventListener('drop', e => {
+          e.preventDefault(); card.classList.remove('drag-over');
+          const targetId = parseInt(card.dataset.id);
+          if (dragSrcId === targetId) return;
+          const srcIdx = PROJECTS.findIndex(p => p.id === dragSrcId);
+          const tgtIdx = PROJECTS.findIndex(p => p.id === targetId);
+          if (srcIdx < 0 || tgtIdx < 0) return;
+          const [moved] = PROJECTS.splice(srcIdx, 1);
+          PROJECTS.splice(tgtIdx, 0, moved);
+          renderCards();
+          toast('تم إعادة الترتيب — لا تنسى الحفظ', 'info');
+        });
+      });
+    }
   </script>
 </body>
+
 </html>
