@@ -1,0 +1,24 @@
+# =========================================
+# robots.txt — moataz.pages.dev
+# Updated: 2026-06-29
+# =========================================
+
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Block admin / private paths (عشان لو عندك dashboard)
+Disallow: /admin/
+Disallow: /admin-panel/
+Disallow: /.env
+Disallow: /config/
+
+# =========================================
+# Sitemap Location
+# =========================================
+Sitemap: https://moataz.pages.dev/sitemap.xml
+
+# =========================================
+# Crawl delay (اختياري — بيساعد مع بعض الـ bots)
+# =========================================
+Crawl-delay: 10
