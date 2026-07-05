@@ -138,7 +138,7 @@
   <!-- ══════════════════════════════════════════
        GOOGLE ANALYTICS — سكريبت واحد بس كافي
   ══════════════════════════════════════════ -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5K7PLZEYGE"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CSYH28GLMS"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
@@ -622,147 +622,11 @@
     </div>
   </footer>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-
   <!-- ================================================================
-     PROJECTS — reads from projects.json → Bento Grid
+     SCRIPTS
      ================================================================ -->
-  <script>
-    (function () {
-      const GRID = document.getElementById('projectsGrid');
-      const FILTERS = document.getElementById('csFilters');
-      let ALL = [];
-      let active = 'All';
-
-      function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
-
-      const ARROW_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
-
-      function buildCard(item, idx) {
-        const thumb = item.image
-          ? `<img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy"/>`
-          : `<div class="pj-thumb-ph"><span class="ph-icon">🖼️</span><span class="ph-label">No image</span></div>`;
-
-        const chips = (item.chips || []).map(c => `<span class="pj-chip">${esc(c)}</span>`).join('');
-
-        return `
-      <div class="pj-card reveal">
-        <div class="pj-thumb">
-          ${thumb}
-          ${item.badge ? `<span class="pj-badge">${esc(item.badge)}</span>` : ''}
-        </div>
-        <div class="pj-body">
-          <h3 class="pj-title">${esc(item.title)}</h3>
-          ${item.desc ? `<p class="pj-desc">${esc(item.desc)}</p>` : ''}
-          ${chips ? `<div class="pj-chips">${chips}</div>` : ''}
-        </div>
-        <div class="pj-footer">
-          <a href="${esc(item.link || '#')}" target="_blank" rel="noopener" class="pj-link">
-            ${esc(item.btnText || 'View Project')}
-            <span class="pj-link-arrow">${ARROW_SVG}</span>
-          </a>
-        </div>
-      </div>`;
-      }
-
-      const obs = new IntersectionObserver(entries => {
-        entries.forEach(e => {
-          if (e.isIntersecting) {
-            const sibs = [...(e.target.parentElement?.querySelectorAll('.reveal') || [])];
-            e.target.style.transitionDelay = Math.min(sibs.indexOf(e.target) * .08, .45) + 's';
-            e.target.classList.add('visible');
-            obs.unobserve(e.target);
-          }
-        });
-      }, { threshold: .08 });
-
-      function render(list) {
-        if (!list.length) {
-          GRID.innerHTML = `<div class="cs-empty"><div class="cs-empty-icon">📂</div><p>No projects in this category yet.</p></div>`;
-          return;
-        }
-        GRID.innerHTML = list.map(buildCard).join('');
-        GRID.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-      }
-
-      function buildFilters(data) {
-        const badges = ['All', ...new Set(data.map(p => p.badge).filter(Boolean))];
-        FILTERS.innerHTML = badges.map(b => `<button class="cs-filter-btn${b === active ? ' active' : ''}" data-f="${esc(b)}">${esc(b)}</button>`).join('');
-        FILTERS.querySelectorAll('.cs-filter-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-            active = btn.dataset.f;
-            FILTERS.querySelectorAll('.cs-filter-btn').forEach(b => b.classList.toggle('active', b.dataset.f === active));
-            render(active === 'All' ? ALL : ALL.filter(p => p.badge === active));
-          });
-        });
-      }
-
-      async function load() {
-        try {
-          const res = await fetch('projects.json?v=' + Date.now());
-          if (!res.ok) throw new Error('HTTP ' + res.status);
-          ALL = await res.json();
-          if (!Array.isArray(ALL) || !ALL.length) {
-            GRID.innerHTML = `<div class="cs-empty"><div class="cs-empty-icon">📂</div><p>No projects yet. Add some from the admin dashboard.</p></div>`;
-            return;
-          }
-          buildFilters(ALL);
-          render(ALL);
-        } catch (e) {
-          console.error('projects.json error:', e);
-          GRID.innerHTML = `<div class="cs-empty"><div class="cs-empty-icon">⚠️</div><p>Could not load projects. Make sure projects.json exists.</p></div>`;
-        }
-      }
-      load();
-    })();
-  </script>
-
-  <!-- ================================================================
-     GLOBAL SCRIPTS
-     ================================================================ -->
-  <script>
-    /* Nav */
-    const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', window.scrollY > 50));
-
-    /* Hamburger */
-    const hamburger = document.getElementById('hamburger');
-    const navLinks = document.getElementById('navLinks');
-    hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
-    navLinks.querySelectorAll('a').forEach(l => l.addEventListener('click', () => navLinks.classList.remove('open')));
-
-    /* Reveal */
-    const revEls = document.querySelectorAll('.reveal');
-    const revObs = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          const sibs = [...(e.target.parentElement?.querySelectorAll('.reveal') || [])];
-          e.target.style.transitionDelay = Math.min(sibs.indexOf(e.target) * .07, .4) + 's';
-          e.target.classList.add('visible');
-          revObs.unobserve(e.target);
-        }
-      });
-    }, { threshold: .1 });
-    revEls.forEach(el => revObs.observe(el));
-
-    /* Smooth scroll */
-    document.querySelectorAll('a[href^="#"]').forEach(a => {
-      a.addEventListener('click', e => {
-        const t = document.querySelector(a.getAttribute('href'));
-        if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-      });
-    });
-
-    /* Blob parallax */
-    document.addEventListener('mousemove', e => {
-      const x = (e.clientX / window.innerWidth - .5) * 30;
-      const y = (e.clientY / window.innerHeight - .5) * 30;
-      document.querySelectorAll('.blob').forEach((b, i) => {
-        const d = i % 2 === 0 ? 1 : -1;
-        b.style.transform = `translate(${x * d * .35}px,${y * d * .35}px)`;
-      });
-    });
-  </script>
+  <script src="script.js"></script>
+  <script src="projects.js"></script>
 
 </body>
 

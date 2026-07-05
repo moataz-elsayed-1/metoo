@@ -17,9 +17,27 @@
 
     <!-- Hero Image -->
     <image:image>
-      <image:loc>https://moataz.pages.dev/profile.jpg</image:loc>
+      <image:loc>https://moataz.pages.dev/NEW.webp</image:loc>
       <image:title>Moataz ElSayed – Media Buyer &amp; Web Developer</image:title>
       <image:caption>Moataz ElSayed – Meta Ads Specialist and Web Developer from Cairo, Egypt</image:caption>
+    </image:image>
+
+  </url>
+
+  <url>
+    <loc>https://moataz.pages.dev/case-studies.html</loc>
+    <lastmod>2026-06-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+
+    <xhtml:link rel="alternate" hreflang="en" href="https://moataz.pages.dev/case-studies.html" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://moataz.pages.dev/case-studies.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://moataz.pages.dev/case-studies.html" />
+
+    <image:image>
+      <image:loc>https://moataz.pages.dev/goldend.png</image:loc>
+      <image:title>Case Studies – Real Meta Ads Results</image:title>
+      <image:caption>Facebook &amp; Instagram ad campaign results for luxury car brands in Egypt</image:caption>
     </image:image>
 
   </url>
