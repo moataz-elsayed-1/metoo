@@ -1,0 +1,119 @@
+[
+  {
+    "id": 1,
+    "title": "Website Templates ",
+    "desc": "",
+    "badge": "HTML · CSS · JS",
+    "chips": [
+      "AR / EN Switch",
+      "Full RTL Support",
+      "Mobile Responsive",
+      "Multiple Niches"
+    ],
+    "link": "https://payhip.com/MoatazElSayed",
+    "btnText": "Browse Templates →",
+    "image": "website-templates.webp"
+  },
+  {
+    "id": 2,
+    "title": "Media Buyer",
+    "desc": "",
+    "badge": "Facebook · Instagram",
+    "chips": [
+      "Reach: 204,532",
+      "Avg. CPL: 18.21 EGP",
+      "Spend: 16,655 EGP",
+      "Best CPL: 10.89 EGP"
+    ],
+    "link": "case-studies.html",
+    "btnText": "View Full Case Study →",
+    "image": "golden.webp"
+  },
+  {
+    "id": 1777511779168,
+    "title": "شركة الإيطالية للتكييف",
+    "desc": "",
+    "badge": "Landing Page",
+    "chips": [
+      "Service Booking",
+      "css",
+      "html",
+      "js"
+    ],
+    "link": "https://elitalia.pages.dev/",
+    "btnText": "View Project →",
+    "image": "ac-company-template.webp"
+  },
+  {
+    "id": 1778230653544,
+    "title": "Gym & Fitness Template",
+    "desc": "",
+    "badge": "Landing Page",
+    "chips": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Responsive"
+    ],
+    "link": "https://payhip.com/b/YALB1",
+    "btnText": "Buy Now →",
+    "image": "gym-fitness-template.webp"
+  },
+  {
+    "id": 1780921731966,
+    "title": "ZE'ROo",
+    "desc": "",
+    "badge": "Landing Page",
+    "chips": [
+      "html",
+      "css",
+      "js",
+      "cars"
+    ],
+    "link": "https://zewar.pages.dev/",
+    "btnText": "View Project →",
+    "image": "zeroo-template.webp"
+  },
+  {
+    "id": 1777512026821,
+    "title": "Doctor Website Template",
+    "desc": "",
+    "badge": "Doctor & Clinic",
+    "chips": [
+      "html",
+      "css",
+      "js"
+    ],
+    "link": "https://payhip.com/b/fTwyK",
+    "btnText": "View Template →",
+    "image": "doctor-website-template.webp"
+  },
+  {
+    "id": 1777512196388,
+    "title": "Real Estate  Template",
+    "desc": "",
+    "badge": "Navy & Gold",
+    "chips": [
+      "HTML",
+      "CSS",
+      "JS"
+    ],
+    "link": "https://payhip.com/b/lnhXw",
+    "btnText": "View Project →",
+    "image": "real-estate-template.webp"
+  },
+  {
+    "id": 1777558311591,
+    "title": "Do you Love me",
+    "desc": "",
+    "badge": "love",
+    "chips": [
+      "html",
+      "css",
+      "js"
+    ],
+    "link": "https://lovemetoo.pages.dev/",
+    "btnText": "View Project →",
+    "image": "do-you-love-me-template.webp"
+  }
+]

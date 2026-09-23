@@ -10,9 +10,8 @@
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
 
-    <!-- Alternate language versions (bilingual portfolio) -->
+    <!-- Language version -->
     <xhtml:link rel="alternate" hreflang="en" href="https://moataz.pages.dev/" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://moataz.pages.dev/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://moataz.pages.dev/" />
 
     <!-- Hero Image -->
@@ -26,18 +25,35 @@
 
   <url>
     <loc>https://moataz.pages.dev/case-studies.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <lastmod>2026-09-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
 
     <xhtml:link rel="alternate" hreflang="en" href="https://moataz.pages.dev/case-studies.html" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://moataz.pages.dev/case-studies.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://moataz.pages.dev/case-studies.html" />
 
     <image:image>
-      <image:loc>https://moataz.pages.dev/goldend.png</image:loc>
+      <image:loc>https://moataz.pages.dev/goldend.jpg</image:loc>
       <image:title>Case Studies – Real Meta Ads Results</image:title>
       <image:caption>Facebook &amp; Instagram ad campaign results for luxury car brands in Egypt</image:caption>
+    </image:image>
+
+    <image:image>
+      <image:loc>https://moataz.pages.dev/cars-overview.jpg</image:loc>
+      <image:title>Luxury Auto Dealership – Messaging Campaign Results</image:title>
+      <image:caption>Meta Ads messaging campaign results for a multi-brand luxury car dealership</image:caption>
+    </image:image>
+
+    <image:image>
+      <image:loc>https://moataz.pages.dev/realestate-overview.jpg</image:loc>
+      <image:title>Real Estate – Multi-Market Lead Generation Results</image:title>
+      <image:caption>Meta Ads lead generation results across Egypt and Saudi Arabia real estate developments</image:caption>
+    </image:image>
+
+    <image:image>
+      <image:loc>https://moataz.pages.dev/ecom-purchases-sar.jpg</image:loc>
+      <image:title>E-Commerce – Full-Funnel Campaign Results</image:title>
+      <image:caption>Meta Ads messaging and purchase campaign results for an e-commerce store in Egypt and Saudi Arabia</image:caption>
     </image:image>
 
   </url>

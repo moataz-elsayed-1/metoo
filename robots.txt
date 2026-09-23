@@ -7,10 +7,7 @@
 User-agent: *
 Allow: /
 
-# Block admin / private paths (عشان لو عندك dashboard)
-Disallow: /admin.html
-Disallow: /admin/
-Disallow: /admin-panel/
+# Block sensitive paths
 Disallow: /.env
 Disallow: /config/
 
