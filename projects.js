@@ -25,10 +25,42 @@
 
   const ARROW_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
 
+  const TEMPLATE_MOCKUP = `
+    <div class="tmpl-preview">
+      <div class="tmpl-window">
+        <div class="tmpl-bar">
+          <span class="tmpl-dot tmpl-dot-r"></span>
+          <span class="tmpl-dot tmpl-dot-y"></span>
+          <span class="tmpl-dot tmpl-dot-g"></span>
+          <div class="tmpl-url"><span class="tmpl-lock">🔒</span>yoursite.com</div>
+        </div>
+        <div class="tmpl-body">
+          <div class="tmpl-nav">
+            <span class="tmpl-logo"></span>
+            <span class="tmpl-navline"></span>
+            <span class="tmpl-navline"></span>
+            <span class="tmpl-navline tmpl-navline-btn"></span>
+          </div>
+          <div class="tmpl-hero">
+            <div class="tmpl-hero-text">
+              <span class="tmpl-line tmpl-line-lg"></span>
+              <span class="tmpl-line tmpl-line-lg tmpl-line-short"></span>
+              <span class="tmpl-line tmpl-line-sm"></span>
+              <span class="tmpl-cta"></span>
+            </div>
+            <div class="tmpl-hero-visual"></div>
+          </div>
+        </div>
+      </div>
+      <div class="tmpl-lang-badge"><span>AR</span><i></i><span>EN</span></div>
+    </div>`;
+
   function buildCard(item) {
-    const thumb = item.image
-      ? `<img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy"/>`
-      : `<div class="pj-thumb-ph"><span class="ph-icon">🖼️</span><span class="ph-label">No image</span></div>`;
+    const thumb = item.id === 1
+      ? TEMPLATE_MOCKUP
+      : item.image
+        ? `<img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy"/>`
+        : `<div class="pj-thumb-ph"><span class="ph-icon">🖼️</span><span class="ph-label">No image</span></div>`;
 
     const chips = (item.chips || []).map((c) => `<span class="pj-chip">${esc(c)}</span>`).join('');
 
@@ -59,7 +91,7 @@
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         const siblings = [...(entry.target.parentElement?.querySelectorAll('.reveal') || [])];
-        entry.target.style.transitionDelay = Math.min(siblings.indexOf(entry.target) * 0.08, 0.45) + 's';
+        entry.target.style.transitionDelay = Math.min(siblings.indexOf(entry.target) * 0.09, 0.5) + 's';
         entry.target.classList.add('visible');
         cardObserver.unobserve(entry.target);
       }

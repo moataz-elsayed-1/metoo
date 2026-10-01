@@ -158,6 +158,7 @@
 </head>
 
 <body>
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 
   <!-- FLOATING WHATSAPP -->
   <a href="https://wa.me/+201090916639" target="_blank" rel="noopener noreferrer" class="wa-float" aria-label="Chat on WhatsApp">
@@ -205,6 +206,7 @@
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
     <div class="blob blob-3"></div>
+    <div class="hero-bg-word" aria-hidden="true">MEDIA BUYER</div>
     <div class="container">
       <div class="hero-inner">
 
@@ -240,6 +242,7 @@
 
         <!-- Photo Column -->
         <div class="hero-photo-col">
+          <div class="hero-photo-ring" aria-hidden="true"></div>
           <div class="hero-photo">
             <img src="NEW.webp" alt="Moataz ElSayed" />
           </div>
@@ -247,19 +250,13 @@
           <div class="corner corner-tr"></div>
           <div class="corner corner-bl"></div>
           <div class="corner corner-br"></div>
-          <div class="stat-pill stat-pill-1">
-            <div class="sp-icon">🎯</div>
-            <div>
-              <div class="sp-num">3×</div>
-              <div class="sp-lbl">Avg. ROAS</div>
-            </div>
+          <div class="hero-float-badge hfb-1">
+            <div class="hero-stat-num">3,800+</div>
+            <div class="hero-stat-lbl">Conversations &amp; Leads</div>
           </div>
-          <div class="stat-pill stat-pill-2">
-            <div class="sp-icon">📈</div>
-            <div>
-              <div class="sp-num">$20k+</div>
-              <div class="sp-lbl">Ad Spend</div>
-            </div>
+          <div class="hero-float-badge hfb-2">
+            <div class="hero-stat-num">3+</div>
+            <div class="hero-stat-lbl">Industries Served</div>
           </div>
         </div>
 
@@ -274,13 +271,13 @@
     <div class="container">
       <div class="stats-inner">
         <div class="stat-item">
-          <div class="s-num">1+</div>
+          <div class="s-num" id="expCounter">1+</div>
           <div class="s-lbl">Years Experience</div>
         </div>
         <div class="stat-divider"></div>
         <div class="stat-item">
-          <div class="s-num">$20k+</div>
-          <div class="s-lbl">Ad Spend Managed</div>
+          <div class="s-num">3,800+</div>
+          <div class="s-lbl">Conversations &amp; Leads</div>
         </div>
         <div class="stat-divider"></div>
         <div class="stat-item">
@@ -289,8 +286,8 @@
         </div>
         <div class="stat-divider"></div>
         <div class="stat-item">
-          <div class="s-num">3×</div>
-          <div class="s-lbl">Average ROAS</div>
+          <div class="s-num">3+</div>
+          <div class="s-lbl">Industries Served</div>
         </div>
         <div class="stat-divider"></div>
         <div class="stat-item">
@@ -309,7 +306,7 @@
       <div class="about-grid">
 
         <div class="reveal">
-          <div class="tag">✦ About Me</div>
+          <div class="tag">01 — About Me</div>
           <h2 class="section-title">Performance Over <span>Everything</span></h2>
           <div
             style="width:48px;height:2px;background:linear-gradient(90deg,var(--purple),transparent);border-radius:1px;margin:1.1rem 0 1.85rem">
@@ -378,7 +375,7 @@
   <section id="services">
     <div class="container">
       <div class="section-header reveal">
-        <div class="tag">✦ What I Do</div>
+        <div class="tag">02 — What I Do</div>
         <h2 class="section-title">Services Built for <span>Results</span></h2>
         <p class="section-sub">Every service is engineered to move the needle — not just spend budget.</p>
       </div>
@@ -428,7 +425,7 @@
       <!-- Header -->
       <div class="cs-section-header reveal">
         <div>
-          <div class="tag">✦ Work & Products</div>
+          <div class="tag">03 — Work & Products</div>
           <h2 class="section-title">Campaigns & <span>Digital Products</span></h2>
         </div>
         <a href="case-studies.html" class="btn btn-ghost">
@@ -462,7 +459,7 @@
       <div class="cs-banner-inner" onclick="window.location.href='case-studies.html'">
         <div class="cs-banner-img"><img src="cs.webp" alt="Case Studies" /></div>
         <div class="cs-banner-text">
-          <div class="tag">✦ Case Studies</div>
+          <div class="tag">04 — Case Studies</div>
           <h2>See How I Turn <span class="grad">Budgets Into Results</span></h2>
           <p>Real campaigns. Real numbers. Deep breakdowns of strategy, execution, and results across luxury
             automotive, real estate, and e-commerce — in Egypt and Saudi Arabia.</p>
@@ -490,7 +487,7 @@
   <section id="why">
     <div class="container">
       <div class="reveal" style="text-align:center;max-width:600px;margin:0 auto">
-        <div class="tag">✦ Why Me</div>
+        <div class="tag">05 — Why Me</div>
         <h2 class="section-title">Why Work <span>With Me?</span></h2>
         <p style="font-size:1rem;color:var(--gray-3);margin-top:.85rem;line-height:1.75">Not all media buyers are the
           same. Here's what sets my approach apart.</p>
@@ -529,20 +526,35 @@
      ================================================================ -->
   <section id="tools">
     <div class="container">
-      <p class="tools-label reveal">Tools & Platforms I Work With</p>
-      <div class="tools-row">
-        <div class="tool-badge reveal"><span class="tb-icon">📘</span> Facebook Ads</div>
-        <div class="tool-badge reveal"><span class="tb-icon">📸</span> Instagram Ads</div>
-        <div class="tool-badge reveal"><span class="tb-icon">⚙️</span> Meta Business Suite</div>
-        <div class="tool-badge reveal"><span class="tb-icon">📊</span> Google Analytics</div>
-        <div class="tool-badge reveal"><span class="tb-icon">🏷️</span> Meta Pixel & API</div>
-        <div class="tool-badge reveal"><span class="tb-icon">🔄</span> Retargeting Funnels</div>
-        <div class="tool-badge reveal"><span class="tb-icon">🔬</span> A/B Testing</div>
-        <div class="tool-badge reveal"><span class="tb-icon">📋</span> Campaign Reporting</div>
-        <div class="tool-badge reveal"><span class="tb-icon">🌐</span> HTML / CSS / JS</div>
-        <div class="tool-badge reveal"><span class="tb-icon">🎨</span> VS Code</div>
-        <div class="tool-badge reveal"><span class="tb-icon">🚀</span> Netlify</div>
-        <div class="tool-badge reveal"><span class="tb-icon">🛒</span> Payhip</div>
+      <p class="tools-label reveal">Tools &amp; Platforms I Work With</p>
+    </div>
+    <div class="marquee-wrapper">
+      <div class="marquee-track">
+        <div class="tool-badge"><span class="tb-icon">📘</span> Facebook Ads</div>
+        <div class="tool-badge"><span class="tb-icon">📸</span> Instagram Ads</div>
+        <div class="tool-badge"><span class="tb-icon">⚙️</span> Meta Business Suite</div>
+        <div class="tool-badge"><span class="tb-icon">📊</span> Google Analytics</div>
+        <div class="tool-badge"><span class="tb-icon">🏷️</span> Meta Pixel & API</div>
+        <div class="tool-badge"><span class="tb-icon">🔄</span> Retargeting Funnels</div>
+        <div class="tool-badge"><span class="tb-icon">🔬</span> A/B Testing</div>
+        <div class="tool-badge"><span class="tb-icon">📋</span> Campaign Reporting</div>
+        <div class="tool-badge"><span class="tb-icon">🌐</span> HTML / CSS / JS</div>
+        <div class="tool-badge"><span class="tb-icon">🎨</span> VS Code</div>
+        <div class="tool-badge"><span class="tb-icon">🚀</span> Netlify</div>
+        <div class="tool-badge"><span class="tb-icon">🛒</span> Payhip</div>
+        <!-- duplicated for a seamless loop -->
+        <div class="tool-badge" aria-hidden="true"><span class="tb-icon">📘</span> Facebook Ads</div>
+        <div class="tool-badge" aria-hidden="true"><span class="tb-icon">📸</span> Instagram Ads</div>
+        <div class="tool-badge" aria-hidden="true"><span class="tb-icon">⚙️</span> Meta Business Suite</div>
+        <div class="tool-badge" aria-hidden="true"><span class="tb-icon">📊</span> Google Analytics</div>
+        <div class="tool-badge" aria-hidden="true"><span class="tb-icon">🏷️</span> Meta Pixel & API</div>
+        <div class="tool-badge" aria-hidden="true"><span class="tb-icon">🔄</span> Retargeting Funnels</div>
+        <div class="tool-badge" aria-hidden="true"><span class="tb-icon">🔬</span> A/B Testing</div>
+        <div class="tool-badge" aria-hidden="true"><span class="tb-icon">📋</span> Campaign Reporting</div>
+        <div class="tool-badge" aria-hidden="true"><span class="tb-icon">🌐</span> HTML / CSS / JS</div>
+        <div class="tool-badge" aria-hidden="true"><span class="tb-icon">🎨</span> VS Code</div>
+        <div class="tool-badge" aria-hidden="true"><span class="tb-icon">🚀</span> Netlify</div>
+        <div class="tool-badge" aria-hidden="true"><span class="tb-icon">🛒</span> Payhip</div>
       </div>
     </div>
   </section>
@@ -553,7 +565,7 @@
   <section id="contact">
     <div class="container">
       <div class="section-header reveal" style="text-align:center;margin-bottom:3.5rem;">
-        <div class="tag">✦ Contact</div>
+        <div class="tag">06 — Contact</div>
         <h2 class="section-title">Let's Build Something <span>Together</span></h2>
         <p class="section-sub">Have a project in mind? Let's talk about how to make it perform.</p>
       </div>
