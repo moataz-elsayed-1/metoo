@@ -213,9 +213,22 @@
           wipeObserver.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.15 });
+    }, { threshold: 0.01 });
     wipeTargets.forEach((el) => wipeObserver.observe(el));
   }
+
+  /* ── Reveal safety net ────────────────────────────────────────
+     Belt-and-suspenders: whatever the reason an element might not
+     have been picked up by its observer yet (a slow device, a
+     viewport quirk, anything) — nothing stays invisible forever.
+     A couple of seconds after load, anything still hidden just
+     shows itself, no animation needed at that point. */
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.querySelectorAll('.reveal:not(.visible), .split-word:not(.visible), .img-wipe:not(.visible)')
+        .forEach((el) => el.classList.add('visible'));
+    }, 2500);
+  });
 
   /* ── Count-up numbers ─────────────────────────────────────────
      Animates a stat's digits counting up from 0 the first time it

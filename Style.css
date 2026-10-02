@@ -757,7 +757,6 @@ body > nav.scrolled .nav-inner::before {
 .hero-float-badge {
   position: absolute;
   background: rgba(14, 14, 40, .9);
-  backdrop-filter: blur(20px);
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: .85rem 1.3rem;
@@ -1563,7 +1562,6 @@ body > nav.scrolled .nav-inner::before {
   padding: .38rem .7rem;
   border-radius: 100px;
   background: rgba(14, 14, 40, .85);
-  backdrop-filter: blur(10px);
   border: 1px solid var(--border);
   font-size: .68rem;
   font-weight: 600;
@@ -1584,7 +1582,6 @@ body > nav.scrolled .nav-inner::before {
   left: .65rem;
   z-index: 1;
   background: rgba(122, 99, 255, .85);
-  backdrop-filter: blur(12px);
   color: #fff;
   font-size: .68rem;
   font-weight: 500;
@@ -2195,9 +2192,8 @@ footer {
     text-align: center;
   }
 
-  .hero-stat-bar {
-    gap: 1rem;
-    padding: .75rem 1.4rem;
+  .hero-float-badge {
+    padding: .65rem 1rem;
   }
 
   .hero-stat-num {
@@ -2206,6 +2202,18 @@ footer {
 
   .hero-stat-lbl {
     font-size: .62rem;
+  }
+
+  /* Continuous decorative motion is nice-to-have screen-filling
+     polish on a big desktop viewport, but it's pure ongoing
+     compositing cost on a phone's GPU for very little payoff at
+     this size — so it's switched off here rather than tuned down. */
+  .hero-photo-ring,
+  .hfb-1,
+  .hfb-2,
+  .hero-photo-col,
+  .blob {
+    animation: none;
   }
 
   .pj-card:nth-child(1) {
@@ -2223,6 +2231,10 @@ footer {
 }
 
 @media (max-width: 768px) {
+  .cs-nav-cv {
+    display: none;
+  }
+
   .nav-indicator {
     display: none;
   }
@@ -2235,7 +2247,6 @@ footer {
     right: 0;
     bottom: 0;
     background: var(--bg);
-    backdrop-filter: blur(20px);
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -2394,9 +2405,8 @@ footer {
     width: 91%;
   }
 
-  .hero-stat-bar {
-    gap: .7rem;
-    padding: .65rem 1.1rem;
+  .hero-float-badge {
+    padding: .55rem .85rem;
   }
 
   .hero-stat-num {
@@ -2888,18 +2898,6 @@ body.case-studies-page .btn-purple:hover {
   background: var(--purple-light);
   box-shadow: 0 0 36px rgba(122, 99, 255, .65);
   transform: translateY(-2px);
-}
-
-body.case-studies-page nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 200;
-  padding: 1.1rem 0;
-  background: rgba(10, 10, 24, .85);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border-card);
 }
 
 body.case-studies-page .blob-1 {
