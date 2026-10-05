@@ -28,22 +28,7 @@
     }, { passive: true });
   }
 
-  /* ── Mobile hamburger menu ────────────────────────────────────
-     Only runs if the page has both #hamburger and #navLinks. */
-  const hamburger = document.getElementById('hamburger');
   const navLinks = document.getElementById('navLinks');
-  if (hamburger && navLinks) {
-    hamburger.addEventListener('click', () => {
-      navLinks.classList.toggle('open');
-      hamburger.classList.toggle('active');
-    });
-    navLinks.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        navLinks.classList.remove('open');
-        hamburger.classList.remove('active');
-      });
-    });
-  }
 
   /* ── Sliding nav-pill indicator ───────────────────────────────
      A small pill glides behind whichever nav link the mouse is
