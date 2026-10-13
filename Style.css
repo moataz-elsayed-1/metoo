@@ -2127,14 +2127,62 @@ footer {
 @media (max-width: 1024px) {
   .hero-inner {
     grid-template-columns: 1fr;
-    gap: 2.5rem;
+    gap: .7rem;
     text-align: center;
-    padding: 1rem 0 2rem;
+    padding: 0 0 2rem;
+  }
+
+  /* Flatten .hero-text so its children become direct grid items of
+     .hero-inner — each one can then take its own "order" below
+     (name + photo first, everything else after) instead of the
+     whole text block moving as a single unit above the photo.
+     .hero-photo-col stays a real box since its ring / corners /
+     floating badges are positioned relative to it. */
+  .hero-text {
+    display: contents;
+  }
+
+  .hero-name {
+    order: 1;
+    margin-bottom: 0;
   }
 
   .hero-photo-col {
-    max-width: 300px;
-    margin: 0 auto;
+    order: 2;
+    margin: .25rem auto 0;
+    /* Sized from the viewport height so the whole photo always fits
+       above the fold: 100svh (the visible height once the browser's
+       own toolbars are counted) minus the nav + name block, times
+       the photo's 3 / 3.7 aspect ratio. The plain-vh line is the
+       fallback for browsers that don't know svh yet. */
+    max-width: max(150px, min(270px, calc((100vh - var(--nav-h, 96px) - 150px) * .81)));
+    max-width: max(150px, min(270px, calc((100svh - var(--nav-h, 96px) - 150px) * .81)));
+  }
+
+  .availability {
+    order: 3;
+    margin: .5rem 0 0;
+  }
+
+  .hero-role {
+    order: 4;
+    margin-bottom: 0;
+  }
+
+  .hero-tagline {
+    order: 5;
+  }
+
+  .hero-desc {
+    order: 6;
+  }
+
+  .hero-contact-row {
+    order: 7;
+  }
+
+  .hero-cta {
+    order: 8;
   }
 
   .availability,
@@ -2145,6 +2193,19 @@ footer {
 
   .hero-desc {
     margin-inline: auto;
+  }
+
+  /* Keep the floating stat badges inside the photo's footprint so
+     they never push the photo's visual bottom edge below the fold. */
+  .hfb-1 {
+    left: -.6rem;
+    bottom: 1.4rem;
+  }
+
+  .hfb-2 {
+    right: -.4rem;
+    top: .9rem;
+    bottom: auto;
   }
 
   .about-grid {
@@ -2216,6 +2277,14 @@ footer {
     filter: blur(40px);
   }
 
+  /* WhatsApp button stays out of the way of the hero photo until the
+     visitor starts scrolling. */
+  .wa-float.wa-hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(.85);
+  }
+
   body > nav .nav-inner::before {
     backdrop-filter: none;
     background: rgba(14, 14, 40, .92);
@@ -2244,9 +2313,30 @@ footer {
     display: none;
   }
 
+  body > nav {
+    padding: .5rem .6rem;
+  }
+
+  body > nav .nav-inner {
+    padding: .4rem .55rem .4rem .9rem;
+    gap: .5rem;
+  }
+
+  body > nav .nav-inner::before {
+    border-radius: 22px;
+  }
+
   .nav-inner {
     flex-wrap: wrap;
-    row-gap: .6rem;
+    row-gap: .15rem;
+  }
+
+  .nav-logo {
+    font-size: 1.02rem;
+  }
+
+  .nav-right {
+    gap: .5rem;
   }
 
   .nav-links {
@@ -2255,10 +2345,10 @@ footer {
     flex-wrap: nowrap;
     justify-content: flex-start;
     overflow-x: auto;
-    gap: .25rem;
+    gap: .1rem;
     -ms-overflow-style: none;
     scrollbar-width: none;
-    padding-top: .5rem;
+    padding-top: .25rem;
     border-top: 1px solid var(--border-subtle);
   }
 
@@ -2271,17 +2361,23 @@ footer {
   }
 
   .nav-links a {
-    font-size: .85rem;
+    font-size: .82rem;
     white-space: nowrap;
-    padding: .4rem .7rem;
+    padding: .3rem .6rem;
   }
 
   .btn-cv {
     display: flex !important;
+    padding: .32rem .85rem;
+    font-size: .72rem;
   }
 
+  /* Hero starts right under the (measured) nav and no longer
+     vertically centres, so the photo sits as high as it can. */
   #hero {
-    padding-top: 3.5rem;
+    min-height: auto;
+    align-items: flex-start;
+    padding-top: calc(var(--nav-h, 96px) + .6rem);
   }
 
   .stat-divider {

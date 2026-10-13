@@ -28,7 +28,37 @@
     }, { passive: true });
   }
 
+  const waFloat = document.querySelector('.wa-float');
+  if (waFloat && document.getElementById('hero')) {
+    const toggleWa = () => waFloat.classList.toggle('wa-hidden', window.scrollY < 120);
+    toggleWa();
+    window.addEventListener('scroll', toggleWa, { passive: true });
+  }
+
   const navLinks = document.getElementById('navLinks');
+
+  /* ── Mobile hero fit ──────────────────────────────────────────
+     Measures the real nav height (it wraps to two rows on phones)
+     and sizes the profile photo from whatever viewport height is
+     left under the name, so the whole photo is visible on first
+     load without scrolling — on any phone size. */
+  const photoCol = document.querySelector('.hero-photo-col');
+  function fitHero() {
+    if (navbar) document.documentElement.style.setProperty('--nav-h', navbar.offsetHeight + 'px');
+    if (!photoCol) return;
+    if (!window.matchMedia('(max-width: 1024px)').matches) { photoCol.style.maxWidth = ''; return; }
+    photoCol.style.maxWidth = '';
+    const top = photoCol.getBoundingClientRect().top + window.scrollY;
+    const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    const avail = Math.min(vh, window.innerHeight) - top - 18;
+    const w = Math.max(140, Math.min(270, avail * 0.81));
+    photoCol.style.maxWidth = w + 'px';
+  }
+  fitHero();
+  window.addEventListener('load', fitHero);
+  window.addEventListener('resize', fitHero);
+  window.addEventListener('orientationchange', fitHero);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitHero);
 
   /* ── Sliding nav-pill indicator ───────────────────────────────
      A small pill glides behind whichever nav link the mouse is
